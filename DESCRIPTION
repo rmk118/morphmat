@@ -14,3 +14,5 @@ Imports:
     ggplot2,
     magrittr,
     stats
+URL: https://github.com/rmk118/morphmat
+BugReports: https://github.com/rmk118/morphmat/issues
