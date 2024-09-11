@@ -1,7 +1,7 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # morphmat
+
+<img src="man/figures/logo.png" align="right" height="139" alt="Hex sticker logo for morphmat package" />
 
 <!-- badges: start -->
 
@@ -33,6 +33,6 @@ devtools::install_github("rmk118/morphmat")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-library(morphmat)
+# library(morphmat)
 ## basic example code
 ```

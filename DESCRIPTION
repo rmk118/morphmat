@@ -1,18 +1,23 @@
 Package: morphmat
-Title: Methods for Modeling Size at Maturity Using Morphometric Data
+Title: Modeling Size at Maturity Using Morphometric Data
 Version: 0.0.0.9000
 Authors@R: 
-    person("Ruby", "Krasnow", email = "ruby.krasnow@maine.edu", role = c("aut", "cre"))
-Description: A compilation of methods used to estimate size at (sexual) maturity based on morphometric data, most commonly applied to crabs, lobsters, and other crustaceans. Approaches include modeling approaches based on piecewise/segmented linear regression as well as numerous clustering-based methods.
+    person("Ruby", "Krasnow", , "ruby.krasnow@maine.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0007-0531-8420"))
+Description: A compilation of methods used to estimate size at (sexual)
+    maturity based on morphometric data, most commonly applied to crabs,
+    lobsters, and other crustaceans. Approaches include modeling
+    approaches based on piecewise/segmentedlinear regression as well as
+    numerous clustering-based methods.
 License: MIT + file LICENSE
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+URL: https://github.com/rmk118/morphmat
+BugReports: https://github.com/rmk118/morphmat/issues
 Imports: 
     dplyr,
     ggplot2,
     lifecycle,
     magrittr,
     stats
-URL: https://github.com/rmk118/morphmat
-BugReports: https://github.com/rmk118/morphmat/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
