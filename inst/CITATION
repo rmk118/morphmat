@@ -1,0 +1,10 @@
+citHeader("To cite morphmat in publications use:")
+
+bibentry(
+  key = "morphmat"
+  bibtype  = "Misc",
+  title    = "morphmat: An R package for modeling size at morphometric maturity",
+  author   = c(person(given = c("Ruby", "M."), family = "Krasnow")),
+  year     = 2024,
+  url      = https://github.com/rmk118/morphmat
+)
