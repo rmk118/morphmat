@@ -1,5 +1,7 @@
-#' Inflection point ratio-based method
+#' Maturity classification based on the minimum density of CH/CW ratios
 #'
+#' @import ggplot2
+#' @importFrom rlang .data
 #' @param x Integer or double vector of measurements for the x-axis
 #'   variable (e.g., carapace width).
 #' @param y Integer or double vector of measurements for the y-axis
@@ -13,26 +15,34 @@
 #' @export
 #'
 #' @examples
+#' library(ggplot2)
+#' set.seed(12)
+#' x <- rnorm(100, mean=2, sd=3)
+#' y <- rnorm(100, mean=10, sd=3)
+#' z <- c(x, y)
+#' hist(z)
+#' infl_pt_fun(1, z, TRUE)
+#'
 infl_pt_fun <- function(x, y, plot = FALSE) {
   ratio <- y / x # find the ratio between the two morphometric variables
 
   # compute a kernel density estimate (essentially a smoothed histogram)
-  densityTest <- density(ratio)
+  densityTest <- stats::density(ratio)
 
   # convert into a data frame
   densityTest <- data.frame(x = densityTest$x, y = densityTest$y)
 
   # find the local minimum between the two peaks
-  densityTest$is_min <- ggpmisc:::find_peaks(-densityTest$y, ignore_threshold = -0.01)
+  densityTest$is_min <- ggpmisc::find_peaks(-densityTest$y, ignore_threshold = -0.01)
   min <- densityTest %>%
-    dplyr::filter(is_min == TRUE) %>%
+    dplyr::filter(.data$is_min == TRUE) %>%
     dplyr::pull(x)
   min <- stats::median(min)
 
   if (is.na(min)) {
-    densityTest$is_min <- ggpmisc:::find_peaks(-densityTest$y)
+    densityTest$is_min <- ggpmisc::find_peaks(-densityTest$y)
     min <- densityTest %>%
-      dplyr::filter(is_min == TRUE) %>%
+      dplyr::filter(.data$is_min == TRUE) %>%
       dplyr::pull(x)
     min <- stats::median(min)
   }
