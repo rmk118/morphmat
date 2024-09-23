@@ -1,8 +1,9 @@
 pandoc: 3.1.11
 pkgdown: 2.1.1
 pkgdown_sha: ~
-articles: {}
-last_built: 2024-09-23T17:02Z
+articles:
+  broken-stick: broken-stick.html
+last_built: 2024-09-23T20:59Z
 urls:
   reference: https://rmk118.github.io/morphmat/reference
   article: https://rmk118.github.io/morphmat/articles
