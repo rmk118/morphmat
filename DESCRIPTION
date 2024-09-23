@@ -10,7 +10,7 @@ Description: A compilation of methods used to estimate size at (sexual)
     approaches based on piecewise/segmentedlinear regression as well as
     numerous clustering-based methods.
 License: MIT + file LICENSE
-URL: https://github.com/rmk118/morphmat
+URL: https://github.com/rmk118/morphmat, https://rmk118.github.io/morphmat/
 BugReports: https://github.com/rmk118/morphmat/issues
 Imports: 
     dplyr,

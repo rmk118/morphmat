@@ -14,6 +14,7 @@ A compilation of methods used to estimate size at (sexual) maturity based on mor
 Useful links:
 \itemize{
   \item \url{https://github.com/rmk118/morphmat}
+  \item \url{https://rmk118.github.io/morphmat/}
   \item Report bugs at \url{https://github.com/rmk118/morphmat/issues}
 }
 
