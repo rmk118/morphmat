@@ -1,0 +1,21 @@
+---
+title: "Broken-stick methods"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Broken-stick methods}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(morphmat)
+```
+
+Here I will write a vignette explaining all of the broken-stick regression methods. This will be useful for referring readers to more complex options available in packages like `segmented` that are not available within `morphmat`.

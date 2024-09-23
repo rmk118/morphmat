@@ -1,6 +1,6 @@
 #' Maturity classification based on the minimum density of CH/CW ratios
 #'
-#' `infl_pt_fun()` can be used to classify individuals as immature or mature
+#' `infl_pt()` can be used to classify individuals as immature or mature
 #' when there is a clear ratio of the y-axis variable to the x-axis variable
 #' that separates the immature and mature clusters. For example, this would be
 #' an effective classification method if the transition to maturity of a
@@ -32,9 +32,9 @@
 #' y <- rnorm(100, mean=10, sd=3)
 #' z <- c(x, y)
 #' hist(z)
-#' infl_pt_fun(1, z, TRUE)
+#' infl_pt(1, z, TRUE)
 #'
-infl_pt_fun <- function(x, y, plot = FALSE) {
+infl_pt <- function(x, y, plot = FALSE) {
   ratio <- y / x # find the ratio between the two morphometric variables
 
   # compute a kernel density estimate (essentially a smoothed histogram)
