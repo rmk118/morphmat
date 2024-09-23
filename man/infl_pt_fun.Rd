@@ -22,7 +22,16 @@ minimum was found. This ratio serves as the discriminant line when
 separating observations by maturity status.
 }
 \description{
-Maturity classification based on the minimum density of CH/CW ratios
+\code{infl_pt_fun()} can be used to classify individuals as immature or mature
+when there is a clear ratio of the y-axis variable to the x-axis variable
+that separates the immature and mature clusters. For example, this would be
+an effective classification method if the transition to maturity of a
+population of Tanner crabs (\emph{Chionoecetes bairdi}) was evident by an increase
+in the log(claw height)/log(carapace width) ratio from below 0.2 to above
+0.2. \code{infl_pt_fun()} finds this discriminating line by creating a kernel
+density estimate (visually similar to a smoothed histogram) of the
+y-var/x-var ratio for all points, then finding the local minimum separating
+the two peaks representing the maturity clusters.
 }
 \examples{
 library(ggplot2)
