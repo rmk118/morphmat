@@ -2,6 +2,7 @@
 
 export("%>%")
 export(broken_stick)
+export(fake_crabs)
 export(infl_pt)
 import(ggplot2)
 import(rlang)
