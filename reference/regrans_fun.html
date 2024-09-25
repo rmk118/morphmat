@@ -43,10 +43,12 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">regrans_fun</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  <span class="va">y</span>,</span>
-<span>  min_changept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>  max_changept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  <span class="va">dat</span>,</span>
+<span>  <span class="va">xvar</span>,</span>
+<span>  <span class="va">yvar</span>,</span>
+<span>  lower <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  upper <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  n_tries <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -55,25 +57,35 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>Integer or double vector of measurements for the x-axis variable
-(e.g., carapace width).</p></dd>
+<dl><dt id="arg-dat">dat<a class="anchor" aria-label="anchor" href="#arg-dat"></a></dt>
+<dd><p>data frame or matrix containing the data</p></dd>
 
 
-<dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
-<dd><p>Integer or double vector of measurements for the y-axis variable
-(e.g., claw height).</p></dd>
+<dt id="arg-xvar">xvar<a class="anchor" aria-label="anchor" href="#arg-xvar"></a></dt>
+<dd><p>Name of column (integer or double) of measurements for the x-axis
+variable (e.g., carapace width).</p></dd>
 
 
-<dt id="arg-min-changept">min_changept<a class="anchor" aria-label="anchor" href="#arg-min-changept"></a></dt>
+<dt id="arg-yvar">yvar<a class="anchor" aria-label="anchor" href="#arg-yvar"></a></dt>
+<dd><p>Name of column (integer or double) of measurements for the y-axis
+variable (e.g., claw height).</p></dd>
+
+
+<dt id="arg-lower">lower<a class="anchor" aria-label="anchor" href="#arg-lower"></a></dt>
 <dd><p>Integer or double; the lower bound for possible SM50 values.
-Must be on the same scale of the data. Defaults to the minimum value of the x-variable.</p></dd>
-
-
-<dt id="arg-max-changept">max_changept<a class="anchor" aria-label="anchor" href="#arg-max-changept"></a></dt>
-<dd><p>Integer or double; the upper bound for possible SM50 values.
-Must be on the same scale of the data. Defaults to the maximum value of
+Must be on the same scale of the data. Defaults to the 20th percentile of
 the x-variable.</p></dd>
+
+
+<dt id="arg-upper">upper<a class="anchor" aria-label="anchor" href="#arg-upper"></a></dt>
+<dd><p>Integer or double; the upper bound for possible SM50 values.
+Must be on the same scale of the data. Defaults to the 80th percentile of
+the x-variable.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>Return all breakpoints tested and their sum of squares, or
+only the estimated SM50?</p></dd>
 
 
 <dt id="arg-n-tries">n_tries<a class="anchor" aria-label="anchor" href="#arg-n-tries"></a></dt>
@@ -82,114 +94,49 @@ the x-variable.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Data frame with breakpoints tested and their sum of squares</p>
+    <p>If verbose = TRUE, a data frame with the breakpoints tested and
+their sum of squares. Otherwise, a single value for the breakpoint with the
+lowest sum of squares.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="fake_crabs.html">fake_crabs</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">100</span>, allo_params<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.2</span>, <span class="fl">1.1</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">regrans_fun</span><span class="op">(</span><span class="va">fc</span><span class="op">$</span><span class="va">x</span>, <span class="va">fc</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      changept   sum_sq</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    55.14267 1740.302</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    56.18517 1714.415</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    57.22767 1701.996</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    58.27016 1693.894</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    59.31266 1676.504</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    60.35516 1656.482</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    61.39765 1643.079</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    62.44015 1626.842</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9    63.48265 1608.830</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10   64.52514 1595.645</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11   65.56764 1582.010</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12   66.61014 1565.981</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13   67.65264 1553.532</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14   68.69513 1544.766</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15   69.73763 1538.582</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16   70.78013 1534.196</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17   71.82262 1531.070</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18   72.86512 1528.833</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19   73.90762 1527.232</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20   74.95011 1524.100</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21   75.99261 1521.640</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22   77.03511 1519.874</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23   78.07760 1517.714</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24   79.12010 1515.156</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25   80.16260 1513.254</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26   81.20509 1512.581</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27   82.24759 1513.851</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28   83.29009 1516.721</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29   84.33259 1520.916</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30   85.37508 1525.859</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31   86.41758 1532.073</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32   87.46008 1539.298</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33   88.50257 1546.820</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34   89.54507 1555.268</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35   90.58757 1564.659</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36   91.63006 1574.635</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37   92.67256 1585.710</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38   93.71506 1596.359</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39   94.75755 1608.942</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40   95.80005 1624.755</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41   96.84255 1641.084</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42   97.88504 1657.266</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43   98.92754 1674.348</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44   99.97004 1688.324</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45  101.01254 1700.864</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46  102.05503 1713.589</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47  103.09753 1723.844</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48  104.14003 1732.155</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49  105.18252 1737.612</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50  106.22502 1740.045</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51  107.26752 1740.199</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52  108.31001 1739.272</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53  109.35251 1737.805</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54  110.39501 1735.935</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55  111.43750 1733.743</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56  112.48000 1731.841</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57  113.52250 1729.894</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58  114.56499 1728.348</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59  115.60749 1727.004</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60  116.64999 1725.592</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61  117.69248 1724.280</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62  118.73498 1723.247</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63  119.77748 1722.260</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64  120.81998 1721.702</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65  121.86247 1721.424</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66  122.90497 1721.545</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67  123.94747 1721.846</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68  124.98996 1722.248</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69  126.03246 1722.767</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70  127.07496 1723.008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71  128.11745 1722.826</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72  129.15995 1722.675</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73  130.20245 1722.514</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74  131.24494 1722.373</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75  132.28744 1722.261</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76  133.32994 1722.192</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77  134.37243 1722.185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78  135.41493 1722.284</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79  136.45743 1722.461</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80  137.49993 1722.705</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81  138.54242 1723.040</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82  139.58492 1723.494</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83  140.62742 1724.104</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84  141.66991 1724.916</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85  142.71241 1725.982</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86  143.75491 1727.355</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87  144.79740 1729.071</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88  145.83990 1728.832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89  146.88240 1728.832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90  147.92489 1728.832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91  148.96739 1728.832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92  150.00989 1728.832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93  151.05238 1728.832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94  152.09488 1728.832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95  153.13738 1728.832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96  154.17988 1728.832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97  155.22237 1728.832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98  156.26487 1728.832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99  157.30737 1728.832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100 158.34986 1740.302</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="fake_crabs.html">fake_crabs</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">100</span>, L50<span class="op">=</span><span class="fl">100</span>, allo_params<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.2</span>, <span class="fl">1.1</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">regrans_fun</span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 89.43822</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">regrans_fun</span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, n<span class="op">=</span><span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    changept   sum_sq</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  89.43822 1917.861</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  89.74331 1919.376</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  90.04840 1921.015</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  90.35348 1922.750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  90.65857 1924.568</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  90.96366 1926.505</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  91.26874 1928.923</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  91.57383 1931.428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  91.87892 1933.981</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 92.18401 1936.569</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 92.48909 1939.569</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 92.79418 1943.374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 93.09927 1947.164</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 93.40436 1950.928</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 93.70944 1954.658</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 94.01453 1958.346</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 94.31962 1962.537</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 94.62470 1966.590</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 94.92979 1969.784</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 95.23488 1973.135</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 95.53997 1977.559</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 95.84505 1982.278</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 96.15014 1986.913</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 96.45523 1991.515</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 96.76032 1996.374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 97.06540 2001.115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 97.37049 2005.811</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 97.67558 2011.004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 97.98066 2016.360</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 98.28575 2021.730</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
