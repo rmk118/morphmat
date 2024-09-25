@@ -1,29 +1,50 @@
 #' REGRANS broken-stick regression method
 #'
-#' @param x Integer or double vector of measurements for the x-axis variable
-#'   (e.g., carapace width).
-#' @param y Integer or double vector of measurements for the y-axis variable
-#'   (e.g., claw height).
-#' @param min_changept Integer or double; the lower bound for possible SM50 values.
-#'   Must be on the same scale of the data. Defaults to the minimum value of the x-variable.
-#' @param max_changept Integer or double; the upper bound for possible SM50 values.
-#'   Must be on the same scale of the data. Defaults to the maximum value of
+#' @param dat data frame or matrix containing the data
+#' @param xvar Name of column (integer or double) of measurements for the x-axis
+#'   variable (e.g., carapace width).
+#' @param yvar Name of column (integer or double) of measurements for the y-axis
+#'   variable (e.g., claw height).
+#' @param lower Integer or double; the lower bound for possible SM50 values.
+#'   Must be on the same scale of the data. Defaults to the 20th percentile of
 #'   the x-variable.
+#' @param upper Integer or double; the upper bound for possible SM50 values.
+#'   Must be on the same scale of the data. Defaults to the 80th percentile of
+#'   the x-variable.
+#' @param verbose Return all breakpoints tested and their sum of squares, or
+#'   only the estimated SM50?
 #' @param n_tries Number of breakpoints to test within the unknown range.
 #'
-#' @return Data frame with breakpoints tested and their sum of squares
+#' @return If verbose = TRUE, a data frame with the breakpoints tested and
+#'   their sum of squares. Otherwise, a single value for the breakpoint with the
+#'   lowest sum of squares.
 #' @export
 #'
 #' @examples
-#' fc <- fake_crabs(n=100, allo_params=c(1, 0.2, 1.1, 0.2))
-#' regrans_fun(fc$x, fc$y)
-regrans_fun <- function(x,
-                        y,
-                        min_changept = min(x, na.rm = TRUE),
-                        max_changept = max(x, na.rm = TRUE),
+#' set.seed(12)
+#' fc <- fake_crabs(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
+#' regrans_fun(fc, "x", "y", verbose = FALSE)
+#' head(regrans_fun(fc, "x", "y", verbose = TRUE), n=30)
+regrans_fun <- function(dat,
+                        xvar,
+                        yvar,
+                        lower = NULL,
+                        upper = NULL,
+                        verbose = FALSE,
                         n_tries = 100) {
 
-  changept_choices <- seq(min_changept, max_changept, l = n_tries)
+  x <- dat[[xvar]]
+  y <- dat[[yvar]]
+
+  if (is.null(lower)) {
+    lower <- stats::quantile(x, 0.2)
+  }
+
+  if (is.null(upper)) {
+    upper <- stats::quantile(x, 0.8)
+  }
+
+  changept_choices <- seq(lower, upper, l = n_tries)
 
   help_fun <- function(i)
   {
@@ -33,9 +54,16 @@ regrans_fun <- function(x,
     return(sum_sq)
   }
 
-  breakpt <- sapply(changept_choices,help_fun)
+  breakpt <- sapply(changept_choices, help_fun)
 
   breakpt <- data.frame(changept = changept_choices, sum_sq = breakpt)
 
-  return(breakpt)
+  if (verbose == TRUE) {
+    return(breakpt)
+  }
+  else {
+    out <- breakpt[which.min(breakpt$sum_sq), "changept"]
+    return(out)
+  }
+
 }

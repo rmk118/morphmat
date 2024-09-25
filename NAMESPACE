@@ -2,6 +2,7 @@
 
 export("%>%")
 export(broken_stick)
+export(broken_stick_stevens)
 export(fake_crabs)
 export(infl_pt)
 export(regrans_fun)

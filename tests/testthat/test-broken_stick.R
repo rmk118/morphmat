@@ -1,3 +1,8 @@
-test_that("preliminary broken stick function works", {
-  expect_equal(broken_stick(dat=iris, x="x", y="y", method="chngpt"), 1)
+test_that("Stevens wrapper works", {
+  set.seed(123)
+  fc <- fake_crabs(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
+  expect_equal(
+    round(broken_stick(fc, xvar="x", yvar="y", method="stevens"),4),
+    121.4316
+  )
 })

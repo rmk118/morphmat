@@ -6,39 +6,40 @@
 \usage{
 broken_stick(
   dat,
-  x,
-  y,
+  xvar,
+  yvar,
   verbose = FALSE,
   ci = 95,
-  lower = stats::quantile(x, 0.2),
-  upper = stats::quantile(x, 0.8),
-  scale = c("log", "none", "std"),
+  lower = NULL,
+  upper = NULL,
+  trans = "none",
   method = c("segmented", "chngpt", "regrans", "stevens", "all")
 )
 }
 \arguments{
 \item{dat}{data frame or matrix containing the data}
 
-\item{x}{Integer or double vector of measurements for the x-axis variable
-(e.g., carapace width).}
+\item{xvar}{Name of column (integer or double) of measurements for the x-axis
+variable (e.g., carapace width).}
 
-\item{y}{Integer or double vector of measurements for the y-axis variable
-(e.g., claw height).}
+\item{yvar}{Name of column (integer or double) of measurements for the y-axis
+variable (e.g., claw height).}
 
-\item{verbose}{Boolean; Should the standard error, confidence intervals,}
+\item{verbose}{Boolean; Should the standard error, confidence intervals, etc.
+be returned, or just the estimate of SM50?}
 
 \item{ci}{Integer; type of confidence intervals to return for SM50, defaults
 to 95\%.}
 
 \item{lower}{Integer or double; the lower bound for possible SM50 values.
-Must be on the same scale of the data. Defaults to the 20th percentile of
+Must be on the same trans of the data. Defaults to the 20th percentile of
 the x-variable.}
 
 \item{upper}{Integer or double; the upper bound for possible SM50 values.
-Must be on the same scale of the data. Defaults to the 80th percentile of
+Must be on the same trans of the data. Defaults to the 80th percentile of
 the x-variable.}
 
-\item{scale}{Transformation to be applied to the data before performing the
+\item{trans}{Transformation to be applied to the data before performing the
 regression: "none", "log" (both variables are log-transformed), or "std"
 (both variables are standardized = scaled and centered). If no string is
 provided, no transformation is performed (i.e., the default is "none").}
@@ -58,5 +59,7 @@ broken-stick models.
 A wrapper function allowing for multiple methods of broken-stick regression to be applied using a standard format for inputs. See \code{vignette("broken-stick")} for more information.
 }
 \examples{
-broken_stick(iris, x="x", y="y", method=c("segmented", "chngpt"))
+set.seed(12)
+fc <- fake_crabs(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
+broken_stick(fc, xvar="x", yvar="y", method=c("segmented", "chngpt"))
 }
