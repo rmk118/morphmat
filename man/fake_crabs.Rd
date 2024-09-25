@@ -51,5 +51,5 @@ to ensure reproducibility.
 }
 \examples{
 set.seed(123)
-fake_crabs()
+fake_crabs(n=25)
 }

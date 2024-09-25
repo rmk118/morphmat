@@ -5,7 +5,7 @@
 \title{Broken-stick (segmented) approaches to estimating SM50}
 \usage{
 broken_stick(
-  df,
+  dat,
   x,
   y,
   verbose = FALSE,
@@ -17,7 +17,7 @@ broken_stick(
 )
 }
 \arguments{
-\item{df}{data frame, matrix, or tibble containing the data}
+\item{dat}{data frame or matrix containing the data}
 
 \item{x}{Integer or double vector of measurements for the x-axis variable
 (e.g., carapace width).}
@@ -31,7 +31,7 @@ broken_stick(
 to 95\%.}
 
 \item{lower}{Integer or double; the lower bound for possible SM50 values.
-Must be on the same scale of the data. Defaults to the w0th percentile of
+Must be on the same scale of the data. Defaults to the 20th percentile of
 the x-variable.}
 
 \item{upper}{Integer or double; the upper bound for possible SM50 values.
@@ -55,8 +55,8 @@ the model object(s) and/or regression parameters for the lines in the
 broken-stick models.
 }
 \description{
-A wrapper function allowing for multiple methods of broken-stick regression to be applied using a standard format for inputs. See the `vignette("Broken-stick methods") vignette for more information.
+A wrapper function allowing for multiple methods of broken-stick regression to be applied using a standard format for inputs. See \code{vignette("broken-stick")} for more information.
 }
 \examples{
-broken_stick(df=iris, x="x", y="y", method=c("segmented", "chngpt"))
+broken_stick(iris, x="x", y="y", method=c("segmented", "chngpt"))
 }

@@ -1,0 +1,39 @@
+---
+title: "Classification methods"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Classification methods}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(morphmat)
+```
+
+Here I will write a vignette explaining all of the methods that first classify points as mature or immature, enabling the use of logistic regression to find SM50 as would be done with a physiological metric of maturity. This vignette will be useful for referring readers to more complex options available in packages like `mclust` that are not available within `morphmat`.
+
+# Clustering methods
+
+hclust, kmeans, hkmeans, PAM, OPTICS, DBSCAN, HDBSCAN, Somerton method, mclust
+
+# Other classification methods
+
+## Inflection point discriminant method
+
+# Discriminant Analysis
+
+Talk about drawbacks and reasons why it is unnecessary, but mention instances where it might be useful (stock assessment, applications to related species)
+
+# Post-classification logistic regression
+
+- Basic logistic regression, GLMMs, GAMs, sdmTMB, etc.
+- Methods of obtaining standard errors/CIs for SM50 parameter (Delta method, Fieller method, etc.)
+- BAYESIAN

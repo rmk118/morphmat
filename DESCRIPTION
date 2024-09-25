@@ -15,7 +15,7 @@ BugReports: https://github.com/rmk118/morphmat/issues
 Imports: 
     dplyr,
     ggplot2,
-    ggpmisc,
+    splus2R,
     glue,
     lifecycle,
     magrittr,
@@ -23,7 +23,7 @@ Imports:
     stats
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     rmarkdown,

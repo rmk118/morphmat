@@ -1,8 +1,8 @@
 #' Broken-stick (segmented) approaches to estimating SM50
 #'
-#' A wrapper function allowing for multiple methods of broken-stick regression to be applied using a standard format for inputs. See the `vignette("Broken-stick methods") vignette for more information.
+#' A wrapper function allowing for multiple methods of broken-stick regression to be applied using a standard format for inputs. See `vignette("broken-stick")` for more information.
 #'
-#' @param df data frame, matrix, or tibble containing the data
+#' @param dat data frame or matrix containing the data
 #' @param x Integer or double vector of measurements for the x-axis variable
 #'   (e.g., carapace width).
 #' @param y Integer or double vector of measurements for the y-axis variable
@@ -21,7 +21,7 @@
 #'   Must be on the same scale of the data. Defaults to the 80th percentile of
 #'   the x-variable.
 #' @param lower Integer or double; the lower bound for possible SM50 values.
-#'   Must be on the same scale of the data. Defaults to the w0th percentile of
+#'   Must be on the same scale of the data. Defaults to the 20th percentile of
 #'   the x-variable.
 #'
 #' @returns If verbose is FALSE (the default), an estimate of SM50 from the
@@ -32,8 +32,8 @@
 #' @export
 #'
 #' @examples
-#' broken_stick(df=iris, x="x", y="y", method=c("segmented", "chngpt"))
-broken_stick <- function(df,
+#' broken_stick(iris, x="x", y="y", method=c("segmented", "chngpt"))
+broken_stick <- function(dat,
                          x,
                          y,
                          verbose = FALSE,

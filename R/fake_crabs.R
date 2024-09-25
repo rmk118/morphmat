@@ -29,7 +29,7 @@
 #'
 #' @examples
 #' set.seed(123)
-#' fake_crabs()
+#' fake_crabs(n=25)
 fake_crabs <- function(L50 = 100, # length at 50% maturity on ref var scale
                        slope = 5, # slope parameter for logistic maturity
                        n = 1000, # number of crabs sampled
@@ -62,7 +62,9 @@ fake_crabs <- function(L50 = 100, # length at 50% maturity on ref var scale
   fake_crabs$mature <- as.factor(mature_vec)
 
   err_sd <- fake_crabs %>%
-    dplyr::summarise(range = max(.data$x, na.rm = TRUE) - min(.data$x, na.rm = TRUE)) %>%
+    dplyr::summarise(
+      range = max(.data$x, na.rm = TRUE) - min(.data$x, na.rm = TRUE)
+    ) %>%
     dplyr::mutate(err_sd = .data$range * 0.01 / error_scale) %>%
     dplyr::pull(err_sd)
 
@@ -79,10 +81,10 @@ fake_crabs <- function(L50 = 100, # length at 50% maturity on ref var scale
     dplyr::mutate(y = dplyr::case_when(
       .data$mature == 0 ~ b0 * (.data$x ^ (a0)) * .data$errs,
       #if crab is mature, use mature parameters
-      .data$mature == 1 ~ b1 * (.data$x ^ (a1)) * .data$errs))
-
-  fake_crabs$log_x = log(fake_crabs$x) #find log of x
-  fake_crabs$log_y = log(fake_crabs$y) #find log of y
+      .data$mature == 1 ~ b1 * (.data$x ^ (a1)) * .data$errs),
+      log_x = log(.data$x),  #find log of x
+      log_y = log(.data$y)  #find log of x
+    )
 
   fake_crabs <- fake_crabs %>% dplyr::select(-"errs")
 

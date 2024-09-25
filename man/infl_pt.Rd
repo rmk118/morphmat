@@ -4,14 +4,16 @@
 \alias{infl_pt}
 \title{Maturity classification based on the minimum density of CH/CW ratios}
 \usage{
-infl_pt(x, y, plot = FALSE)
+infl_pt(dat, x, y, plot = FALSE)
 }
 \arguments{
-\item{x}{Integer or double vector of measurements for the x-axis
-variable (e.g., carapace width).}
+\item{dat}{optional data frame or matrix containing the data}
 
-\item{y}{Integer or double vector of measurements for the y-axis
-variable (e.g., claw height).}
+\item{x}{Name of column (or integer or double vector) containing measurements
+for the x-axis variable (e.g., carapace width).}
+
+\item{y}{Name of column (or integer or double vector) containing measurements
+for the y-axis variable (e.g., claw height).}
 
 \item{plot}{Boolean; should a plot of the density curve with the identified
 minimum be created?}
@@ -24,10 +26,12 @@ separating observations by maturity status.
 \description{
 \code{infl_pt()} can be used to classify individuals as immature or mature
 when there is a clear ratio of the y-axis variable to the x-axis variable
-that separates the immature and mature clusters. For example, this would be
-an effective classification method if the transition to maturity of a
-population of Tanner crabs (\emph{Chionoecetes bairdi}) was evident by an increase
-in the log(claw height)/log(carapace width) ratio from below 0.2 to above
+that separates the immature and mature clusters.
+
+For example, this would be an effective classification method if the
+transition to maturity of a population of Tanner crabs
+(\emph{Chionoecetes bairdi}) was evident by an increase in the
+log(claw height)/log(carapace width) ratio from below 0.2 to above
 0.2. \code{infl_pt_fun()} finds this discriminating line by creating a kernel
 density estimate (visually similar to a smoothed histogram) of the
 y-var/x-var ratio for all points, then finding the local minimum separating
@@ -36,10 +40,13 @@ the two peaks representing the maturity clusters.
 \examples{
 library(ggplot2)
 set.seed(12)
-x <- rnorm(100, mean=2, sd=3)
-y <- rnorm(100, mean=10, sd=3)
+x <- rnorm(100, mean = 2, sd = 3)
+y <- rnorm(100, mean = 15, sd = 3)
 z <- c(x, y)
 hist(z)
-infl_pt(1, z, TRUE)
+dat1 <- data.frame(xvar=rep(1, 200),yvar=z)
+infl_pt(dat1, "xvar", "yvar", TRUE)
+fc <- fake_crabs(n=100, allo_params=c(1, 0.2, 1.1, 0.2))
+infl_pt(fc, "x", "y", TRUE)
 
 }
