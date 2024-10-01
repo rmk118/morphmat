@@ -14,11 +14,11 @@
 #' @param verbose Should additional output be returned besides the SM50
 #'   estimate?
 #'
-#' @returns If verbose is FALSE (the default), an estimate of SM50 from the
-#'   specified method(s). Otherwise, output is a list that also includes the
-#'   original data with a column representing which line (immature or mature)
-#'   the point was assigned to, the immature amd mature slope and intercept
-#'   parameters, and the F and p-values for the final piecewise model.
+#' @returns If verbose is FALSE (the default), an estimate of SM50. Otherwise,
+#'   output is a list that also includes the original data with a column
+#'   representing which line (immature or mature) the point was assigned to, the
+#'   immature amd mature slope and intercept parameters, and the F and p-values
+#'   for the final piecewise model.
 #' @export
 #'
 #' @examples
