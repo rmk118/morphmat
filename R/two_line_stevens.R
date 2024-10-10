@@ -33,8 +33,8 @@
 #'
 #' @examples
 #' #' set.seed(12)
-#' fc <- fake_crabs(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
-#' two_line_stevens(fc, xvar="x", yvar="y", verbose = FALSE)
+#' fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
+#' two_line_stevens(fc, xvar = "x", yvar = "y", verbose = FALSE)
 two_line_stevens <- function(dat,
                              xvar,
                              yvar,
@@ -90,8 +90,9 @@ two_line_stevens <- function(dat,
     mse <- rep(0, n0)
 
     for (i in 1:n0) {
-      piecewise1 <- stats::lm(yvar ~ xvar * (xvar < xvar[i]) + xvar * (xvar >= xvar[i]), data =
-                         stevens)
+      piecewise1 <- stats::lm(
+        yvar ~ xvar * (xvar < xvar[i]) + xvar * (xvar >= xvar[i]),
+        data = stevens)
       mse[i] <- mean(piecewise1$residuals ^ 2)
     }
 
@@ -123,8 +124,8 @@ two_line_stevens <- function(dat,
   }
 
   ## rerun piecewise regression at best bp
-  piecewise2 <- stats::lm(yvar ~ xvar * (xvar < bp) + xvar * (xvar > bp), data =
-                     stevens)
+  piecewise2 <- stats::lm(yvar ~ xvar * (xvar < bp) + xvar * (xvar > bp),
+                          data = stevens)
 
   pw_vals <- stats::coef(piecewise2)
   pw_vals[which(is.na(pw_vals))] <- 0
@@ -134,7 +135,6 @@ two_line_stevens <- function(dat,
   b_hi <- pw_vals[2]
 
   jx <- as.numeric((a_lo - a_hi) / (b_hi - b_lo)) #the point where 2 lines meet
-  jy <- a_lo + b_lo * jx
 
   ####  Reassign group membership
   memb_pw <- rep(1, n0)
@@ -143,8 +143,8 @@ two_line_stevens <- function(dat,
 
   output <- list(
     data = stevens,
-    bp = bp,
-    jx = jx,
+    breakpoint = bp,
+    intersection = jx,
     imm_slope = b_lo,
     imm_int = a_lo,
     mat_slope = b_hi,

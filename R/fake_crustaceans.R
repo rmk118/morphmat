@@ -29,10 +29,10 @@
 #'
 #' @examples
 #' set.seed(123)
-#' fake_crabs(n=25)
-fake_crabs <- function(L50 = 100, # length at 50% maturity on ref var scale
+#' fake_crustaceans(n=25)
+fake_crustaceans <- function(L50 = 100, # length at 50% maturity on ref var scale
                        slope = 5, # slope parameter for logistic maturity
-                       n = 1000, # number of crabs sampled
+                       n = 1000, # number of crustaceans sampled
                        # mean of reference variable, e.g., carapace width in mm
                        x_mean = 105,
                        # standard deviation of reference variable
@@ -46,22 +46,22 @@ fake_crabs <- function(L50 = 100, # length at 50% maturity on ref var scale
 
 
   # Create normal distribution of carapace widths for a given n, mean, and SD
-  fake_crabs <- data.frame(x = stats::rnorm(n = n, mean = x_mean, sd = x_sd))
+  fake_crustaceans <- data.frame(x = stats::rnorm(n = n, mean = x_mean, sd = x_sd))
 
   # Add probability of maturity for each individual crab
   # based on a logistic distribution with given location (L50) and
   # shape (slope of the logistic curve) parameters
-  fake_crabs$prob_mat <- stats::plogis(fake_crabs$x, L50, slope)
+  fake_crustaceans$prob_mat <- stats::plogis(fake_crustaceans$x, L50, slope)
 
   # Based on the probabilities of maturity,
   # use a binomial distribution to assign each crab a maturity status
   # (0 = immature, 1 = mature)
-  mature_vec <- stats::rbinom(n, 1, fake_crabs$prob_mat)
+  mature_vec <- stats::rbinom(n, 1, fake_crustaceans$prob_mat)
 
   # Add vector of maturities to data frame of x-vars and maturity probabilities
-  fake_crabs$mature <- as.factor(mature_vec)
+  fake_crustaceans$mature <- as.factor(mature_vec)
 
-  err_sd <- fake_crabs %>%
+  err_sd <- fake_crustaceans %>%
     dplyr::summarise(
       range = max(.data$x, na.rm = TRUE) - min(.data$x, na.rm = TRUE)
     ) %>%
@@ -69,14 +69,14 @@ fake_crabs <- function(L50 = 100, # length at 50% maturity on ref var scale
     dplyr::pull(err_sd)
 
   err <- stats::rnorm(n = n, sd = err_sd)
-  fake_crabs$errs <- exp(err)
+  fake_crustaceans$errs <- exp(err)
 
   a0 <- allo_params[1] # Immature slope parameter
   b0 <- allo_params[2] # Immature intercept parameter
   a1 <- allo_params[3] # Mature slope parameter
   b1 <- allo_params[4] # Immature intercept parameter
 
-  fake_crabs <- fake_crabs %>%
+  fake_crustaceans <- fake_crustaceans %>%
     #if crab is immature, use immature parameters
     dplyr::mutate(y = dplyr::case_when(
       .data$mature == 0 ~ b0 * (.data$x ^ (a0)) * .data$errs,
@@ -86,8 +86,8 @@ fake_crabs <- function(L50 = 100, # length at 50% maturity on ref var scale
       log_y = log(.data$y)  #find log of x
     )
 
-  fake_crabs <- fake_crabs %>% dplyr::select(-"errs")
+  fake_crustaceans <- fake_crustaceans %>% dplyr::select(-"errs")
 
-  return(fake_crabs)
+  return(fake_crustaceans)
 
 }

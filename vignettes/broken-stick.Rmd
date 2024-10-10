@@ -1,10 +1,16 @@
 ---
 title: "Broken-stick methods"
 output: rmarkdown::html_vignette
+bibliography: references.bib
+link-citations: true
+link-external-newwindow: true 
 vignette: >
   %\VignetteIndexEntry{Broken-stick methods}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+number-sections: true
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -15,7 +21,729 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+#| message: FALSE
+#| echo: FALSE
+#| warning: FALSE
+#| output: FALSE
+
 library(morphmat)
+
+library(chngpt)
+library(segmented)
+library(tidyverse)
+
+knitr::opts_chunk$set(message = FALSE)
 ```
 
-Here I will write a vignette explaining all of the broken-stick regression methods. This will be useful for referring readers to more complex options available in packages like `segmented` that are not available within `morphmat`.
+```{r}
+#| label: setup-visible
+
+set.seed(123) # set seed for reproducibility
+
+mytheme <- theme_classic()+ #define custom theme for ggplots
+  theme(
+    axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
+    axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
+    text=element_text(size=13))
+```
+
+<!-- Here I will write a vignette explaining all of the broken-stick regression methods. This will be useful for referring readers to more complex options available in packages like `segmented` that are not available within `morphmat`. -->
+
+Sources (more will be added): Somerton [-@somerton1980]; Muggeo [-@muggeo2003; @muggeo2008; @muggeo2017]; Hall et al. [-@hall2006]
+
+\begin{equation*}\log{y}=
+    \begin{cases}
+     \tilde{\beta_1} + \alpha_1 \log{x}             & \text{for }\log{x} \leq c \\
+     \tilde{\beta_1} + c(\alpha_1-\alpha_2)+\alpha_2 \log{x}  & \text{for }\log{x} > c
+    \end{cases}       
+\end{equation*}
+
+At $\log{x}=c$, the bottom equation becomes $\tilde{\beta_1}+(\log{x})(\alpha_1-\alpha_2)+\alpha_2\log{x}$, equivalent to the top equation. Note that in this formulation, there is only one intercept term $(\beta_1)$, so the immature and mature lines cannot have the same slope without being equivalent lines. In this model, the estimated value of the breakpoint parameter $c$ is taken to be SM50.
+
+We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate the use (and limitations) of broken-stick methods.
+```{r}
+fc <- fake_crustaceans(
+  error_scale = 17,
+  slope = 9,
+  L50 = 75,
+  n = 800,
+  allo_params = c(0.9, 0.25, 1.05, 0.2),
+  x_mean = 85
+)
+```
+
+```{r}
+#| echo: false
+
+ggplot() +
+  geom_point(data = fc, aes(x, y), alpha = 0.4) +
+  labs(x = "CW (mm)", y = "CH (mm)", ) +
+  mytheme
+```
+
+## segmented package
+
+A powerful and customizable method of implementing broken-stick regression is provided by the R package `segmented`, which has been cited by many papers using morphometric data to estimate size at maturity. Note that `segmented` includes three different methods to compute confidence intervals, the details of which are discussed in Muggeo [-@muggeo2017]. It is also possible to estimate 95% CIs via bootstrap resampling, but the computation time required is relatively high and the resulting estimates are around the same values as those from the "delta" and "gradient" methods included in the `segmented` package.
+
+```{r}
+lm_orig <- lm(y ~ x, data = fc)
+lm_orig_seg <- segmented(lm_orig)
+plot(lm_orig_seg)
+```
+
+The segmented package has three built-in methods to get 95% confidence intervals for the break point:
+
+```{r}
+#| echo: false
+#| label: segmented-CIs
+
+cat("Delta method:")
+confint.segmented(lm_orig_seg, method = "delta")
+cat("Score method:")
+confint.segmented(lm_orig_seg, method = "score")
+cat("Gradient method:")
+confint.segmented(lm_orig_seg, method = "gradient")
+```
+
+And a significance test for a non-zero difference-in-slope parameter of a segmented relationship:
+```{r}
+#| label: segmented-pscore
+
+pscore.test(lm_orig,  ~ x)
+```
+
+We can also use an ANOVA test to compare the segmented model to a single linear model:
+```{r}
+#| label: segmented-anova
+
+anova(lm_orig, lm_orig_seg)
+```
+
+```{r}
+#| code-fold: true
+#| label: fig-segmented-plot
+#| fig-cap: "SM50 estimate for simulated crab data from the R package segmented"
+#| echo: false
+
+# Plot SM50 and CIs alongside the data
+ggplot() +
+  geom_rect(aes(xmin = confint.segmented(lm_orig_seg, method = "score")[[2]], 
+                xmax = confint.segmented(lm_orig_seg, method = "score")[[3]], 
+                ymin = -Inf, ymax = Inf, fill = "Score"), alpha = 0.5) +
+  geom_rect(aes(xmin = confint.segmented(lm_orig_seg, method = "gradient")[[2]], 
+                xmax = confint.segmented(lm_orig_seg, method = "gradient")[[3]], 
+                ymin = -Inf, ymax = Inf, fill = "Gradient"), alpha = 0.9) +
+  geom_rect(aes(xmin = confint.segmented(lm_orig_seg)[[2]], 
+                xmax = confint.segmented(lm_orig_seg)[[3]], 
+                ymin = -Inf, ymax = Inf, fill = "Delta"), alpha = 0.4) +
+  geom_point(data = fc, aes(x, y), alpha = 0.4) +
+  geom_vline(aes(xintercept = confint.segmented(lm_orig_seg)[[1]], 
+                 linetype = "Est. SM50"), # Central estimate line
+             color = "#0f85a0", linewidth = 1) +
+  geom_vline(aes(xintercept = 75, linetype = "True SM50"), # True SM50
+                 color = "black", linewidth = 1) +
+  labs(x = "CW (mm)",
+       y = "CH (mm)",
+       #title = "SM50 Estimate with 95% Confidence Intervals",
+       fill = "95% CI est. method",
+       linetype = NULL) +
+  scale_fill_manual(values = c(
+    "Score"    = "#f5db99",
+    "Gradient" = "#d0e2af",
+    "Delta"    = "#7bbcd5"
+  )) +
+  scale_linetype_manual(values = c("solid", "dashed")) +
+  theme_light() + 
+  ylim(0, NA) +
+  mytheme + 
+  guides(linetype = guide_legend(override.aes = list(size = 10)))
+```
+
+## chngpt package
+
+Another R package with the capability of segmented regression is called `chngpt`. This package differs slightly from `segmented` in the types of threshold models that are supported, the optimization algorithms used for parameter estimation, and the method(s) used to calculate confidence intervals for the breakpoint [@fong2017].
+
+```{r}
+#| label: chngpt1
+#| error: false
+#| collapse: true
+
+fit_chngpt <- chngptm(
+  formula.1 = y ~ 1,
+  formula.2 =  ~ x,
+  family = "gaussian",
+  data = fc,
+  type = "segmented",
+  var.type = "default",
+  weights = NULL
+)
+summary(fit_chngpt)
+```
+
+```{r}
+#| label: fig-chngpt-plots
+#| echo: false
+#| fig-cap:
+#| - "Broken-stick model from the package chngpt"
+#| - "Log likelihood of the model at various breakpoint values"
+#| - "Bootstrap 95% confidence intervals"
+#| layout-ncol: 3
+
+plot(fit_chngpt, 1)
+plot(fit_chngpt, 2)
+plot(fit_chngpt, 3)
+```
+
+As with the `segmented` package, it seems to have significantly underestimated SM50 compared to the true value of 75, which is not contained within the bootstrap confidence intervals. An alternative method for calculating confidence intervals ("model-based") produces very similar results to the default bootstrap method.
+
+```{r}
+#| label: chngpt-other-CI-methods
+#| collapse: true
+
+summary(
+  chngptm(
+    formula.1 = y ~ 1,
+    formula.2 =  ~ x,
+    family = "gaussian",
+    data = fc,
+    type = "segmented",
+    var.type = "model", # note change from default to model
+    weights = NULL
+  )
+)[["chngpt"]]
+```
+
+Adding a starting breakpoint value of 75 (i.e., initializing the search at the correct value) through the "chngpt.init" argument does not affect the results:
+
+```{r}
+#| label: add-chngpt-init
+
+summary(
+  chngptm(
+    formula.1 = y ~ 1,
+    formula.2 =  ~ x,
+    family = "gaussian",
+    data = fc,
+    type = "segmented",
+    chngpt.init = 75,
+    weights = NULL
+  )
+)[["chngpt"]]
+```
+
+This method is EXTREMELY sensitive to the "lb.quantile" and "ub.quantile" arguments, which refer to the lower and upper bounds of the search range for change point estimate, respectively (the function defaults are 0.05 and 0.95). For example, if we change the lower quantile bound to 0.33 and the upper to 0.66, the model will accurately return an SM50 value of 75 mm.
+
+```{r}
+#| label: chngpt-most-accurate
+
+summary(
+  chngptm(
+    formula.1 = y ~ 1,
+    formula.2 =  ~ x,
+    family = "gaussian",
+    data = fc,
+    type = "segmented",
+    var.type = "model",
+    lb.quantile = 0.33,
+    ub.quantile = 0.66,
+    weights = NULL
+  )
+)[["chngpt"]][1]
+```
+
+```{r}
+#| label: chngpt-heatmap
+
+chngpt_grid <- expand.grid(lower = seq(0.1, 0.9, by = 0.05),
+                           upper = seq(0.1, 0.9, by = 0.05))
+
+chngpt_grid_possible <- chngpt_grid %>% filter(lower < upper)
+
+chngpt_grid_out <- map2(
+  chngpt_grid_possible$lower,
+  chngpt_grid_possible$upper,
+  \(x, y) chngptm(
+    formula.1 = y ~ 1,
+    formula.2 =  ~ x,
+    family = "gaussian",
+    data = fc,
+    type = "segmented",
+    var.type = "none",
+    lb.quantile = x,
+    ub.quantile = y,
+    weights = NULL
+  )$coefficients["chngpt"]
+)
+
+chngpt_grid_possible$sm50 <- as.numeric(chngpt_grid_out)
+
+chngpt_grid <- chngpt_grid %>%
+  left_join(chngpt_grid_possible) %>%
+  mutate(right = if_else(sm50 > 73 & sm50 < 77, "*", NA))
+```
+
+
+```{r}
+#| label: fig-chngpt-heatmap
+#| fig-cap: "Effect of changing the upper and lower quartile bounds of the unknown region for the breakpoint on SM50 estimates. SM50 estimates were produced from segmented regression models using the chngptm function in the package chngpt. Black asterisks represent upper/lower bound combinations where the estimated SM50 was within 2 mm of the true value (75 mm)."
+#| echo: false
+
+
+ggplot(data = chngpt_grid) +
+  geom_tile(aes(x = upper, y = lower, fill = sm50),
+            color = "white",
+            linewidth = 0.1) +
+  geom_text(
+    aes(x = upper, y = lower, label = right),
+    color = "black",
+    size = 5,
+    na.rm = TRUE
+  ) +
+  scale_fill_gradient2(
+    high = "#b2182b",
+    mid = "white",
+    low = "#2166ac",
+    midpoint = 75,
+    na.value = "white"
+  ) +
+  coord_cartesian(expand = FALSE) +
+  scale_x_continuous(transform = "reverse") +
+  labs(y = "Lower bound", x = "Upper bound", fill = "SM50 estimate (mm)") +
+  mytheme
+```
+
+
+```{r}
+#| label: fig-chngpt-heatmap-high
+#| fig-cap: "Effect of changing the upper and lower quartile bounds of the unknown region for the breakpoint on SM50 estimates. SM50 estimates were produced from segmented regression models using the chngptm function in the package chngpt. Black asterisks represent upper/lower bound combinations where the estimated SM50 was within 2 mm of the true value (105 mm)."
+#| echo: false
+
+chngpt_grid <- chngpt_grid %>%
+ # left_join(chngpt_grid_possible) %>%
+  mutate(right = if_else(sm50 > 103 & sm50 < 107, "*", NA))
+
+ggplot(data = chngpt_grid) +
+  geom_tile(aes(x = upper, y = lower, fill = sm50),
+            color = "white",
+            linewidth = 0.1) +
+  geom_text(
+    aes(x = upper, y = lower, label = right),
+    color = "black",
+    size = 5,
+    na.rm = TRUE
+  ) +
+  scale_fill_gradient2(
+    high = "#b2182b",
+    mid = "white",
+    low = "#2166ac",
+    midpoint = 105,
+    na.value = "white"
+  ) +
+  coord_cartesian(expand = FALSE) +
+  scale_x_continuous(transform = "reverse") +
+  labs(y = "Lower bound", x = "Upper bound", fill = "SM50 estimate (mm)") +
+  mytheme
+```
+
+Interestingly, changing the lower bound seems to have a much more significant impact on the resulting estimate than changing the upper bound.
+
+The estimates and accuracy also change dramatically even with slightly different variations of data with the exact same underlying structure. Here, we will use the `fake_crustaceans()` function to generate nine different data sets, all with the same SM50 (75 mm), mean carapace with (85 mm), level of noise, logistic slope parameter, sample size, and allometric parameters.
+
+```{r}
+chngpt_grid <- expand.grid(lower = seq(0, 0.95, by = 0.05),
+                           upper = seq(0, 0.95, by = 0.05))
+
+chngpt_grid_possible <- chngpt_grid %>% filter(lower < upper)
+
+fc_8 <- data.frame(num = c(1:9)) %>% rowwise() %>% mutate(dat = list(
+  fake_crustaceans(
+    error_scale = 17,
+    slope = 9,
+    L50 = 75,
+    n = 800,
+    allo_params = c(0.9, 0.25, 1.05, 0.2),
+    x_mean = 85
+  )
+))
+
+fc_8 %>% unnest(cols = c(dat)) %>% ungroup() %>% ggplot() +
+  geom_point(aes(x, y)) +
+  facet_wrap(~ num)
+
+fc8_out <- fc_8 %>% mutate(chngpts = list(
+  chngpt_grid_possible %>%
+    add_column(
+      sm50 = map2_vec(
+        chngpt_grid_possible$lower,
+        chngpt_grid_possible$upper,
+        \(a, b) chngptm(
+          formula.1 = y ~ 1,
+          formula.2 =  ~ x,
+          family = "gaussian",
+          data = dat,
+          type = "segmented",
+          var.type = "none",
+          lb.quantile = a,
+          ub.quantile = b,
+          weights = NULL
+        )$coefficients["chngpt"]
+      )
+    ) %>% mutate(right = if_else(sm50 > 74 &
+                                   sm50 < 76, "*", NA))
+))
+
+```
+
+```{r}
+#| echo: false
+
+fc8_out %>% unnest(cols = c(chngpts)) %>%
+  ggplot() +
+  geom_tile(aes(x = upper, y = lower, fill = sm50),
+            color = "white",
+            linewidth = 0.1) +
+  geom_text(
+    aes(x = upper, y = lower, label = right),
+    color = "black",
+    size = 5,
+    na.rm = TRUE
+  ) +
+  mytheme+
+  scale_fill_gradient2(
+    high = "#b2182b",
+    mid = "white",
+    low = "#2166ac",
+    midpoint = 75,
+    na.value = "white"
+  ) +
+  coord_cartesian(expand = FALSE) +
+  scale_x_continuous(transform = "reverse") +
+  labs(y = "Lower bound", x = "Upper bound", fill = "SM50 estimate (mm)") +
+  facet_wrap( ~ num)
+```
+
+Although we will not test all of the options here, the `chngpt` package supports 14 different types of two-phase (one threshold) models, as well as one three-phase model: see [Fig. 1](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10722876/) in @son2021. Importantly, it also supports generalized linear models and linear mixed models, so you can fit models utilizing any family that can be passed to glm and include other covariates and random effects. Additional benefits of this package include several functions to simulate data and the significant capability of user-friendly customization. Options include providing your own grid of changepoints to iterate over, using five different types of bootstrap CIs with numerous options for each type, providing a bound on the slope parameters for the lines on either side of the breakpoint, and changing the search/optimization algorithm for parameter estimation to meet the needs of your data (e.g., "fastgrid2" is very fast and might be helpful for large data sets).
+
+Using the "chngpt.test" function to run significance tests:
+
+```{r}
+#| label: chngpt-sig-tests
+#| collapse: true
+
+# Model with default upper and lower bounds
+chngpt.test(
+  formula.null = y ~ 1,
+  formula.chngpt = ~ x,
+  family = "gaussian",
+  data = fc,
+  type = "segmented"
+)
+
+# Model with better upper and lower bounds to return 
+# the true SM50 of 75 mm (0.6 and 0.3)
+chngpt.test(
+  formula.null = y ~ 1,
+  formula.chngpt = ~ x,
+  family = "gaussian",
+  data = fc,
+  type = "segmented",
+  lb.quantile = 0.3,
+  ub.quantile = 0.6
+)
+```
+
+It is interesting that this function returns a slightly different breakpoint/threshold estimate from the chngptm() function when both are called using the default search region bounds (58.9 vs 59.1, regardless of what set.seed is set to before calling the functions). Additionally, the test statistic for the model with the less accurate breakpoint estimate is much higher than for the more accurate model, yielding a lower p-value.
+
+## REGRANS
+
+We will also test the broken-stick method by manually coding an algorithm to identify the appropriate breakpoint. The following code is conceptually very similar to the R version of REGRANS, which was initially written in 1993 in the programming language BASIC [@pezzuto1993].
+
+You can optionally define lower and upper limits for the changepoints you want this function to test; otherwise, it tests a user-defined number of evenly-spaced values (default = 100) ranging from the 0.2 quantile to the 0.8 quantile of the x-axis variable.
+
+```{r}
+regrans_est <- regrans_fun(fc, "x", "y", verbose = FALSE)
+regrans_est
+```
+
+```{r}
+#| echo: false
+
+ggplot() +
+  geom_point(data = fc, aes(x, y), alpha = 0.4) +
+  geom_vline(aes(xintercept = regrans_est, linetype = "Estimate"), linewidth = 1) +
+  geom_vline(aes(xintercept = 75, linetype = "Truth"), linewidth = 1) +
+  labs(
+    title = "REGRANS SM50 Estimate",
+    x = "CW (mm)",
+    y = "CH (mm)",
+    linetype = NULL
+  ) +
+  mytheme
+```
+
+It appears that as with the previous broken-stick methods, REGRANS tends to underestimate SM50. We will first check how many breakpoints we need to test before the predictions stabilize:
+
+```{r}
+#| message: false
+#| label: regrans-num-bps
+
+test <- seq(20, 200, 2) %>%
+  map_dbl(
+    \(a) regrans_fun(
+      fc,
+      xvar = "x",
+      yvar = "y",
+      verbose = FALSE,
+      n_tries = a,
+      lower = min(fc$x),
+      upper = max(fc$x)
+    )
+  )
+
+data.frame(n_tries = seq(20, 200, 2), est = test) %>% ggplot() +
+  geom_point(aes(x = n_tries, y = est)) +
+  geom_line(aes(x = n_tries, y = est)) +
+  #geom_smooth(aes(x=n_tries,y=est), method='loess', formula='y~x', se=FALSE)+
+  labs(x = "Number of breakpoints tested", y = "SM50 estimate (mm)") +
+  mytheme
+```
+
+```{r}
+#| label: regrans-heatmap
+
+regrans_grid <- expand.grid(lower = seq(0.1, 0.9, by = 0.05),
+                            upper = seq(0.1, 0.9, by = 0.05))
+
+regrans_grid_possible <- regrans_grid %>% filter(lower < upper)
+
+regrans_grid_out <- map2(
+  regrans_grid_possible$lower,
+  regrans_grid_possible$upper,
+  \(a, b) regrans_fun(
+    fc,
+    xvar = "x",
+    yvar = "y",
+    lower = quantile(fc$x, a),
+    upper = quantile(fc$x, b),
+    verbose = FALSE
+  )
+)
+
+regrans_grid_possible$sm50 <- as.numeric(regrans_grid_out)
+
+regrans_grid <- regrans_grid %>%
+  left_join(regrans_grid_possible) %>%
+  mutate(right = if_else(sm50 > 73 & sm50 < 77, "*", NA))
+```
+
+```{r}
+#| label: fig-regrans-heatmap
+#| fig-cap: "Effect of changing the upper and lower quartile bounds of the unknown region for the breakpoint on SM50 estimates from the REGRANS function. Black asterisks represent upper/lower bound combinations where the estimated SM50 was within 2 mm of the true value (75 mm)."
+#| echo: false
+
+ggplot(data = regrans_grid) +
+  geom_tile(aes(x = upper, y = lower, fill = sm50),
+            color = "white",
+            linewidth = 0.1) +
+  geom_text(
+    aes(x = upper, y = lower, label = right),
+    color = "black",
+    size = 5,
+    na.rm = TRUE
+  ) +
+  scale_fill_gradient2(
+    high = "#b2182b",
+    mid = "white",
+    low = "#2166ac",
+    midpoint = 75,
+    na.value = "white"
+  ) +
+  coord_cartesian(expand = FALSE) +
+  scale_x_continuous(transform = "reverse") +
+  labs(y = "Lower bound", x = "Upper bound", fill = "SM50 estimate (mm)") +
+  mytheme
+```
+
+```{r}
+#| label: fig-regrans-heatmap
+#| fig-cap: "Effect of changing the upper and lower quartile bounds of the unknown region for the breakpoint on SM50 estimates from the REGRANS function. Black asterisks represent upper/lower bound combinations where the estimated SM50 was within 2 mm of the true value (75 mm)."
+#| echo: false
+
+ggplot(data = regrans_grid) +
+  geom_tile(aes(x = upper, y = lower, fill = sm50),
+            color = "white",
+            linewidth = 0.1) +
+  geom_text(
+    aes(x = upper, y = lower, label = right),
+    color = "black",
+    size = 5,
+    na.rm = TRUE
+  ) +
+  scale_fill_gradient2(
+    high = "#b2182b",
+    mid = "white",
+    low = "#2166ac",
+    midpoint = 75,
+    na.value = "white"
+  ) +
+  coord_cartesian(expand = FALSE) +
+  scale_x_continuous(transform = "reverse") +
+  labs(y = "Lower bound", x = "Upper bound", fill = "SM50 estimate (mm)") +
+  mytheme
+```
+
+We can see that once again the model estimate of SM50 is highly sensitive to the lower bound on the possible values to test as a breakpoint in the segmented regression.
+
+
+## Crab_Maturity Type A (Stevens)
+
+A third algorithm for using segmented regression to estimate SM50 was written by Dr. Bradley Stevens at the University of Maryland Eastern Shore. This code is part of the [Crab_Maturity program](https://github.com/Crabman52/Crustacean_Sensation) available on GitHub. There are several different methods included within Crab_Maturity; this segmented regression approach is included here because it differs from the `segmented` and REGRANS methods in that possible SM50 values are restricted to values of the x-variable present in the data set.
+
+```{r}
+stevens_est <- broken_stick_stevens(fc, "x", "y", verbose = FALSE)
+stevens_est
+```
+
+```{r}
+#| echo: false
+
+ggplot() +
+  geom_point(data = fc, aes(x, y), alpha = 0.4) +
+  geom_vline(aes(xintercept = stevens_est, linetype = "Estimate"), linewidth = 1) +
+  geom_vline(aes(xintercept = 75, linetype = "Truth"), linewidth = 1) +
+  labs(
+    title = "Stevens SM50 Estimate",
+    x = "CW (mm)",
+    y = "CH (mm)",
+    linetype = NULL
+  ) +
+  mytheme
+```
+
+
+```{r}
+#| label: stevens-heatmap
+
+stevens_grid <- expand.grid(lower = seq(0.1, 0.9, by = 0.05),
+                            upper = seq(0.1, 0.9, by = 0.05))
+
+stevens_grid_possible <- stevens_grid %>% filter(lower < upper)
+
+stevens_grid_out <- map2(
+  stevens_grid_possible$lower,
+  stevens_grid_possible$upper,
+  \(a, b) broken_stick_stevens(
+    fc,
+    xvar = "x",
+    yvar = "y",
+    lower = quantile(fc$x, a),
+    upper = quantile(fc$x, b),
+    verbose = FALSE
+  )
+)
+
+# i <- 1
+# stevens_grid_out <- c()
+# while(i < nrow(stevens_grid_possible)+1) {
+#   low_temp <- quantile(fc$x, stevens_grid_possible[i, "lower"])
+#   hi_temp <- quantile(fc$x, stevens_grid_possible[i, "upper"])
+#   
+#    stevens_grid_out[i] <- 
+#     broken_stick_stevens(
+#     fc,
+#     xvar = "x",
+#     yvar = "y",
+#     lower = low_temp,
+#     upper = hi_temp,
+#     verbose = FALSE
+#   )
+#    i <- i + 1
+# }
+
+stevens_grid_possible$sm50 <- as.numeric(stevens_grid_out)
+
+stevens_grid <- stevens_grid %>%
+  left_join(stevens_grid_possible) %>%
+  mutate(right = if_else(sm50 > 73 & sm50 < 77, "*", NA))
+```
+
+
+```{r}
+#| label: fig-stevens-heatmap
+#| fig-cap: "Effect of changing the upper and lower quartile bounds of the unknown region for the breakpoint on SM50 estimates from the Crab_Maturity (broken-stick Stevens) function. Black asterisks represent upper/lower bound combinations where the estimated SM50 was within 2 mm of the true value (75 mm)."
+#| echo: false
+
+ggplot(data = stevens_grid) +
+  geom_tile(aes(x = upper, y = lower, fill = sm50),
+            color = "white",
+            linewidth = 0.1) +
+  geom_text(
+    aes(x = upper, y = lower, label = right),
+    color = "black",
+    size = 5,
+    na.rm = TRUE
+  ) +
+  scale_fill_gradient2(
+    high = "#b2182b",
+    mid = "white",
+    low = "#2166ac",
+    midpoint = 75,
+    na.value = "white"
+  ) +
+  coord_cartesian(expand = FALSE) +
+  scale_x_continuous(transform = "reverse") +
+  labs(y = "Lower bound", x = "Upper bound", fill = "SM50 estimate (mm)") +
+  mytheme
+```
+
+75 mm is around the 33rd percentile of these simulated data.
+
+```{r}
+fc <- fake_crustaceans(
+    error_scale = 17,
+    slope = 9,
+    L50 = 105,
+    n = 800,
+    allo_params = c(0.9, 0.25, 1.05, 0.2),
+    x_mean = 85
+) 
+
+fc_high %>% ggplot() +
+    geom_point(aes(x, y), alpha = 0.4) +
+    labs(x = "CW (mm)", y = "CH (mm)", ) +
+    mytheme
+```
+
+```{r}
+#| label: fig-stevens-heatmap-high
+#| fig-cap: "Effect of changing the upper and lower quartile bounds of the unknown region for the breakpoint on SM50 estimates from the Crab_Maturity (broken-stick Stevens) function. Black asterisks represent upper/lower bound combinations where the estimated SM50 was within 2 mm of the true value (105 mm)."
+#| echo: false
+
+stevens_grid <- stevens_grid %>%
+ # left_join(stevens_grid_possible) %>%
+  mutate(right = if_else(sm50 > 103 & sm50 < 107, "*", NA))
+
+ggplot(data = stevens_grid) +
+  geom_tile(aes(x = upper, y = lower, fill = sm50),
+            color = "white",
+            linewidth = 0.1) +
+  geom_text(
+    aes(x = upper, y = lower, label = right),
+    color = "black",
+    size = 5,
+    na.rm = TRUE
+  ) +
+  scale_fill_gradient2(
+    high = "#b2182b",
+    mid = "white",
+    low = "#2166ac",
+    midpoint = 105,
+    na.value = "white"
+  ) +
+  coord_cartesian(expand = FALSE) +
+  scale_x_continuous(transform = "reverse") +
+  labs(y = "Lower bound", x = "Upper bound", fill = "SM50 estimate (mm)") +
+  mytheme
+```
+
+### References

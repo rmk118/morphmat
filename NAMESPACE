@@ -3,7 +3,7 @@
 export("%>%")
 export(broken_stick)
 export(broken_stick_stevens)
-export(fake_crabs)
+export(fake_crustaceans)
 export(infl_pt)
 export(regrans_fun)
 export(two_line_logistic)

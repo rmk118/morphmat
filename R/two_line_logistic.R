@@ -5,12 +5,18 @@
 #'   variable (e.g., carapace width).
 #' @param yvar Name of column (integer or double) of measurements for the y-axis
 #'   variable (e.g., claw height).
-#' @param imm_int Starting value for the immature intercept parameter when fitting the NLS model
-#' @param imm_slope tarting value for the immature slope parameter when fitting the NLS model
-#' @param mat_int Starting value for the mature intercept parameter when fitting the NLS model
-#' @param mat_slope Starting value for the mature slope parameter when fitting the NLS model
-#' @param SM50_start Starting value for SM50 parameter when fitting the NLS model. If not provided, taken to be the median of the x-variable
-#' @param alpha_start Starting value for the logistic slope parameter when fitting the NLS model
+#' @param imm_int Starting value for the immature intercept parameter when
+#'   fitting the NLS model
+#' @param imm_slope tarting value for the immature slope parameter when fitting
+#'   the NLS model
+#' @param mat_int Starting value for the mature intercept parameter when fitting
+#'   the NLS model
+#' @param mat_slope Starting value for the mature slope parameter when fitting
+#'   the NLS model
+#' @param SM50_start Starting value for SM50 parameter when fitting the NLS
+#'   model. If not provided, taken to be the median of the x-variable
+#' @param alpha_start Starting value for the logistic slope parameter when
+#'   fitting the NLS model
 #' @param verbose Should additional output be returned besides the SM50
 #'   estimate?
 #'
@@ -20,7 +26,7 @@
 #'
 #' @examples
 #' set.seed(12)
-#' fc <- fake_crabs(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
+#' fc <- fake_crustaceans(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
 #' two_line_logistic(fc, xvar="x", yvar="y", verbose = FALSE)
 two_line_logistic <- function(dat,
                               xvar,

@@ -1,10 +1,21 @@
 ---
 title: "Classification methods"
 output: rmarkdown::html_vignette
+format: 
+    code-overflow: wrap
+    toc: true
+    toc-depth: 3
+    df-print: kable
+    code-fold: true
 vignette: >
   %\VignetteIndexEntry{Classification methods}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+link-external-newwindow: true 
+number-sections: true
+bibliography: references.bib
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}

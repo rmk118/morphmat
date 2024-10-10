@@ -22,7 +22,7 @@
 #'
 #' @examples
 #' set.seed(12)
-#' fc <- fake_crabs(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
+#' fc <- fake_crustaceans(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
 #' regrans_fun(fc, "x", "y", verbose = FALSE)
 #' head(regrans_fun(fc, "x", "y", verbose = TRUE), n=30)
 regrans_fun <- function(dat,
@@ -44,7 +44,7 @@ regrans_fun <- function(dat,
     upper <- stats::quantile(x, 0.8)
   }
 
-  changept_choices <- seq(lower, upper, l = n_tries)
+  changept_choices <- seq(lower, upper, length.out = n_tries)
 
   help_fun <- function(i)
   {

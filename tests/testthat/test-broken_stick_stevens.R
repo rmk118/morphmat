@@ -1,6 +1,6 @@
 test_that("function returns expected value", {
   set.seed(123)
-  fc <- fake_crabs(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
+  fc <- fake_crustaceans(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
   expect_equal(
     round(broken_stick_stevens(fc, xvar="x", yvar="y", verbose = FALSE),4),
     121.4316

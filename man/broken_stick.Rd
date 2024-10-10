@@ -60,6 +60,6 @@ A wrapper function allowing for multiple methods of broken-stick regression to b
 }
 \examples{
 set.seed(12)
-fc <- fake_crabs(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
+fc <- fake_crustaceans(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
 broken_stick(fc, xvar="x", yvar="y", method=c("segmented", "chngpt"))
 }
