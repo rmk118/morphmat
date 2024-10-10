@@ -15,12 +15,69 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+#| message: FALSE
+#| echo: FALSE
+#| warning: FALSE
+#| output: FALSE
+
 library(morphmat)
+library(chngpt)
+library(tidyverse)
+
+knitr::opts_chunk$set(message = FALSE)
 ```
 
-Here I will write a vignette explaining all of the two-line regression methods. This will be useful for referring readers to more complex options available in packages like `chngpt` that are not available within `morphmat`.
+```{r}
+#| label: setup-2
+#| echo: false
+
+mytheme <- theme_classic()+ #define custom theme for ggplots
+  theme(
+    axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
+    axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
+    text=element_text(size=13))
+```
+
+<!-- Here I will write a vignette explaining all of the two-line regression methods. This will be useful for referring readers to more complex options available in packages like `chngpt` that are not available within `morphmat`. -->
+
+## Standard {#sec-twoA}
+
+Two-line models differ from broken-stick models because the intersection point of the line representing the immature individuals and the line representing mature individuals is not necessarily the same as the optimal breakpoint value (the value on the x-axis where the y-values switch from being predicted by the immature line to being predicted by the mature line).
+
+We will test two slightly different versions of this approach using code from Crab_Maturity (Stevens, 2020). The first version uses a piecewise regression model to find the x-value/breakpoint that gives the lowest mean square error (MSE) by iteratively testing each observed x-value within the range of unknown maturity. In the second version, the tested x-values are evenly spaced points within the unknown range, and may not equal actual observed values (like REGRANS). The number and interval between points can be user-defined, but we will follow the convention of REGRANS and simply test every integer value in the unknown range.
+
+The SM50 could be defined as the optimal breakpoint OR as the point at which the two lines actually intersect; i.e. where the regression equations predict the same y-value. The intersection point may be lower than the previously determined breakpoint and can even be negative, so it is often more reasonable to use the breakpoint as our estimate of SM50.
 
 # Two-line Stevens
+
+```{r}
+#| label: generate-crabs
+
+set.seed(123) # set seed for reproducibility
+
+fc <- fake_crustaceans(
+  error_scale = 17,
+  slope = 9,
+  L50 = 75,
+  n = 800,
+  allo_params = c(0.9, 0.25, 1.05, 0.2),
+  x_mean = 85
+)
+```
+
+```{r}
+#| echo: false
+
+ggplot() +
+  geom_point(data = fc, aes(x, y), alpha = 0.4) +
+  labs(x = "CW (mm)", y = "CH (mm)", ) +
+  mytheme
+```
+
+```{r}
+stevens_est <- two_line_stevens(fc, "x", "y", verbose = FALSE)
+stevens_est
+```
 
 # Two-line with logistic transition
 

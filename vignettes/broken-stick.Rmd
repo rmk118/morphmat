@@ -27,7 +27,6 @@ knitr::opts_chunk$set(
 #| output: FALSE
 
 library(morphmat)
-
 library(chngpt)
 library(segmented)
 library(tidyverse)
@@ -36,9 +35,8 @@ knitr::opts_chunk$set(message = FALSE)
 ```
 
 ```{r}
-#| label: setup-visible
-
-set.seed(123) # set seed for reproducibility
+#| label: setup-2
+#| echo: false
 
 mytheme <- theme_classic()+ #define custom theme for ggplots
   theme(
@@ -62,6 +60,10 @@ At $\log{x}=c$, the bottom equation becomes $\tilde{\beta_1}+(\log{x})(\alpha_1-
 
 We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate the use (and limitations) of broken-stick methods.
 ```{r}
+#| label: generate-crabs
+
+set.seed(123) # set seed for reproducibility
+
 fc <- fake_crustaceans(
   error_scale = 17,
   slope = 9,
@@ -312,39 +314,6 @@ ggplot(data = chngpt_grid) +
   mytheme
 ```
 
-
-```{r}
-#| label: fig-chngpt-heatmap-high
-#| fig-cap: "Effect of changing the upper and lower quartile bounds of the unknown region for the breakpoint on SM50 estimates. SM50 estimates were produced from segmented regression models using the chngptm function in the package chngpt. Black asterisks represent upper/lower bound combinations where the estimated SM50 was within 2 mm of the true value (105 mm)."
-#| echo: false
-
-chngpt_grid <- chngpt_grid %>%
- # left_join(chngpt_grid_possible) %>%
-  mutate(right = if_else(sm50 > 103 & sm50 < 107, "*", NA))
-
-ggplot(data = chngpt_grid) +
-  geom_tile(aes(x = upper, y = lower, fill = sm50),
-            color = "white",
-            linewidth = 0.1) +
-  geom_text(
-    aes(x = upper, y = lower, label = right),
-    color = "black",
-    size = 5,
-    na.rm = TRUE
-  ) +
-  scale_fill_gradient2(
-    high = "#b2182b",
-    mid = "white",
-    low = "#2166ac",
-    midpoint = 105,
-    na.value = "white"
-  ) +
-  coord_cartesian(expand = FALSE) +
-  scale_x_continuous(transform = "reverse") +
-  labs(y = "Lower bound", x = "Upper bound", fill = "SM50 estimate (mm)") +
-  mytheme
-```
-
 Interestingly, changing the lower bound seems to have a much more significant impact on the resulting estimate than changing the upper bound.
 
 The estimates and accuracy also change dramatically even with slightly different variations of data with the exact same underlying structure. Here, we will use the `fake_crustaceans()` function to generate nine different data sets, all with the same SM50 (75 mm), mean carapace with (85 mm), level of noise, logistic slope parameter, sample size, and allometric parameters.
@@ -564,34 +533,6 @@ ggplot(data = regrans_grid) +
   mytheme
 ```
 
-```{r}
-#| label: fig-regrans-heatmap
-#| fig-cap: "Effect of changing the upper and lower quartile bounds of the unknown region for the breakpoint on SM50 estimates from the REGRANS function. Black asterisks represent upper/lower bound combinations where the estimated SM50 was within 2 mm of the true value (75 mm)."
-#| echo: false
-
-ggplot(data = regrans_grid) +
-  geom_tile(aes(x = upper, y = lower, fill = sm50),
-            color = "white",
-            linewidth = 0.1) +
-  geom_text(
-    aes(x = upper, y = lower, label = right),
-    color = "black",
-    size = 5,
-    na.rm = TRUE
-  ) +
-  scale_fill_gradient2(
-    high = "#b2182b",
-    mid = "white",
-    low = "#2166ac",
-    midpoint = 75,
-    na.value = "white"
-  ) +
-  coord_cartesian(expand = FALSE) +
-  scale_x_continuous(transform = "reverse") +
-  labs(y = "Lower bound", x = "Upper bound", fill = "SM50 estimate (mm)") +
-  mytheme
-```
-
 We can see that once again the model estimate of SM50 is highly sensitive to the lower bound on the possible values to test as a breakpoint in the segmented regression.
 
 
@@ -642,24 +583,6 @@ stevens_grid_out <- map2(
   )
 )
 
-# i <- 1
-# stevens_grid_out <- c()
-# while(i < nrow(stevens_grid_possible)+1) {
-#   low_temp <- quantile(fc$x, stevens_grid_possible[i, "lower"])
-#   hi_temp <- quantile(fc$x, stevens_grid_possible[i, "upper"])
-#   
-#    stevens_grid_out[i] <- 
-#     broken_stick_stevens(
-#     fc,
-#     xvar = "x",
-#     yvar = "y",
-#     lower = low_temp,
-#     upper = hi_temp,
-#     verbose = FALSE
-#   )
-#    i <- i + 1
-# }
-
 stevens_grid_possible$sm50 <- as.numeric(stevens_grid_out)
 
 stevens_grid <- stevens_grid %>%
@@ -698,52 +621,6 @@ ggplot(data = stevens_grid) +
 
 75 mm is around the 33rd percentile of these simulated data.
 
-```{r}
-fc <- fake_crustaceans(
-    error_scale = 17,
-    slope = 9,
-    L50 = 105,
-    n = 800,
-    allo_params = c(0.9, 0.25, 1.05, 0.2),
-    x_mean = 85
-) 
 
-fc_high %>% ggplot() +
-    geom_point(aes(x, y), alpha = 0.4) +
-    labs(x = "CW (mm)", y = "CH (mm)", ) +
-    mytheme
-```
-
-```{r}
-#| label: fig-stevens-heatmap-high
-#| fig-cap: "Effect of changing the upper and lower quartile bounds of the unknown region for the breakpoint on SM50 estimates from the Crab_Maturity (broken-stick Stevens) function. Black asterisks represent upper/lower bound combinations where the estimated SM50 was within 2 mm of the true value (105 mm)."
-#| echo: false
-
-stevens_grid <- stevens_grid %>%
- # left_join(stevens_grid_possible) %>%
-  mutate(right = if_else(sm50 > 103 & sm50 < 107, "*", NA))
-
-ggplot(data = stevens_grid) +
-  geom_tile(aes(x = upper, y = lower, fill = sm50),
-            color = "white",
-            linewidth = 0.1) +
-  geom_text(
-    aes(x = upper, y = lower, label = right),
-    color = "black",
-    size = 5,
-    na.rm = TRUE
-  ) +
-  scale_fill_gradient2(
-    high = "#b2182b",
-    mid = "white",
-    low = "#2166ac",
-    midpoint = 105,
-    na.value = "white"
-  ) +
-  coord_cartesian(expand = FALSE) +
-  scale_x_continuous(transform = "reverse") +
-  labs(y = "Lower bound", x = "Upper bound", fill = "SM50 estimate (mm)") +
-  mytheme
-```
 
 ### References
