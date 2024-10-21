@@ -26,6 +26,7 @@ knitr::opts_chunk$set(
 library(morphmat)
 library(ggplot2)
 library(dplyr)
+library(tidyr)
 ```
 
 # Introduction
@@ -78,7 +79,7 @@ default_sim <- fake_crustaceans()
 
 default_sim_long <- default_sim %>%
   rename(reg_x = x, reg_y = y) %>%
-  pivot_longer(
+  tidyr::pivot_longer(
     cols = c(reg_x, reg_y, log_x, log_y),
     names_sep = "_",
     names_to = c("log", "var")
