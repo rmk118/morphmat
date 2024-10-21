@@ -15,8 +15,6 @@ BugReports: https://github.com/rmk118/morphmat/issues
 Imports: 
     dplyr,
     ggplot2,
-    tidyr,
-    purrr,
     splus2R,
     glue,
     lifecycle,

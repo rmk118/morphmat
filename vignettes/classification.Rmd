@@ -35,8 +35,6 @@ knitr::opts_chunk$set(
 library(morphmat)
 library(dplyr)
 library(ggplot2)
-library(tidyr)
-library(purrr)
 
 knitr::opts_chunk$set(message = FALSE)
 ```
