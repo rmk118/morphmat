@@ -41,6 +41,8 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/broken-stick.html">Broken-stick methods</a></li>
     <li><a class="dropdown-item" href="../articles/classification.html">Classification methods</a></li>
+    <li><a class="dropdown-item" href="../articles/simulations.html">Simulating data</a></li>
+    <li><a class="dropdown-item" href="../articles/two-line.html">Two-line models</a></li>
   </ul>
 </li>
       </ul>
@@ -71,12 +73,351 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rmk118/morphmat" class="external-link">morphmat</a></span><span class="op">)</span></span></code></pre></div>
-<p>Here I will write a vignette explaining all of the broken-stick
-regression methods. This will be useful for referring readers to more
-complex options available in packages like <code>segmented</code> that
-are not available within <code>morphmat</code>.</p>
-  </main>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rmk118/morphmat" class="external-link">morphmat</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">chngpt</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">segmented</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span></code></pre></div>
+<!-- Here I will write a vignette explaining all of the broken-stick regression methods. This will be useful for referring readers to more complex options available in packages like `segmented` that are not available within `morphmat`. -->
+<p>Sources (more will be added): Somerton <span class="citation">(<a href="#ref-somerton1980">1980</a>)</span>; Muggeo <span class="citation">(<a href="#ref-muggeo2003">2003</a>, <a href="#ref-muggeo2008">2008</a>, <a href="#ref-muggeo2017">2017</a>)</span>; Hall et al. <span class="citation">(<a href="#ref-hall2006">2006</a>)</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mi>y</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mover><msub><mi>β</mi><mn>1</mn></msub><mo accent="true">̃</mo></mover><mo>+</mo><msub><mi>α</mi><mn>1</mn></msub><mo>log</mo><mi>x</mi></mtd><mtd columnalign="left" style="text-align: left"><mrow><mtext mathvariant="normal">for </mtext><mspace width="0.333em"></mspace></mrow><mo>log</mo><mi>x</mi><mo>≤</mo><mi>c</mi></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mover><msub><mi>β</mi><mn>1</mn></msub><mo accent="true">̃</mo></mover><mo>+</mo><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>α</mi><mn>1</mn></msub><mo>−</mo><msub><mi>α</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>α</mi><mn>2</mn></msub><mo>log</mo><mi>x</mi></mtd><mtd columnalign="left" style="text-align: left"><mrow><mtext mathvariant="normal">for </mtext><mspace width="0.333em"></mspace></mrow><mo>log</mo><mi>x</mi><mo>&gt;</mo><mi>c</mi></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">\begin{equation*}\log{y}=
+    \begin{cases}
+     \tilde{\beta_1} + \alpha_1 \log{x}             &amp; \text{for }\log{x} \leq c \\
+     \tilde{\beta_1} + c(\alpha_1-\alpha_2)+\alpha_2 \log{x}  &amp; \text{for }\log{x} &gt; c
+    \end{cases}       
+\end{equation*}</annotation></semantics></math></p>
+<p>At
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mi>x</mi><mo>=</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">\log{x}=c</annotation></semantics></math>,
+the bottom equation becomes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><msub><mi>β</mi><mn>1</mn></msub><mo accent="true">̃</mo></mover><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>log</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>α</mi><mn>1</mn></msub><mo>−</mo><msub><mi>α</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>α</mi><mn>2</mn></msub><mo>log</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">\tilde{\beta_1}+(\log{x})(\alpha_1-\alpha_2)+\alpha_2\log{x}</annotation></semantics></math>,
+equivalent to the top equation. Note that in this formulation, there is
+only one intercept term
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>β</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(\beta_1)</annotation></semantics></math>,
+so the immature and mature lines cannot have the same slope without
+being equivalent lines. In this model, the estimated value of the
+breakpoint parameter
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math>
+is taken to be SM50.</p>
+<p>We will start by simulating a data set with a known SM50 value of 75
+mm to demonstrate the use (and limitations) of broken-stick methods.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span> <span class="co"># set seed for reproducibility</span></span>
+<span></span>
+<span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fake_crustaceans.html">fake_crustaceans</a></span><span class="op">(</span></span>
+<span>  error_scale <span class="op">=</span> <span class="fl">17</span>,</span>
+<span>  slope <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>  L50 <span class="op">=</span> <span class="fl">75</span>,</span>
+<span>  n <span class="op">=</span> <span class="fl">800</span>,</span>
+<span>  allo_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.25</span>, <span class="fl">1.05</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
+<span>  x_mean <span class="op">=</span> <span class="fl">85</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="broken-stick_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<div class="section level2">
+<h2 id="segmented-package">segmented package<a class="anchor" aria-label="anchor" href="#segmented-package"></a>
+</h2>
+<p>A powerful and customizable method of implementing broken-stick
+regression is provided by the R package <code>segmented</code>, which
+has been cited by many papers using morphometric data to estimate size
+at maturity. Note that <code>segmented</code> includes three different
+methods to compute confidence intervals, the details of which are
+discussed in Muggeo <span class="citation">(<a href="#ref-muggeo2017">2017</a>)</span>. It is also possible to estimate
+95% CIs via bootstrap resampling, but the computation time required is
+relatively high and the resulting estimates are around the same values
+as those from the “delta” and “gradient” methods included in the
+<code>segmented</code> package.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lm_orig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, data <span class="op">=</span> <span class="va">fc</span><span class="op">)</span></span>
+<span><span class="va">lm_orig_seg</span> <span class="op">&lt;-</span> <span class="fu">segmented</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/segmented/man/segmented.html" class="external-link">segmented</a></span><span class="op">(</span><span class="va">lm_orig</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">lm_orig_seg</span><span class="op">)</span></span></code></pre></div>
+<p><img src="broken-stick_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p>The segmented package has three built-in methods to get 95%
+confidence intervals for the break point:</p>
+<pre><code><span><span class="co">#&gt; Delta method:</span></span>
+<span><span class="co">#&gt;           Est. CI(95%).low CI(95%).up</span></span>
+<span><span class="co">#&gt; psi1.x 59.2594     52.0697     66.449</span></span>
+<span><span class="co">#&gt; Score method:</span></span>
+<span><span class="co">#&gt;           Est. CI(95%).low CI(95%).up</span></span>
+<span><span class="co">#&gt; psi1.x 59.2594     51.6198    65.0947</span></span>
+<span><span class="co">#&gt; Gradient method:</span></span>
+<span><span class="co">#&gt;           Est. CI(95%).low CI(95%).up</span></span>
+<span><span class="co">#&gt; psi1.x 59.2594      51.016    67.7093</span></span></code></pre>
+<p>We can also use an ANOVA test to compare the segmented model to a
+single linear model:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">lm_orig</span>, <span class="va">lm_orig_seg</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Analysis of Variance Table</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model 1: y ~ x</span></span>
+<span><span class="co">#&gt; Model 2: y ~ x + U1.x + psi1.x</span></span>
+<span><span class="co">#&gt;   Res.Df    RSS Df Sum of Sq      F   Pr(&gt;F)    </span></span>
+<span><span class="co">#&gt; 1    798 7681.8                                 </span></span>
+<span><span class="co">#&gt; 2    796 7496.5  2    185.29 9.8375 6.02e-05 ***</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>
+<div class="figure">
+<img src="broken-stick_files/figure-html/fig-segmented-plot-1.png" alt="SM50 estimate for simulated crab data from the R package segmented" width="700"><p class="caption">
+SM50 estimate for simulated crab data from the R package segmented
+</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="chngpt-package">chngpt package<a class="anchor" aria-label="anchor" href="#chngpt-package"></a>
+</h2>
+<p>Another R package with the capability of segmented regression is
+called <code>chngpt</code>. This package differs slightly from
+<code>segmented</code> in the types of threshold models that are
+supported, the optimization algorithms used for parameter estimation,
+and the method(s) used to calculate confidence intervals for the
+breakpoint <span class="citation">(<a href="#ref-fong2017">Fong et al.
+2017</a>)</span>.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_chngpt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/chngpt/man/chngptm.html" class="external-link">chngptm</a></span><span class="op">(</span></span>
+<span>  formula.1 <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>  formula.2 <span class="op">=</span>  <span class="op">~</span> <span class="va">x</span>,</span>
+<span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fc</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"segmented"</span>,</span>
+<span>  var.type <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  weights <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit_chngpt</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Change point model threshold.type:  segmented </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;                    est Std. Error*     (lower    upper)     p.value*</span></span>
+<span><span class="co">#&gt; (Intercept) -0.1642533  0.84261672 -2.0797746 1.2232829 8.454458e-01</span></span>
+<span><span class="co">#&gt; x            0.1775513  0.01840241  0.1477799 0.2199174 4.999353e-22</span></span>
+<span><span class="co">#&gt; (x-chngpt)+  0.1626764  0.01871295  0.1230745 0.1964292 3.522081e-18</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Threshold:</span></span>
+<span><span class="co">#&gt;        est Std. Error     (lower     upper) </span></span>
+<span><span class="co">#&gt;  59.259390   2.342262  55.983514  65.165182</span></span></code></pre></div>
+<div class="figure">
+<img src="broken-stick_files/figure-html/fig-chngpt-plots-1.png" alt="Broken-stick model from the package chngpt" width="700"><p class="caption">
+Broken-stick model from the package chngpt
+</p>
+</div>
+<div class="figure">
+<img src="broken-stick_files/figure-html/fig-chngpt-plots-2.png" alt="Log likelihood of the model at various breakpoint values" width="700"><p class="caption">
+Log likelihood of the model at various breakpoint values
+</p>
+</div>
+<div class="figure">
+<img src="broken-stick_files/figure-html/fig-chngpt-plots-3.png" alt="Bootstrap 95% confidence intervals" width="700"><p class="caption">
+Bootstrap 95% confidence intervals
+</p>
+</div>
+<p>As with the <code>segmented</code> package, it seems to have
+significantly underestimated SM50 compared to the true value of 75,
+which is not contained within the bootstrap confidence intervals. An
+alternative method for calculating confidence intervals (“model-based”)
+produces very similar results to the default bootstrap method.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/chngpt/man/chngptm.html" class="external-link">chngptm</a></span><span class="op">(</span></span>
+<span>    formula.1 <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>    formula.2 <span class="op">=</span>  <span class="op">~</span> <span class="va">x</span>,</span>
+<span>    family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">fc</span>,</span>
+<span>    type <span class="op">=</span> <span class="st">"segmented"</span>,</span>
+<span>    var.type <span class="op">=</span> <span class="st">"model"</span>, <span class="co"># note change from default to model</span></span>
+<span>    weights <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">[[</span><span class="st">"chngpt"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt;        est Std. Error     (lower     upper) </span></span>
+<span><span class="co">#&gt;  59.259390   4.019829  51.157970  66.915699</span></span></code></pre></div>
+<p>Adding a starting breakpoint value of 75 (i.e., initializing the
+search at the correct value) through the “chngpt.init” argument does not
+affect the estimate, although it does result in narrower confidence
+intervals:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/chngpt/man/chngptm.html" class="external-link">chngptm</a></span><span class="op">(</span></span>
+<span>    formula.1 <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>    formula.2 <span class="op">=</span>  <span class="op">~</span> <span class="va">x</span>,</span>
+<span>    family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">fc</span>,</span>
+<span>    type <span class="op">=</span> <span class="st">"segmented"</span>,</span>
+<span>    chngpt.init <span class="op">=</span> <span class="fl">75</span>,</span>
+<span>    weights <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">[[</span><span class="st">"chngpt"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt;        est Std. Error     (lower     upper) </span></span>
+<span><span class="co">#&gt;  59.259390   2.342262  55.983514  65.165182</span></span></code></pre></div>
+<p>This method is EXTREMELY sensitive to the “lb.quantile” and
+“ub.quantile” arguments, which refer to the lower and upper bounds of
+the search range for change point estimate, respectively (the function
+defaults are 0.05 and 0.95). For example, if we change the lower
+quantile bound to 0.33 and the upper to 0.66, the model will return an
+SM50 value closer to the true value of 75 mm.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/chngpt/man/chngptm.html" class="external-link">chngptm</a></span><span class="op">(</span></span>
+<span>    formula.1 <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>    formula.2 <span class="op">=</span>  <span class="op">~</span> <span class="va">x</span>,</span>
+<span>    family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">fc</span>,</span>
+<span>    type <span class="op">=</span> <span class="st">"segmented"</span>,</span>
+<span>    var.type <span class="op">=</span> <span class="st">"model"</span>,</span>
+<span>    lb.quantile <span class="op">=</span> <span class="fl">0.33</span>,</span>
+<span>    ub.quantile <span class="op">=</span> <span class="fl">0.66</span>,</span>
+<span>    weights <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">[[</span><span class="st">"chngpt"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span><span class="co">#&gt;      est </span></span>
+<span><span class="co">#&gt; 77.05939</span></span></code></pre></div>
+<p>The estimates and accuracy also change dramatically even with
+slightly different variations of data with the exact same underlying
+structure. Results from detailed investigations of the sensitivity of
+each modeling approach will be available in a forthcoming paper (Krasnow
+et al., <em>in prep</em>).</p>
+<p>Although we will not test all of the options here, the
+<code>chngpt</code> package supports 14 different types of two-phase
+(one threshold) models, as well as one three-phase model: see <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10722876/" class="external-link">Fig. 1</a>
+in <span class="citation">Son and Fong (<a href="#ref-son2021">2021</a>)</span>. Importantly, it also supports
+generalized linear models and linear mixed models, so you can fit models
+utilizing any family that can be passed to glm and include other
+covariates and random effects. Additional benefits of this package
+include several functions to simulate data and the significant
+capability of user-friendly customization. Options include providing
+your own grid of changepoints to iterate over, using five different
+types of bootstrap CIs with numerous options for each type, providing a
+bound on the slope parameters for the lines on either side of the
+breakpoint, and changing the search/optimization algorithm for parameter
+estimation to meet the needs of your data (e.g., “fastgrid2” is very
+fast and might be helpful for large data sets).</p>
+<p>Using the “chngpt.test” function to run significance tests:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Model with default upper and lower bounds</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/chngpt/man/chngpt.test.html" class="external-link">chngpt.test</a></span><span class="op">(</span></span>
+<span>  formula.null <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>  formula.chngpt <span class="op">=</span> <span class="op">~</span> <span class="va">x</span>,</span>
+<span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fc</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"segmented"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Maximum of Likelihood Ratio Statistics</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  fc</span></span>
+<span><span class="co">#&gt; Maximal statistic = 19.533, threshold = 59.306, p-value = 4e-05</span></span>
+<span><span class="co">#&gt; alternative hypothesis: two-sided</span></span>
+<span></span>
+<span><span class="co"># Model with better upper and lower bounds to return</span></span>
+<span><span class="co"># the true SM50 of 75 mm (0.6 and 0.3)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/chngpt/man/chngpt.test.html" class="external-link">chngpt.test</a></span><span class="op">(</span></span>
+<span>  formula.null <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>  formula.chngpt <span class="op">=</span> <span class="op">~</span> <span class="va">x</span>,</span>
+<span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fc</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"segmented"</span>,</span>
+<span>  lb.quantile <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>  ub.quantile <span class="op">=</span> <span class="fl">0.6</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Maximum of Likelihood Ratio Statistics</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  fc</span></span>
+<span><span class="co">#&gt; Maximal statistic = 7.7314, threshold = 75.475, p-value = 0.01028</span></span>
+<span><span class="co">#&gt; alternative hypothesis: two-sided</span></span></code></pre></div>
+<p>It is interesting that this function returns a slightly different
+breakpoint/threshold estimate from the chngptm() function when both are
+called using the default search region bounds (regardless of what
+set.seed is set to before calling the functions). Additionally, the test
+statistic for the model with the less accurate breakpoint estimate is
+much higher than for the more accurate model, yielding a lower
+p-value.</p>
+</div>
+<div class="section level2">
+<h2 id="regrans">REGRANS<a class="anchor" aria-label="anchor" href="#regrans"></a>
+</h2>
+<p>We will also test the broken-stick method by manually coding an
+algorithm to identify the appropriate breakpoint. The following code is
+conceptually very similar to the R version of REGRANS, which was
+initially written in 1993 in the programming language BASIC <span class="citation">(<a href="#ref-pezzuto1993">Pezzuto
+1993</a>)</span>.</p>
+<p>You can optionally define lower and upper limits for the changepoints
+you want this function to test; otherwise, it tests a user-defined
+number of evenly-spaced values (default = 100) ranging from the 0.2
+quantile to the 0.8 quantile of the x-axis variable.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">regrans_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regrans_fun.html">regrans_fun</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">regrans_est</span></span>
+<span><span class="co">#&gt; [1] 69.35071</span></span></code></pre></div>
+<p><img src="broken-stick_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
+<p>As with the previous broken-stick methods, REGRANS tends to
+underestimate SM50 and the model estimates are highly sensitive to the
+values of the upper and lower bounds of the region considered plausible
+to contain the SM50 value.</p>
+</div>
+<div class="section level2">
+<h2 id="crab_maturity-type-a-stevens">Crab_Maturity Type A (Stevens)<a class="anchor" aria-label="anchor" href="#crab_maturity-type-a-stevens"></a>
+</h2>
+<p>A third algorithm for using segmented regression to estimate SM50 was
+written by Dr. Bradley Stevens at the University of Maryland Eastern
+Shore. This code is part of the <a href="https://github.com/Crabman52/Crustacean_Sensation" class="external-link">Crab_Maturity
+program</a> available on GitHub. There are several different methods
+included within Crab_Maturity; this segmented regression approach is
+included here because it differs from the <code>segmented</code> and
+REGRANS methods in that possible SM50 values are restricted to values of
+the x-variable present in the data set.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">stevens_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/broken_stick_stevens.html">broken_stick_stevens</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">stevens_est</span></span>
+<span><span class="co">#&gt; [1] 73.51211</span></span></code></pre></div>
+<p><img src="broken-stick_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
+<div class="section level3 unnumbered">
+<h3 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-fong2017" class="csl-entry">
+Fong, Youyi, Ying Huang, Peter B. Gilbert, and Sallie R. Permar. 2017.
+<span>“Chngpt: Threshold Regression Model Estimation and
+Inference.”</span> <em>BMC Bioinformatics</em> 18 (1): 454. <a href="https://doi.org/10.1186/s12859-017-1863-x" class="external-link">https://doi.org/10.1186/s12859-017-1863-x</a>.
+</div>
+<div id="ref-hall2006" class="csl-entry">
+Hall, Norman G, Kim D Smith, Simon de Lestang, and Ian C Potter. 2006.
+<span>“Does the Largest Chela of the Males of Three Crab Species Undergo
+an Allometric Change That Can Be Used to Determine Morphometric
+Maturity?”</span> <em>ICES Journal of Marine Science</em> 63 (1):
+140–50. <a href="https://doi.org/10.1016/j.icesjms.2005.07.007" class="external-link">https://doi.org/10.1016/j.icesjms.2005.07.007</a>.
+</div>
+<div id="ref-muggeo2003" class="csl-entry">
+Muggeo, Vito M. R. 2003. <span>“Estimating Regression Models with
+Unknown Break-Points.”</span> <em>Statistics in Medicine</em> 22 (19):
+3055–71. <a href="https://doi.org/dsrbfd" class="external-link">https://doi.org/dsrbfd</a>.
+</div>
+<div id="ref-muggeo2008" class="csl-entry">
+———. 2008. <span>“Segmented: An r Package to Fit Regression Models with
+Broken-Line Relationships.”</span> <em>R News</em> 8 (1): 20–25. <a href="https://journal.r-project.org/articles/RN-2008-004/RN-2008-004.pdf" class="external-link">https://journal.r-project.org/articles/RN-2008-004/RN-2008-004.pdf</a>.
+</div>
+<div id="ref-muggeo2017" class="csl-entry">
+———. 2017. <span>“Interval Estimation for the Breakpoint in Segmented
+Regression: A Smoothed Score-Based Approach.”</span> <em>Australian
+&amp; New Zealand Journal of Statistics</em> 59 (3): 311–22. <a href="https://doi.org/gkzpsc" class="external-link">https://doi.org/gkzpsc</a>.
+</div>
+<div id="ref-pezzuto1993" class="csl-entry">
+Pezzuto, Paulo Ricardo. 1993. <span>“Regrans: A
+<span>“</span>Basic<span>”</span> Program for an Extensive Analysis of
+Relative Growth.”</span> <em>Atlântica</em> 15: 93–105.
+</div>
+<div id="ref-somerton1980" class="csl-entry">
+Somerton, D. A. 1980. <span>“Fitting Straight Lines to Hiatt Growth
+Diagrams: A Re-Evaluation.”</span> <em>ICES Journal of Marine
+Science</em> 39 (1): 15–19. <a href="https://doi.org/10.1093/icesjms/39.1.15" class="external-link">https://doi.org/10.1093/icesjms/39.1.15</a>.
+</div>
+<div id="ref-son2021" class="csl-entry">
+Son, Hyunju, and Youyi Fong. 2021. <span>“Fast Grid Search and
+Bootstrap-Based Inference for Continuous Two-Phase Polynomial Regression
+Models.”</span> <em>Environmetrics</em> 32 (3): e2664. <a href="https://doi.org/10.1002/env.2664" class="external-link">https://doi.org/10.1002/env.2664</a>.
+</div>
+</div>
+</div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 

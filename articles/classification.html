@@ -41,6 +41,8 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/broken-stick.html">Broken-stick methods</a></li>
     <li><a class="dropdown-item" href="../articles/classification.html">Classification methods</a></li>
+    <li><a class="dropdown-item" href="../articles/simulations.html">Simulating data</a></li>
+    <li><a class="dropdown-item" href="../articles/two-line.html">Two-line models</a></li>
   </ul>
 </li>
       </ul>
@@ -70,14 +72,26 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rmk118/morphmat" class="external-link">morphmat</a></span><span class="op">)</span></span></code></pre></div>
 <p>Here I will write a vignette explaining all of the methods that first
 classify points as mature or immature, enabling the use of logistic
 regression to find SM50 as would be done with a physiological metric of
 maturity. This vignette will be useful for referring readers to more
 complex options available in packages like <code>mclust</code> that are
 not available within <code>morphmat</code>.</p>
+<p>We will start by simulating a data set with a known SM50 value of 75
+mm to demonstrate the use (and limitations) of broken-stick methods.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span> <span class="co"># set seed for reproducibility</span></span>
+<span></span>
+<span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fake_crustaceans.html">fake_crustaceans</a></span><span class="op">(</span></span>
+<span>  error_scale <span class="op">=</span> <span class="fl">17</span>,</span>
+<span>  slope <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>  L50 <span class="op">=</span> <span class="fl">75</span>,</span>
+<span>  n <span class="op">=</span> <span class="fl">800</span>,</span>
+<span>  allo_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.25</span>, <span class="fl">1.05</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
+<span>  x_mean <span class="op">=</span> <span class="fl">85</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="classification_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <div class="section level2">
 <h2 id="clustering-methods">Clustering methods<a class="anchor" aria-label="anchor" href="#clustering-methods"></a>
 </h2>
@@ -90,6 +104,54 @@ method, mclust</p>
 <div class="section level3">
 <h3 id="inflection-point-discriminant-method">Inflection point discriminant method<a class="anchor" aria-label="anchor" href="#inflection-point-discriminant-method"></a>
 </h3>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">disc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infl_pt.html">infl_pt</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="classification_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">fc</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"CW (mm)"</span>, y <span class="op">=</span> <span class="st">"CH (mm)"</span>, <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="va">mytheme</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>slope <span class="op">=</span> <span class="va">disc</span>, color <span class="op">=</span> <span class="st">"red"</span>, linewidth <span class="op">=</span> <span class="fl">1.3</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="classification_files/figure-html/fig-inflpt-line-1.png" alt="Simulated data with addition of linear discriminant function identified via the inflection point method" width="700"><p class="caption">
+Simulated data with addition of linear discriminant function identified
+via the inflection point method
+</p>
+</div>
+<p>The line can then be used to classify each point as immature and
+mature, enabling logistic regression to be applied to estimate SM50:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fc_infl_pt</span> <span class="op">&lt;-</span> <span class="va">fc</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pred_mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">y</span><span class="op">/</span><span class="va">x</span> <span class="op">&gt;</span> <span class="va">disc</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                    correct <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">pred_mat</span> <span class="op">==</span> <span class="va">mature</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_installed.html" class="external-link">is_installed</a></span><span class="op">(</span><span class="st">"patchwork"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">fc_infl_pt</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, color <span class="op">=</span> <span class="va">mature</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"CW (mm)"</span>, y <span class="op">=</span> <span class="st">"CH (mm)"</span>, title <span class="op">=</span> <span class="st">"True maturity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>      <span class="va">mytheme</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">fc_infl_pt</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, color <span class="op">=</span> <span class="va">pred_mat</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"CW (mm)"</span>, y <span class="op">=</span> <span class="st">"CH (mm)"</span>, title <span class="op">=</span> <span class="st">"Predicted maturity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>        <span class="va">mytheme</span><span class="op">)</span></span>
+<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">fc_infl_pt</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, color <span class="op">=</span> <span class="va">mature</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"CW (mm)"</span>, y <span class="op">=</span> <span class="st">"CH (mm)"</span>, title <span class="op">=</span> <span class="st">"True maturity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="va">mytheme</span></span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">fc_infl_pt</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, color <span class="op">=</span> <span class="va">pred_mat</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"CW (mm)"</span>, y <span class="op">=</span> <span class="st">"CH (mm)"</span>, title <span class="op">=</span> <span class="st">"Predicted maturity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="va">mytheme</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p><img src="classification_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">infl_pt_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">pred_mat</span> <span class="op">~</span> <span class="va">x</span>, family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link<span class="op">=</span><span class="st">"logit"</span><span class="op">)</span>, data<span class="op">=</span><span class="va">fc_infl_pt</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># SM50 = -A/B</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">infl_pt_mod</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">infl_pt_mod</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 76.58952</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -102,12 +164,46 @@ related species)</p>
 <div class="section level2">
 <h2 id="post-classification-logistic-regression">Post-classification logistic regression<a class="anchor" aria-label="anchor" href="#post-classification-logistic-regression"></a>
 </h2>
+<p>Once a method of maturity classification has been identified, many
+additional choices need to be made when using logistic regression to
+obtain an estimate of SM50, particularly if you want to obtain standard
+errors, confidence intervals, etc.</p>
 <ul>
-<li>Basic logistic regression, GLMMs, GAMs, sdmTMB, etc.</li>
-<li>Methods of obtaining standard errors/CIs for SM50 parameter (Delta
-method, Fieller method, etc.)</li>
-<li>BAYESIAN</li>
+<li>Basic (GLM), GLMMs (lmer, nlme, glmmTMB), GAMs, sdmTMB, Bayesian
+methods, etc.</li>
 </ul>
+<div class="section level3">
+<h3 id="methods-to-obtain-confidence-intervals-for-sm50-value">Methods to obtain confidence intervals for SM50 value<a class="anchor" aria-label="anchor" href="#methods-to-obtain-confidence-intervals-for-sm50-value"></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li><p><a href="https://github.com/rafamoral/L50/blob/main/confint_L.R" class="external-link">confint_L.R
+script</a> from Mainguy et al. <span class="citation">(<a href="#ref-mainguy2024">2024</a>)</span>: Delta method, Fieller method,
+profile-likelihood, non-parametric bootstrapping, parametric
+bootstrapping, Monte Carlo, Bayesian</p></li>
+<li><p>R package qra: Fieller method</p></li>
+<li><p>R package twopartm: Fieller method</p></li>
+<li><p>R package drc <span class="citation">(<a href="#ref-ritz2015">Ritz et al. 2015</a>)</span>: Delta method, Fieller
+method. This package can also fit 5/4/3/2-parameter logistic,
+log-logistic, Weibull, etc. models, incorporate weights, robust nls
+fitting, constrained optimization, and other customization options. It
+also contains functions to simulate data</p></li>
+</ol>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-mainguy2024" class="csl-entry">
+Mainguy, Julien, Martin Bélanger, Geneviève Ouellet-Cauchon, and Rafael
+de Andrade Moral. 2024. <span>“Monitoring Reproduction in Fish:
+Assessing the Adequacy of Ogives and the Predicted Uncertainty of Their
+<span><em>L</em></span>50 Estimates for More Reliable Biological
+Inferences.”</span> <em>Fisheries Research</em> 269 (January): 106863.
+<a href="https://doi.org/10.1016/j.fishres.2023.106863" class="external-link">https://doi.org/10.1016/j.fishres.2023.106863</a>.
+</div>
+<div id="ref-ritz2015" class="csl-entry">
+Ritz, Christian, Florent Baty, Jens C. Streibig, and Daniel Gerhard.
+2015. <span>“Dose-Response Analysis Using R.”</span> <em>PLOS ONE</em>
+10 (12): e0146021. <a href="https://doi.org/10.1371/journal.pone.0146021" class="external-link">https://doi.org/10.1371/journal.pone.0146021</a>.
+</div>
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

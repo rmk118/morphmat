@@ -20,6 +20,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/broken-stick.html">Broken-stick methods</a></li>
     <li><a class="dropdown-item" href="../articles/classification.html">Classification methods</a></li>
+    <li><a class="dropdown-item" href="../articles/simulations.html">Simulating data</a></li>
+    <li><a class="dropdown-item" href="../articles/two-line.html">Two-line models</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -99,8 +101,8 @@ for the final piecewise model.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="fake_crabs.html">fake_crabs</a></span><span class="op">(</span>n<span class="op">=</span><span class="fl">100</span>, L50<span class="op">=</span><span class="fl">100</span>, allo_params<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.2</span>, <span class="fl">1.1</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">broken_stick_stevens</span><span class="op">(</span><span class="va">fc</span>, xvar<span class="op">=</span><span class="st">"x"</span>, yvar<span class="op">=</span><span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="fake_crustaceans.html">fake_crustaceans</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">100</span>, L50 <span class="op">=</span> <span class="fl">100</span>, allo_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.2</span>, <span class="fl">1.1</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">broken_stick_stevens</span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 91.10524</span>
 </code></pre></div>
     </div>
