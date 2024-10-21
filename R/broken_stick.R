@@ -61,11 +61,11 @@ broken_stick <- function(dat,
   }
 
   if (is.null(lower)) {
-    lower <- stats::quantile(dat$xvar, 0.2)
+    lower <- stats::quantile(dat[[xvar]], 0.2)
   }
 
   if (is.null(upper)) {
-    upper <- stats::quantile(dat$xvar, 0.8)
+    upper <- stats::quantile(dat[[xvar]], 0.8)
   }
 
   if ("chngpt" %in% method | "all" %in% method) {
