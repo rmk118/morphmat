@@ -81,7 +81,11 @@ stevens_est
 
 # Two-line with logistic transition
 
-# chngpt stegmented
+```{r}
+tll_est <- two_line_logistic(fc, "x", "y", verbose = FALSE)
+tll_est
+```
+
 
 
 ## References

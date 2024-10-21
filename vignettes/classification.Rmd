@@ -37,7 +37,6 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(purrr)
-library(patchwork)
 
 knitr::opts_chunk$set(message = FALSE)
 ```
@@ -109,14 +108,27 @@ fc_infl_pt <- fc %>% mutate(pred_mat = as.factor(if_else(y/x > disc, 1, 0)),
 ```
 
 ```{r}
-(ggplot() +
-  geom_point(data = fc_infl_pt, aes(x, y, color = mature), alpha = 0.4) +
-  labs(x = "CW (mm)", y = "CH (mm)", title = "True maturity") +
-  mytheme) +
-(ggplot() +
-  geom_point(data = fc_infl_pt, aes(x, y, color = pred_mat), alpha = 0.4) +
-  labs(x = "CW (mm)", y = "CH (mm)", title = "Predicted maturity") +
-  mytheme)
+
+if (rlang::is_installed("patchwork")) {
+  (ggplot() +
+      geom_point(data = fc_infl_pt, aes(x, y, color = mature), alpha = 0.4) +
+      labs(x = "CW (mm)", y = "CH (mm)", title = "True maturity") +
+      mytheme) +
+    (ggplot() +
+        geom_point(data = fc_infl_pt, aes(x, y, color = pred_mat), alpha = 0.4) +
+        labs(x = "CW (mm)", y = "CH (mm)", title = "Predicted maturity") +
+        mytheme)
+} else {
+  ggplot() +
+    geom_point(data = fc_infl_pt, aes(x, y, color = mature), alpha = 0.4) +
+    labs(x = "CW (mm)", y = "CH (mm)", title = "True maturity") +
+    mytheme
+  
+  ggplot() +
+    geom_point(data = fc_infl_pt, aes(x, y, color = pred_mat), alpha = 0.4) +
+    labs(x = "CW (mm)", y = "CH (mm)", title = "Predicted maturity") +
+    mytheme
+}
 ```
 
 ```{r}
