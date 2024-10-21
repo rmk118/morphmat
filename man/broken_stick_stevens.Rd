@@ -45,6 +45,6 @@ Broken-stick method from Bradley Stevens
 }
 \examples{
 set.seed(12)
-fc <- fake_crustaceans(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
-broken_stick_stevens(fc, xvar="x", yvar="y", verbose = FALSE)
+fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
+broken_stick_stevens(fc, xvar = "x", yvar = "y", verbose = FALSE)
 }

@@ -13,6 +13,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 link-external-newwindow: true 
 number-sections: true
+link-citations: true
 bibliography: references.bib
 editor_options: 
   chunk_output_type: console
@@ -26,10 +27,58 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+#| message: FALSE
+#| echo: FALSE
+#| warning: FALSE
+#| output: FALSE
+
 library(morphmat)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(purrr)
+library(patchwork)
+
+knitr::opts_chunk$set(message = FALSE)
+```
+
+```{r}
+#| label: setup-2
+#| echo: false
+
+mytheme <- theme_classic()+ #define custom theme for ggplots
+  theme(
+    axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
+    axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
+    text=element_text(size=13))
 ```
 
 Here I will write a vignette explaining all of the methods that first classify points as mature or immature, enabling the use of logistic regression to find SM50 as would be done with a physiological metric of maturity. This vignette will be useful for referring readers to more complex options available in packages like `mclust` that are not available within `morphmat`.
+
+We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate the use (and limitations) of broken-stick methods.
+```{r}
+#| label: generate-crabs
+
+set.seed(123) # set seed for reproducibility
+
+fc <- fake_crustaceans(
+  error_scale = 17,
+  slope = 9,
+  L50 = 75,
+  n = 800,
+  allo_params = c(0.9, 0.25, 1.05, 0.2),
+  x_mean = 85
+)
+```
+
+```{r}
+#| echo: false
+
+ggplot() +
+  geom_point(data = fc, aes(x, y), alpha = 0.4) +
+  labs(x = "CW (mm)", y = "CH (mm)", ) +
+  mytheme
+```
 
 # Clustering methods
 
@@ -39,12 +88,61 @@ hclust, kmeans, hkmeans, PAM, OPTICS, DBSCAN, HDBSCAN, Somerton method, mclust
 
 ## Inflection point discriminant method
 
+```{r}
+disc <- infl_pt(fc, "x", "y", plot = TRUE)
+```
+
+```{r}
+#| label: fig-inflpt-line
+#| fig-cap: "Simulated data with addition of linear discriminant function identified via the inflection point method"
+
+ggplot() +
+  geom_point(data = fc, aes(x, y), alpha = 0.4) +
+  labs(x = "CW (mm)", y = "CH (mm)", ) +
+  mytheme + geom_abline(slope = disc, color = "red", linewidth = 1.3)
+```
+
+The line can then be used to classify each point as immature and mature, enabling logistic regression to be applied to estimate SM50:
+```{r}
+fc_infl_pt <- fc %>% mutate(pred_mat = as.factor(if_else(y/x > disc, 1, 0)),
+                    correct = if_else(pred_mat == mature, TRUE, FALSE))
+```
+
+```{r}
+(ggplot() +
+  geom_point(data = fc_infl_pt, aes(x, y, color = mature), alpha = 0.4) +
+  labs(x = "CW (mm)", y = "CH (mm)", title = "True maturity") +
+  mytheme) +
+(ggplot() +
+  geom_point(data = fc_infl_pt, aes(x, y, color = pred_mat), alpha = 0.4) +
+  labs(x = "CW (mm)", y = "CH (mm)", title = "Predicted maturity") +
+  mytheme)
+```
+
+```{r}
+infl_pt_mod <- glm(pred_mat ~ x, family=binomial(link="logit"), data=fc_infl_pt)
+
+# SM50 = -A/B
+unname(-coef(infl_pt_mod)[1]/coef(infl_pt_mod)[2])
+```
+
+
 # Discriminant Analysis
 
 Talk about drawbacks and reasons why it is unnecessary, but mention instances where it might be useful (stock assessment, applications to related species)
 
 # Post-classification logistic regression
 
-- Basic logistic regression, GLMMs, GAMs, sdmTMB, etc.
-- Methods of obtaining standard errors/CIs for SM50 parameter (Delta method, Fieller method, etc.)
-- BAYESIAN
+Once a method of maturity classification has been identified, many additional choices need to be made when using logistic regression to obtain an estimate of SM50, particularly if you want to obtain standard errors, confidence intervals, etc.
+
+- Basic (GLM), GLMMs (lmer, nlme, glmmTMB), GAMs, sdmTMB, Bayesian methods, etc.
+
+## Methods to obtain confidence intervals for SM50 value
+
+1.  [confint_L.R script](https://github.com/rafamoral/L50/blob/main/confint_L.R) from Mainguy et al. [-@mainguy2024]: Delta method, Fieller method, profile-likelihood, non-parametric bootstrapping, parametric bootstrapping, Monte Carlo, Bayesian
+
+2.  R package qra: Fieller method
+
+3.  R package twopartm: Fieller method
+
+4.  R package drc [@ritz2015]: Delta method, Fieller method. This package can also fit 5/4/3/2-parameter logistic, log-logistic, Weibull, etc. models, incorporate weights, robust nls fitting, constrained optimization, and other customization options. It also contains functions to simulate data
