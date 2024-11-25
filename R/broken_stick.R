@@ -1,6 +1,8 @@
 #' Broken-stick (segmented) approaches to estimating SM50
 #'
-#' A wrapper function allowing for multiple methods of broken-stick regression to be applied using a standard format for inputs. See `vignette("broken-stick")` for more information.
+#' A wrapper function allowing for multiple methods of broken-stick regression
+#' to be applied using a standard format for inputs. See
+#' `vignette("broken-stick")` for more information.
 #'
 #' @param dat data frame or matrix containing the data
 #' @param xvar Name of column (integer or double) of measurements for the x-axis
@@ -10,8 +12,6 @@
 #' @param method Method to use for the regression. A single string or string
 #'   vector containing one or more of c("segmented", "chngpt", "regrans",
 #'   "stevens"), or "all" to return the results of all methods for comparison.
-#' @param verbose Boolean; Should the standard error, confidence intervals, etc.
-#'   be returned, or just the estimate of SM50?
 #' @param ci Integer; type of confidence intervals to return for SM50, defaults
 #'   to 95%.
 #' @param trans Transformation to be applied to the data before performing the
@@ -25,21 +25,16 @@
 #'   Must be on the same trans of the data. Defaults to the 20th percentile of
 #'   the x-variable.
 #'
-#' @returns If verbose is FALSE (the default), an estimate of SM50 from the
-#'   specified method(s). Otherwise, output is a list that also includes the
-#'   standard error and confidence intervals for the SM50 estimate as well as
-#'   the model object(s) and/or regression parameters for the lines in the
-#'   broken-stick models.
+#' @returns An estimate of SM50 from the specified method(s).
 #' @export
 #'
 #' @examples
 #' set.seed(12)
-#' fc <- fake_crustaceans(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
-#' broken_stick(fc, xvar="x", yvar="y", method=c("segmented", "chngpt"))
+#' fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
+#' broken_stick(fc, xvar = "x", yvar = "y", method = c("segmented", "chngpt"))
 broken_stick <- function(dat,
                          xvar,
                          yvar,
-                         verbose = FALSE,
                          ci = 95,
                          lower = NULL,
                          upper = NULL,

@@ -53,6 +53,7 @@ mytheme <- theme_classic()+ #define custom theme for ggplots
 Here I will write a vignette explaining all of the methods that first classify points as mature or immature, enabling the use of logistic regression to find SM50 as would be done with a physiological metric of maturity. This vignette will be useful for referring readers to more complex options available in packages like `mclust` that are not available within `morphmat`.
 
 We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate the use (and limitations) of broken-stick methods.
+
 ```{r}
 #| label: generate-crabs
 
@@ -79,7 +80,9 @@ ggplot() +
 
 # Clustering methods
 
-hclust, kmeans, hkmeans, PAM, OPTICS, DBSCAN, HDBSCAN, Somerton method, mclust
+Endless clustering methods have been implemented in existing R packages. I will be using simulation testing to evaluate the relative performance of common clustering methods when used to separate immature and mature crustaceans based on morphometric data. Functions included in the simulation testing will include `hclust()` and `kmeans()` from the base R `stats` package; `factoextra::hkmeans()`; `cluster::PAM()`; `mclust::Mclust()`; and `dbscan()`, `hdbscan()`, and `OPTICS()` from the `dbscan` package.
+
+The Somerton method is a clustering method widely used for estimating size at maturity based on the allometric growth of crustacean body parts, originally written in FORTRAN [@somerton1980a]. `morphmat` will contain code to implement the Somerton method in R, largely following the structure of code written by Dr. Bradley Stevens.
 
 ## Somerton method
 
@@ -90,7 +93,6 @@ mod <- glm(data = out_df,
            family = binomial(link = "logit"))
 unname(-coef(mod)[1] / coef(mod)[2])
 ```
-
 
 # Other classification methods
 
@@ -111,6 +113,7 @@ ggplot() +
 ```
 
 The line can then be used to classify each point as immature and mature, enabling logistic regression to be applied to estimate SM50:
+
 ```{r}
 fc_infl_pt <- fc %>% mutate(pred_mat = as.factor(if_else(y / x > disc, 1, 0)),
                             correct = if_else(pred_mat == mature, TRUE, FALSE))
@@ -140,6 +143,16 @@ if (rlang::is_installed("patchwork")) {
 }
 ```
 
+<!-- # Discriminant Analysis -->
+
+<!-- Talk about drawbacks and reasons why it is unnecessary, but mention instances where it might be useful (stock assessment, applications to related species). -->
+
+# Post-classification logistic regression
+
+Once a method of maturity classification has been identified, many additional choices need to be made when using logistic regression to obtain an estimate of SM50, particularly if you want to obtain standard errors, confidence intervals, etc. This aspect of the analysis is the same as determining size at maturity for non-crustacean fisheries.
+
+The most common way to do this is to fit a generalized linear model using the binomial family with a logit link, then taking the ratio of the estimated coefficients to find the SM50 value. For example, using the classifications produced by the Somerton method:
+
 ```{r}
 infl_pt_mod <- glm(pred_mat ~ x,
                    family = binomial(link = "logit"),
@@ -149,16 +162,7 @@ infl_pt_mod <- glm(pred_mat ~ x,
 unname(-coef(infl_pt_mod)[1] / coef(infl_pt_mod)[2])
 ```
 
-
-# Discriminant Analysis
-
-Talk about drawbacks and reasons why it is unnecessary, but mention instances where it might be useful (stock assessment, applications to related species)
-
-# Post-classification logistic regression
-
-Once a method of maturity classification has been identified, many additional choices need to be made when using logistic regression to obtain an estimate of SM50, particularly if you want to obtain standard errors, confidence intervals, etc.
-
-- Basic (GLM), GLMMs (lmer, nlme, glmmTMB), GAMs, sdmTMB, Bayesian methods, etc.
+Beyond the familiar `stats::glm`, there are many packages that can be used to model the relationship between size and maturity status, allowing for the incorporation of random effects, temporal or spatial structuring, and other additional complexities. These include popular packages for fitting generalized linear mixed models (GLMMs) and generalized additive (mixed) models (GAMMs) such as `lmer`, `nlme`, `mgcv`, `glmmTMB`, and `sdmTMB`.
 
 ## Methods to obtain confidence intervals for SM50 value
 
@@ -169,3 +173,5 @@ Once a method of maturity classification has been identified, many additional ch
 3.  R package twopartm: Fieller method
 
 4.  R package drc [@ritz2015]: Delta method, Fieller method. This package can also fit 5/4/3/2-parameter logistic, log-logistic, Weibull, etc. models, incorporate weights, robust nls fitting, constrained optimization, and other customization options. It also contains functions to simulate data
+
+5: R package tidydelta: Delta method

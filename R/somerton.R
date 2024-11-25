@@ -111,8 +111,10 @@ somerton_fun <- function(
   }
 
 
-  df <- df %>% dplyr::rename(init_group = .data$group, pred_mat =  .data$temp_group) %>%
-    dplyr::mutate(pred_mat_num = dplyr::if_else(.data$pred_mat == "adult", 1, 0))
+  df <- df %>% dplyr::rename(init_group = .data$group,
+                             pred_mat =  .data$temp_group) %>%
+    dplyr::mutate(pred_mat_num = dplyr::if_else(.data$pred_mat == "adult",
+                                                1, 0))
 
   output <- list(
     data = df,

@@ -8,7 +8,6 @@ broken_stick(
   dat,
   xvar,
   yvar,
-  verbose = FALSE,
   ci = 95,
   lower = NULL,
   upper = NULL,
@@ -24,9 +23,6 @@ variable (e.g., carapace width).}
 
 \item{yvar}{Name of column (integer or double) of measurements for the y-axis
 variable (e.g., claw height).}
-
-\item{verbose}{Boolean; Should the standard error, confidence intervals, etc.
-be returned, or just the estimate of SM50?}
 
 \item{ci}{Integer; type of confidence intervals to return for SM50, defaults
 to 95\%.}
@@ -49,17 +45,15 @@ vector containing one or more of c("segmented", "chngpt", "regrans",
 "stevens"), or "all" to return the results of all methods for comparison.}
 }
 \value{
-If verbose is FALSE (the default), an estimate of SM50 from the
-specified method(s). Otherwise, output is a list that also includes the
-standard error and confidence intervals for the SM50 estimate as well as
-the model object(s) and/or regression parameters for the lines in the
-broken-stick models.
+An estimate of SM50 from the specified method(s).
 }
 \description{
-A wrapper function allowing for multiple methods of broken-stick regression to be applied using a standard format for inputs. See \code{vignette("broken-stick")} for more information.
+A wrapper function allowing for multiple methods of broken-stick regression
+to be applied using a standard format for inputs. See
+\code{vignette("broken-stick")} for more information.
 }
 \examples{
 set.seed(12)
-fc <- fake_crustaceans(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
-broken_stick(fc, xvar="x", yvar="y", method=c("segmented", "chngpt"))
+fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
+broken_stick(fc, xvar = "x", yvar = "y", method = c("segmented", "chngpt"))
 }
