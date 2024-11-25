@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Classification methods">
 </head>
 <body>
@@ -95,8 +95,22 @@ mm to demonstrate the use (and limitations) of broken-stick methods.</p>
 <div class="section level2">
 <h2 id="clustering-methods">Clustering methods<a class="anchor" aria-label="anchor" href="#clustering-methods"></a>
 </h2>
-<p>hclust, kmeans, hkmeans, PAM, OPTICS, DBSCAN, HDBSCAN, Somerton
-method, mclust</p>
+<p>Endless clustering methods have been implemented in existing R
+packages. I will be using simulation testing to evaluate the relative
+performance of common clustering methods when used to separate immature
+and mature crustaceans based on morphometric data. Functions included in
+the simulation testing will include <code><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">hclust()</a></code> and
+<code><a href="https://rdrr.io/r/stats/kmeans.html" class="external-link">kmeans()</a></code> from the base R <code>stats</code> package;
+<code>factoextra::hkmeans()</code>; <code>cluster::PAM()</code>;
+<code>mclust::Mclust()</code>; and <code>dbscan()</code>,
+<code>hdbscan()</code>, and <code>OPTICS()</code> from the
+<code>dbscan</code> package.</p>
+<p>The Somerton method is a clustering method widely used for estimating
+size at maturity based on the allometric growth of crustacean body
+parts, originally written in FORTRAN <span class="citation">(<a href="#ref-somerton1980a">Somerton 1980</a>)</span>.
+<code>morphmat</code> will contain code to implement the Somerton method
+in R, largely following the structure of code written by Dr. Bradley
+Stevens.</p>
 <div class="section level3">
 <h3 id="somerton-method">Somerton method<a class="anchor" aria-label="anchor" href="#somerton-method"></a>
 </h3>
@@ -157,6 +171,22 @@ mature, enabling logistic regression to be applied to estimate SM50:</p>
 <span>    <span class="va">mytheme</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p><img src="classification_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
+<!-- # Discriminant Analysis -->
+<!-- Talk about drawbacks and reasons why it is unnecessary, but mention instances where it might be useful (stock assessment, applications to related species). -->
+</div>
+</div>
+<div class="section level2">
+<h2 id="post-classification-logistic-regression">Post-classification logistic regression<a class="anchor" aria-label="anchor" href="#post-classification-logistic-regression"></a>
+</h2>
+<p>Once a method of maturity classification has been identified, many
+additional choices need to be made when using logistic regression to
+obtain an estimate of SM50, particularly if you want to obtain standard
+errors, confidence intervals, etc. This aspect of the analysis is the
+same as determining size at maturity for non-crustacean fisheries.</p>
+<p>The most common way to do this is to fit a generalized linear model
+using the binomial family with a logit link, then taking the ratio of
+the estimated coefficients to find the SM50 value. For example, using
+the classifications produced by the Somerton method:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">infl_pt_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">pred_mat</span> <span class="op">~</span> <span class="va">x</span>,</span>
 <span>                   family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span>,</span>
@@ -165,26 +195,14 @@ mature, enabling logistic regression to be applied to estimate SM50:</p>
 <span><span class="co"># SM50 = -A/B</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">infl_pt_mod</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">infl_pt_mod</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 76.58952</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="discriminant-analysis">Discriminant Analysis<a class="anchor" aria-label="anchor" href="#discriminant-analysis"></a>
-</h2>
-<p>Talk about drawbacks and reasons why it is unnecessary, but mention
-instances where it might be useful (stock assessment, applications to
-related species)</p>
-</div>
-<div class="section level2">
-<h2 id="post-classification-logistic-regression">Post-classification logistic regression<a class="anchor" aria-label="anchor" href="#post-classification-logistic-regression"></a>
-</h2>
-<p>Once a method of maturity classification has been identified, many
-additional choices need to be made when using logistic regression to
-obtain an estimate of SM50, particularly if you want to obtain standard
-errors, confidence intervals, etc.</p>
-<ul>
-<li>Basic (GLM), GLMMs (lmer, nlme, glmmTMB), GAMs, sdmTMB, Bayesian
-methods, etc.</li>
-</ul>
+<p>Beyond the familiar <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">stats::glm</a></code>, there are many packages
+that can be used to model the relationship between size and maturity
+status, allowing for the incorporation of random effects, temporal or
+spatial structuring, and other additional complexities. These include
+popular packages for fitting generalized linear mixed models (GLMMs) and
+generalized additive (mixed) models (GAMMs) such as <code>lmer</code>,
+<code>nlme</code>, <code>mgcv</code>, <code>glmmTMB</code>, and
+<code>sdmTMB</code>.</p>
 <div class="section level3">
 <h3 id="methods-to-obtain-confidence-intervals-for-sm50-value">Methods to obtain confidence intervals for SM50 value<a class="anchor" aria-label="anchor" href="#methods-to-obtain-confidence-intervals-for-sm50-value"></a>
 </h3>
@@ -201,6 +219,7 @@ log-logistic, Weibull, etc. models, incorporate weights, robust nls
 fitting, constrained optimization, and other customization options. It
 also contains functions to simulate data</p></li>
 </ol>
+<p>5: R package tidydelta: Delta method</p>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-mainguy2024" class="csl-entry">
 Mainguy, Julien, Martin Bélanger, Geneviève Ouellet-Cauchon, and Rafael
@@ -214,6 +233,11 @@ Inferences.”</span> <em>Fisheries Research</em> 269 (January): 106863.
 Ritz, Christian, Florent Baty, Jens C. Streibig, and Daniel Gerhard.
 2015. <span>“Dose-Response Analysis Using R.”</span> <em>PLOS ONE</em>
 10 (12): e0146021. <a href="https://doi.org/10.1371/journal.pone.0146021" class="external-link">https://doi.org/10.1371/journal.pone.0146021</a>.
+</div>
+<div id="ref-somerton1980a" class="csl-entry">
+Somerton, DA. 1980. <span>“A Computer Technique for Estimating the Size
+of Sexual Maturity in Crabs.”</span> <em>Canadian Journal of Fisheries
+and Aquatic Sciences</em> 37 (10): 1488–94. <a href="https://doi.org/10.1139/f80-192" class="external-link">https://doi.org/10.1139/f80-192</a>.
 </div>
 </div>
 </div>
