@@ -43,14 +43,14 @@ knitr::opts_chunk$set(message = FALSE)
 #| label: setup-2
 #| echo: false
 
-mytheme <- theme_classic()+ #define custom theme for ggplots
+mytheme <- theme_classic() + # define custom theme for ggplots
   theme(
     axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
     axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
-    text=element_text(size=13))
+    text = element_text(size = 13))
 ```
 
-Here I will write a vignette explaining all of the methods that first classify points as mature or immature, enabling the use of logistic regression to find SM50 as would be done with a physiological metric of maturity. This vignette will be useful for referring readers to more complex options available in packages like `mclust` that are not available within `morphmat`.
+This vignette describes methods that first classify individual data points as mature or immature, enabling the use of logistic regression to find SM50 as would be done with a physiological metric of maturity. This vignette will be useful for referring readers to more complex options available in packages like `mclust` that are not available within `morphmat`.
 
 We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate the use (and limitations) of broken-stick methods.
 

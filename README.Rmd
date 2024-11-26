@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 # morphmat
 
-<img src="man/figures/logo.png" alt="Hex sticker logo for morphmat package" align="right" height="139", class="pkgdown-hide"/>
+<img src="man/figures/logo.png" alt="Hex sticker logo for morphmat package" align="right" height="139" class="pkgdown-hide"/>
 
 <!-- badges: start -->
 
@@ -28,11 +28,10 @@ A compilation of methods used to estimate size at (sexual) maturity based on mor
 
 `morphmat` is intended to help fisheries scientists and managers to implement the multitude of computational methods that have been developed for estimating crustacean size at maturity. This package is being developed as part of my graduate work at the University of Maine. **This is still a work in progress and should not yet be used for research purposes.**
 
-`morphmat` will include user-friendly functions for estimating size at morphometric maturity, along with guidelines for choosing the optimal method for a given dataset and correctly interpreting results. Both novel and historically popular (e.g., broken-stick regression) methods will be included, and users will be able to obtain SM50 estimates from nearly a dozen different approaches with a single function call. Crucially, by combining code for the various models within a single package, morphmat will enable the application of multi-model inference to SM50 estimation, avoiding the arbitrary selection of a single “best” model [@katsanevakis2006]. By increasing the accessibility of modern statistical methods for estimating SM50, I hope to facilitate the widespread adoption of improved SM50 modeling procedures.
+`morphmat` will include user-friendly functions for estimating size at morphometric maturity, along with guidelines for choosing the optimal method for a given dataset and correctly interpreting results. Both novel and historically popular (e.g., broken-stick regression) methods will be included, and users will be able to obtain SM50 estimates from nearly a dozen different approaches with a single function call. By combining code for the various models within a single package, morphmat will enable the application of multi-model inference to SM50 estimation, avoiding the arbitrary selection of a single “best” model [@katsanevakis2006]. By increasing the accessibility of modern statistical methods for estimating SM50, I hope to facilitate the widespread adoption of improved SM50 modeling procedures.
 
 `morphmat` will include versions of the methods implemented in these existing GitHub repositories:
 
-|  |  |  |  |
 |---------------|---------------|---------------|---------------------------|
 | **Type** | **Authors** | **GitHub repository** | **Description/notes** |
 | Package | Josymar Torrejon-Magallanes | [ejosymart/sizeMat](https://github.com/ejosymart/sizeMat) | [sizeMat: An R Package to Estimate Size at Sexual Maturity](https://cran.r-project.org/web/packages/sizeMat/vignettes/sizeMat.html) |
@@ -45,7 +44,6 @@ A compilation of methods used to estimate size at (sexual) maturity based on mor
 
 The following scripts do not use morphometric data and require individuals to already be classified as mature or immature. They provide various examples of how to fit maturity\~length binomial models to estimate SM50 and obtain confidence intervals. These tools can also be used to calculate size at maturity for non-crustacean fisheries. For a comprehensive examination of this type of model, see [@mainguy2024].
 
-|  |  |  |  |
 |--------------|--------------|-------------------|--------------------------|
 | **Type** | **Authors** | **GitHub repository** | **Description/notes** |
 | R scripts | Lucas Rodrigues | [lvcasrodrigues/maturity_at_size](https://github.com/lvcasrodrigues/maturity_at_size) | Does not use morphometric data; takes size classes with known numbers of mature individuals per size class and fits a binomial model (frequentist or Bayesian). Finds SM50 by generating new data from the model rather than from ratio of parameters |
