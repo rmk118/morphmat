@@ -1,7 +1,7 @@
 
 # morphmat
 
-<img src="man/figures/logo.png" alt="Hex sticker logo for morphmat package" align="right" height="139" class="pkgdown-hide"/>
+<img src="man/figures/logo.png" alt="Hex sticker logo for morphmat package" class="pkgdown-hide" align="right" height="139"/>
 
 <!-- badges: start -->
 
@@ -42,40 +42,16 @@ widespread adoption of improved SM50 modeling procedures.
 `morphmat` will include versions of the methods implemented in these
 existing GitHub repositories:
 
-\|—————\|—————\|—————\|—————————\| \| **Type** \| **Authors** \|
-**GitHub repository** \| **Description/notes** \| \| Package \| Josymar
-Torrejon-Magallanes \|
-[ejosymart/sizeMat](https://github.com/ejosymart/sizeMat) \| [sizeMat:
-An R Package to Estimate Size at Sexual
-Maturity](https://cran.r-project.org/web/packages/sizeMat/vignettes/sizeMat.html)
-\| \| Package \| Rodrigo Sant’Ana, Fernando Mayer \|
-[rodrigosantana/Regrans: Fits Segmented Linear Regression
-Models](https://github.com/rodrigosantana/Regrans) \| Older repository:
-[fernandomayer/Regrans](https://github.com/fernandomayer/Regrans/blob/master/change.point.R)
-\| \| Package \| Derek Sonderegger \|
-[siZer](https://cran.r-project.org/web/packages/SiZer/index.html) \|
-[Conduct size at morphometric maturity analysis (SMM) and plot results
-using the SiZer extension package](https://zenodo.org/records/5002120)
-by Olson, Andrew P., Siddon, Chris E., and Eckert, Ginny L. \| \|
-Package \| Vito M. R. Muggeo \|
-[segmented](https://cran.r-project.org/web/packages/segmented/index.html)
-\| [package reference
-manual](https://cran.r-project.org/web/packages/segmented/segmented.pdf)
-\| \| Package \| Youyi Fong \|
-[chngpt](https://doi.org/10.32614/CRAN.package.chngpt) \| [Fitting
-Threshold Regression Models Using
-chngpt](https://cran.r-project.org/web/packages/chngpt/vignettes/chngpt-vignette.pdf)
-(vignette) \| \| Package \| Tobie Surette \|
-[TobieSurette/gulf.stats](https://github.com/TobieSurette/gulf.stats) \|
-See files
-[morphometric.maturity.R](https://github.com/TobieSurette/gulf.stats/blob/master/R/morphometric.maturity.R)
-and
-[morphometry.R](https://github.com/TobieSurette/gulf.stats/blob/master/R/morphometry.R)
-\| \| R scripts \| Bradley Stevens \|
-[Crabman52/Crustacean_Sensation](https://github.com/Crabman52/Crustacean_Sensation)
-\| Include three different methods for separating mature from immature
-crabs based on allometric growth of body parts, with code based on
-Somerton’s (1980) program MATURE \|
+|  |  |  |  |
+|----|----|----|----|
+| **Type** | **Authors** | **GitHub repository** | **Description/notes** |
+| Package | Josymar Torrejon-Magallanes | [ejosymart/sizeMat](https://github.com/ejosymart/sizeMat) | [sizeMat: An R Package to Estimate Size at Sexual Maturity](https://cran.r-project.org/web/packages/sizeMat/vignettes/sizeMat.html) |
+| Package | Rodrigo Sant’Ana, Fernando Mayer | [rodrigosantana/Regrans: Fits Segmented Linear Regression Models](https://github.com/rodrigosantana/Regrans) | Older repository: [fernandomayer/Regrans](https://github.com/fernandomayer/Regrans/blob/master/change.point.R) |
+| Package | Derek Sonderegger | [siZer](https://cran.r-project.org/web/packages/SiZer/index.html) | [Conduct size at morphometric maturity analysis (SMM) and plot results using the SiZer extension package](https://zenodo.org/records/5002120) by Olson, Andrew P., Siddon, Chris E., and Eckert, Ginny L. |
+| Package | Vito M. R. Muggeo | [segmented](https://cran.r-project.org/web/packages/segmented/index.html) | [package reference manual](https://cran.r-project.org/web/packages/segmented/segmented.pdf) |
+| Package | Youyi Fong | [chngpt](https://doi.org/10.32614/CRAN.package.chngpt) | [Fitting Threshold Regression Models Using chngpt](https://cran.r-project.org/web/packages/chngpt/vignettes/chngpt-vignette.pdf) (vignette) |
+| Package | Tobie Surette | [TobieSurette/gulf.stats](https://github.com/TobieSurette/gulf.stats) | See files [morphometric.maturity.R](https://github.com/TobieSurette/gulf.stats/blob/master/R/morphometric.maturity.R) and [morphometry.R](https://github.com/TobieSurette/gulf.stats/blob/master/R/morphometry.R) |
+| R scripts | Bradley Stevens | [Crabman52/Crustacean_Sensation](https://github.com/Crabman52/Crustacean_Sensation) | Include three different methods for separating mature from immature crabs based on allometric growth of body parts, with code based on Somerton’s (1980) program MATURE |
 
 The following scripts do not use morphometric data and require
 individuals to already be classified as mature or immature. They provide
@@ -85,25 +61,12 @@ used to calculate size at maturity for non-crustacean fisheries. For a
 comprehensive examination of this type of model, see ([Mainguy et al.
 2024](#ref-mainguy2024)).
 
-\|————–\|————–\|——————-\|————————–\| \| **Type** \| **Authors** \|
-**GitHub repository** \| **Description/notes** \| \| R scripts \| Lucas
-Rodrigues \|
-[lvcasrodrigues/maturity_at_size](https://github.com/lvcasrodrigues/maturity_at_size)
-\| Does not use morphometric data; takes size classes with known numbers
-of mature individuals per size class and fits a binomial model
-(frequentist or Bayesian). Finds SM50 by generating new data from the
-model rather than from ratio of parameters \| \| R scripts \| Mainguy et
-al. \| [rafamoral/L50](https://github.com/rafamoral/L50): Monitoring
-reproduction in fish: Assessing the adequacy of ogives and the predicted
-uncertainty of their *L*<sub>50</sub> estimates for more reliable
-biological inferences \| Over a dozen methods for estimating L50 values
-and obtaining confidence intervals from (frequentist or Bayesian)
-binomial models (Delta, Fieller, bootstrap resampling,
-profile-likelihood, etc.). See accompanying manuscript by Mainguy et al.
-([2024](#ref-mainguy2024)). \| \| R script \| [Alastair V.
-Harry](https://scholar.google.com.au/citations?user=hb4nzPYAAAAJ&hl) \|
-[Alharry/Maturity.ogive.R](https://gist.github.com/alharry/4576675) \|
-Includes bootstrap resampling to obtain 95% CIs \|
+|  |  |  |  |
+|----|----|----|----|
+| **Type** | **Authors** | **GitHub repository** | **Description/notes** |
+| R scripts | Lucas Rodrigues | [lvcasrodrigues/maturity_at_size](https://github.com/lvcasrodrigues/maturity_at_size) | Does not use morphometric data; takes size classes with known numbers of mature individuals per size class and fits a binomial model (frequentist or Bayesian). Finds SM50 by generating new data from the model rather than from ratio of parameters |
+| R scripts | Mainguy et al. | [rafamoral/L50](https://github.com/rafamoral/L50): Monitoring reproduction in fish: Assessing the adequacy of ogives and the predicted uncertainty of their *L*<sub>50</sub> estimates for more reliable biological inferences | Over a dozen methods for estimating L50 values and obtaining confidence intervals from (frequentist or Bayesian) binomial models (Delta, Fieller, bootstrap resampling, profile-likelihood, etc.). See accompanying manuscript by Mainguy et al. ([2024](#ref-mainguy2024)). |
+| R script | [Alastair V. Harry](https://scholar.google.com.au/citations?user=hb4nzPYAAAAJ&hl) | [Alharry/Maturity.ogive.R](https://gist.github.com/alharry/4576675) | Includes bootstrap resampling to obtain 95% CIs |
 
 ## Installation
 
