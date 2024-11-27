@@ -79,7 +79,8 @@ vignette will be useful for referring readers to more complex options
 available in packages like <code>mclust</code> that are not available
 within <code>morphmat</code>.</p>
 <p>We will start by simulating a data set with a known SM50 value of 75
-mm to demonstrate the use (and limitations) of broken-stick methods.</p>
+mm to demonstrate the use (and limitations) of classification
+methods.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span> <span class="co"># set seed for reproducibility</span></span>
 <span></span>
@@ -95,7 +96,7 @@ mm to demonstrate the use (and limitations) of broken-stick methods.</p>
 <div class="section level2">
 <h2 id="clustering-methods">Clustering methods<a class="anchor" aria-label="anchor" href="#clustering-methods"></a>
 </h2>
-<p>Endless clustering methods have been implemented in existing R
+<p>Innumerable clustering methods have been implemented in existing R
 packages. I will be using simulation testing to evaluate the relative
 performance of common clustering methods when used to separate immature
 and mature crustaceans based on morphometric data. Functions included in
@@ -115,7 +116,7 @@ Stevens.</p>
 <h3 id="somerton-method">Somerton method<a class="anchor" aria-label="anchor" href="#somerton-method"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">out_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/somerton_fun.html">somerton_fun</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">out_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/somerton.html">somerton</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">out_df</span>,</span>
 <span>           <span class="va">pred_mat_num</span> <span class="op">~</span> <span class="va">x</span>,</span>
 <span>           family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span></span>

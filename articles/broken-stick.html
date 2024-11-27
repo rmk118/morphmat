@@ -321,12 +321,12 @@ fast and might be helpful for large data sets).</p>
 <span><span class="co">#&gt; Maximal statistic = 7.7314, threshold = 75.475, p-value = 0.01028</span></span>
 <span><span class="co">#&gt; alternative hypothesis: two-sided</span></span></code></pre></div>
 <p>It is interesting that this function returns a slightly different
-breakpoint/threshold estimate from the chngptm() function when both are
-called using the default search region bounds (regardless of what
-set.seed is set to before calling the functions). Additionally, the test
-statistic for the model with the less accurate breakpoint estimate is
-much higher than for the more accurate model, yielding a lower
-p-value.</p>
+breakpoint/threshold estimate from the <code><a href="https://rdrr.io/pkg/chngpt/man/chngptm.html" class="external-link">chngptm()</a></code> function
+when both are called using the default search region bounds (regardless
+of what set.seed is set to before calling the functions). Additionally,
+the test statistic for the model with the less accurate breakpoint
+estimate is much higher than for the more accurate model, yielding a
+lower p-value.</p>
 </div>
 <div class="section level2">
 <h2 id="regrans">REGRANS<a class="anchor" aria-label="anchor" href="#regrans"></a>
@@ -341,7 +341,7 @@ you want this function to test; otherwise, it tests a user-defined
 number of evenly-spaced values (default = 100) ranging from the 0.2
 quantile to the 0.8 quantile of the x-axis variable.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">regrans_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regrans_fun.html">regrans_fun</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">regrans_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regrans.html">regrans</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">regrans_est</span></span>
 <span><span class="co">#&gt; [1] 69.35071</span></span></code></pre></div>
 <p><img src="broken-stick_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
@@ -351,7 +351,7 @@ values of the upper and lower bounds of the region considered plausible
 to contain the SM50 value.</p>
 </div>
 <div class="section level2">
-<h2 id="crab_maturity-type-a-stevens">Crab_Maturity Type A (Stevens)<a class="anchor" aria-label="anchor" href="#crab_maturity-type-a-stevens"></a>
+<h2 id="crab_maturity-type-a-broken-stick-stevens">Crab_Maturity Type A (Broken-stick Stevens)<a class="anchor" aria-label="anchor" href="#crab_maturity-type-a-broken-stick-stevens"></a>
 </h2>
 <p>A third algorithm for using segmented regression to estimate SM50 was
 written by Dr. Bradley Stevens at the University of Maryland Eastern
@@ -359,8 +359,8 @@ Shore. This code is part of the <a href="https://github.com/Crabman52/Crustacean
 program</a> available on GitHub. There are several different methods
 included within Crab_Maturity; this segmented regression approach is
 included here because it differs from the <code>segmented</code> and
-REGRANS methods in that possible SM50 values are restricted to values of
-the x-variable present in the data set.</p>
+REGRANS methods in that <em>possible SM50 values are restricted to
+values of the x-variable present in the data set</em>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stevens_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/broken_stick_stevens.html">broken_stick_stevens</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">stevens_est</span></span>
