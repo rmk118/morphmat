@@ -52,7 +52,7 @@ mytheme <- theme_classic() + # define custom theme for ggplots
 
 This vignette describes methods that first classify individual data points as mature or immature, enabling the use of logistic regression to find SM50 as would be done with a physiological metric of maturity. This vignette will be useful for referring readers to more complex options available in packages like `mclust` that are not available within `morphmat`.
 
-We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate the use (and limitations) of broken-stick methods.
+We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate the use (and limitations) of classification methods.
 
 ```{r}
 #| label: generate-crabs
@@ -80,14 +80,14 @@ ggplot() +
 
 # Clustering methods
 
-Endless clustering methods have been implemented in existing R packages. I will be using simulation testing to evaluate the relative performance of common clustering methods when used to separate immature and mature crustaceans based on morphometric data. Functions included in the simulation testing will include `hclust()` and `kmeans()` from the base R `stats` package; `factoextra::hkmeans()`; `cluster::PAM()`; `mclust::Mclust()`; and `dbscan()`, `hdbscan()`, and `OPTICS()` from the `dbscan` package.
+Innumerable clustering methods have been implemented in existing R packages. I will be using simulation testing to evaluate the relative performance of common clustering methods when used to separate immature and mature crustaceans based on morphometric data. Functions included in the simulation testing will include `hclust()` and `kmeans()` from the base R `stats` package; `factoextra::hkmeans()`; `cluster::PAM()`; `mclust::Mclust()`; and `dbscan()`, `hdbscan()`, and `OPTICS()` from the `dbscan` package.
 
 The Somerton method is a clustering method widely used for estimating size at maturity based on the allometric growth of crustacean body parts, originally written in FORTRAN [@somerton1980a]. `morphmat` will contain code to implement the Somerton method in R, largely following the structure of code written by Dr. Bradley Stevens.
 
 ## Somerton method
 
 ```{r}
-out_df <- somerton_fun(fc, xvar = "x", yvar = "y")[[1]]
+out_df <- somerton(fc, xvar = "x", yvar = "y")[[1]]
 mod <- glm(data = out_df,
            pred_mat_num ~ x,
            family = binomial(link = "logit"))

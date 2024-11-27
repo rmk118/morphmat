@@ -44,9 +44,9 @@ x <- rnorm(100, mean = 2, sd = 3)
 y <- rnorm(100, mean = 15, sd = 3)
 z <- c(x, y)
 hist(z)
-dat1 <- data.frame(xvar=rep(1, 200),yvar=z)
+dat1 <- data.frame(xvar = rep(1, 200), yvar = z)
 infl_pt(dat1, "xvar", "yvar", TRUE)
-fc <- fake_crustaceans(n=100, allo_params=c(1, 0.2, 1.1, 0.2))
+fc <- fake_crustaceans(n = 100, allo_params = c(1, 0.2, 1.1, 0.2))
 infl_pt(fc, "x", "y", TRUE)
 
 }

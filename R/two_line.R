@@ -1,4 +1,13 @@
-#' Two-line methods from Bradley Stevens
+#' Two-line regression method for estimating size at maturity
+#'
+#' @description Fits separate linear models for the allometric growth of
+#'   immature and mature individuals. Code adapted from Dr. Bradley Stevens at
+#'   the University of Maryland Eastern Shore.
+#'
+#' @details The optimal breakpoint between lines is found by minimizing the
+#'   residual sum of squares when iterating over (1) num_bps evenly-spaced
+#'   values within the possible range or (2) all values of the x-axis variable
+#'   present in the unknown range.
 #'
 #' @param dat data frame or matrix containing the data
 #' @param xvar Name of column (integer or double) of measurements for the x-axis
@@ -23,19 +32,24 @@
 #' @returns If verbose is FALSE (the default), two possible estimates of SM50:
 #'   the breakpoint x-value marking the transition between immature and mature
 #'   points/lines, and the intersection point where the two lines cross. The
-#'   intersection value will typically be extremely unrealistic unless
-#'   the slopes of the lines are drastically different. If verbose is TRUE,
-#'   output is a list that also includes the original data with a column
-#'   representing which line (immature or mature) the point was assigned to, the
-#'   immature amd mature slope and intercept parameters, and the intersection
-#'   point of the two lines.
+#'   intersection value will typically be extremely unrealistic unless the
+#'   slopes of the lines are drastically different. If verbose is TRUE, output
+#'   is a list that also includes the original data with a column representing
+#'   which line (immature or mature) the point was assigned to, the immature and
+#'   mature slope and intercept parameters, and the intersection point of the
+#'   two lines.
 #' @export
 #'
 #' @examples
 #' #' set.seed(12)
 #' fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
-#' two_line_stevens(fc, xvar = "x", yvar = "y", verbose = FALSE)
-two_line_stevens <- function(dat,
+#' two_line(fc, xvar = "x", yvar = "y", verbose = FALSE)
+#'
+#' @seealso [two_line_logistic()] for an alternative two-line model with a
+#'   logistic transition between the left and right segments and
+#'   [broken_stick()] for segmented/piecewise regression methods.
+#'
+two_line <- function(dat,
                              xvar,
                              yvar,
                              lower = NULL,

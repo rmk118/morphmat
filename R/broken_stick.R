@@ -91,7 +91,7 @@ broken_stick <- function(dat,
     out <- append(out, c(segmented=seg_lm))
   }
   if ("regrans" %in% method | "all" %in% method) {
-    temp  <- regrans_fun(dat, xvar, yvar, verbose = FALSE)
+    temp  <- regrans(dat, xvar, yvar, verbose = FALSE)
     if (!("all" %in% method) & length(method)==1) {
       out <- temp
     }

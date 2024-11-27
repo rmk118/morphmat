@@ -35,7 +35,7 @@ mytheme <- theme_classic()+ #define custom theme for ggplots
   theme(
     axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
     axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
-    text=element_text(size=13))
+    text=element_text(size = 13))
 ```
 
 <!-- Here I will write a vignette explaining all of the two-line regression methods. This will be useful for referring readers to more complex options available in packages like `chngpt` that are not available within `morphmat`. -->
@@ -75,7 +75,7 @@ ggplot() +
 ```
 
 ```{r}
-stevens_est <- two_line_stevens(fc, "x", "y", verbose = FALSE)
+stevens_est <- two_line(fc, "x", "y", verbose = FALSE)
 stevens_est
 ```
 

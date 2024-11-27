@@ -33,7 +33,7 @@ A compilation of methods used to estimate size at (sexual) maturity based on mor
 `morphmat` will include versions of the methods implemented in these existing GitHub repositories:
 
 |  |  |  |  |
-|----|----|----|----|
+|-----------------|-----------------|-----------------|----------------------|
 | **Type** | **Authors** | **GitHub repository** | **Description/notes** |
 | Package | Josymar Torrejon-Magallanes | [ejosymart/sizeMat](https://github.com/ejosymart/sizeMat) | [sizeMat: An R Package to Estimate Size at Sexual Maturity](https://cran.r-project.org/web/packages/sizeMat/vignettes/sizeMat.html) |
 | Package | Rodrigo Sant'Ana, Fernando Mayer | [rodrigosantana/Regrans: Fits Segmented Linear Regression Models](https://github.com/rodrigosantana/Regrans) | Older repository: [fernandomayer/Regrans](https://github.com/fernandomayer/Regrans/blob/master/change.point.R) |
@@ -46,7 +46,7 @@ A compilation of methods used to estimate size at (sexual) maturity based on mor
 The following scripts do not use morphometric data and require individuals to already be classified as mature or immature. They provide various examples of how to fit maturity\~length binomial models to estimate SM50 and obtain confidence intervals. These tools can also be used to calculate size at maturity for non-crustacean fisheries. For a comprehensive examination of this type of model, see [@mainguy2024].
 
 |  |  |  |  |
-|----|----|----|----|
+|----------------|----------------|-----------------|-----------------------|
 | **Type** | **Authors** | **GitHub repository** | **Description/notes** |
 | R scripts | Lucas Rodrigues | [lvcasrodrigues/maturity_at_size](https://github.com/lvcasrodrigues/maturity_at_size) | Does not use morphometric data; takes size classes with known numbers of mature individuals per size class and fits a binomial model (frequentist or Bayesian). Finds SM50 by generating new data from the model rather than from ratio of parameters |
 | R scripts | Mainguy et al. | [rafamoral/L50](https://github.com/rafamoral/L50): Monitoring reproduction in fish: Assessing the adequacy of ogives and the predicted uncertainty of their *L*~50~ estimates for more reliable biological inferences | Over a dozen methods for estimating L50 values and obtaining confidence intervals from (frequentist or Bayesian) binomial models (Delta, Fieller, bootstrap resampling, profile-likelihood, etc.). See accompanying manuscript by Mainguy et al. [-@mainguy2024]. |
@@ -77,7 +77,7 @@ fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
 REGRANS:
 
 ```{r}
-regrans_fun(fc, "x", "y", verbose = FALSE)
+regrans(fc, "x", "y", verbose = FALSE)
 ```
 
 Two-line logistic:
@@ -86,10 +86,10 @@ Two-line logistic:
 two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE)
 ```
 
-Two-line Stevens:
+Two-line model (lines are fit separately; no forced intersection):
 
 ```{r}
-two_line_stevens(fc, xvar = "x", yvar = "y", verbose = FALSE)
+two_line(fc, xvar = "x", yvar = "y", verbose = FALSE)
 ```
 
 Broken-stick Stevens:
@@ -116,7 +116,7 @@ broken_stick(fc, xvar = "x", yvar = "y", method = "all")
 Somerton method:
 
 ```{r}
-out_df <- somerton_fun(fc, xvar = "x", yvar = "y")[[1]]
+out_df <- somerton(fc, xvar = "x", yvar = "y")[[1]]
 mod <- glm(data = out_df, pred_mat_num ~ x, family = binomial(link = "logit"))
 unname(-coef(mod)[1] / coef(mod)[2])
 ```

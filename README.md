@@ -94,7 +94,7 @@ fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
 REGRANS:
 
 ``` r
-regrans_fun(fc, "x", "y", verbose = FALSE)
+regrans(fc, "x", "y", verbose = FALSE)
 #> [1] 89.43822
 ```
 
@@ -106,10 +106,10 @@ two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE)
 #> 104.7633
 ```
 
-Two-line Stevens:
+Two-line model (lines are fit separately; no forced intersection):
 
 ``` r
-two_line_stevens(fc, xvar = "x", yvar = "y", verbose = FALSE)
+two_line(fc, xvar = "x", yvar = "y", verbose = FALSE)
 #>   breakpoint intersection 
 #>     106.0655    1383.9744
 ```
@@ -141,7 +141,7 @@ broken_stick(fc, xvar = "x", yvar = "y", method = "all")
 Somerton method:
 
 ``` r
-out_df <- somerton_fun(fc, xvar = "x", yvar = "y")[[1]]
+out_df <- somerton(fc, xvar = "x", yvar = "y")[[1]]
 mod <- glm(data = out_df, pred_mat_num ~ x, family = binomial(link = "logit"))
 unname(-coef(mod)[1] / coef(mod)[2])
 #> [1] 102.37

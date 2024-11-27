@@ -37,11 +37,11 @@ library(ggplot2)
 #| label: setup-2
 #| echo: false
 
-mytheme <- theme_classic()+ #define custom theme for ggplots
+mytheme <- theme_classic() + #define custom theme for ggplots
   theme(
     axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
     axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
-    text=element_text(size=13))
+    text = element_text(size = 13))
 ```
 
 <!-- Here I will write a vignette explaining all of the broken-stick regression methods. This will be useful for referring readers to more complex options available in packages like `segmented` that are not available within `morphmat`. -->
@@ -277,7 +277,7 @@ chngpt.test(
 )
 ```
 
-It is interesting that this function returns a slightly different breakpoint/threshold estimate from the chngptm() function when both are called using the default search region bounds (regardless of what set.seed is set to before calling the functions). Additionally, the test statistic for the model with the less accurate breakpoint estimate is much higher than for the more accurate model, yielding a lower p-value.
+It is interesting that this function returns a slightly different breakpoint/threshold estimate from the `chngptm()` function when both are called using the default search region bounds (regardless of what set.seed is set to before calling the functions). Additionally, the test statistic for the model with the less accurate breakpoint estimate is much higher than for the more accurate model, yielding a lower p-value.
 
 ## REGRANS
 
@@ -286,7 +286,7 @@ We will also test the broken-stick method by manually coding an algorithm to ide
 You can optionally define lower and upper limits for the changepoints you want this function to test; otherwise, it tests a user-defined number of evenly-spaced values (default = 100) ranging from the 0.2 quantile to the 0.8 quantile of the x-axis variable.
 
 ```{r}
-regrans_est <- regrans_fun(fc, "x", "y", verbose = FALSE)
+regrans_est <- regrans(fc, "x", "y", verbose = FALSE)
 regrans_est
 ```
 
@@ -308,9 +308,9 @@ ggplot() +
 
 As with the previous broken-stick methods, REGRANS tends to underestimate SM50 and the model estimates are highly sensitive to the values of the upper and lower bounds of the region considered plausible to contain the SM50 value.
 
-## Crab_Maturity Type A (Stevens)
+## Crab_Maturity Type A (Broken-stick Stevens)
 
-A third algorithm for using segmented regression to estimate SM50 was written by Dr. Bradley Stevens at the University of Maryland Eastern Shore. This code is part of the [Crab_Maturity program](https://github.com/Crabman52/Crustacean_Sensation) available on GitHub. There are several different methods included within Crab_Maturity; this segmented regression approach is included here because it differs from the `segmented` and REGRANS methods in that possible SM50 values are restricted to values of the x-variable present in the data set.
+A third algorithm for using segmented regression to estimate SM50 was written by Dr. Bradley Stevens at the University of Maryland Eastern Shore. This code is part of the [Crab_Maturity program](https://github.com/Crabman52/Crustacean_Sensation) available on GitHub. There are several different methods included within Crab_Maturity; this segmented regression approach is included here because it differs from the `segmented` and REGRANS methods in that *possible SM50 values are restricted to values of the x-variable present in the data set*.
 
 ```{r}
 stevens_est <- broken_stick_stevens(fc, "x", "y", verbose = FALSE)

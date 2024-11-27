@@ -55,6 +55,7 @@ broken_stick_stevens <- function(dat,
   stevens$xvar <- xraw
   stevens$yvar <- yraw
 
+  # null model - single line to describe both maturity stages
   lm0 <- stats::lm(yvar ~ xvar, data = stevens)
   rss0 <- stats::anova(lm0)[[2, 2]] # residual sum of squares
   ms0 <- stats::anova(lm0)[[3]] # mean squared error
@@ -64,7 +65,7 @@ broken_stick_stevens <- function(dat,
   mse0 <- mean(lm0$residuals ^ 2)
 
   # assign group membership
-  # 1 = left line, 2= right line
+  # 1 = left line, 2 = right line
   memb <- rep(1, nrow(stevens))
   memb_low <- (xraw <= min_x) # T/F list if less than low range
   memb_high <- (yraw > min_y) # T/F list if GT than high range
@@ -113,7 +114,7 @@ broken_stick_stevens <- function(dat,
 
     if (run == 1 |
         (rss_pool < rss_min)) {
-      # Run 1 OR pooled RSS
+      # Run 1 OR pooled RSS < minimum RSS so far
       rss_min <- rss_pool
       joint_x <- min_x
       joint_y <- min_y
