@@ -61,7 +61,7 @@ We will start by simulating a data set with a known SM50 value of 75 mm to demon
 ```{r}
 #| label: generate-crabs
 
-set.seed(123) # set seed for reproducibility
+set.seed(12) # set seed for reproducibility
 
 fc <- fake_crustaceans(
   error_scale = 17,

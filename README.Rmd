@@ -43,7 +43,7 @@ A compilation of methods used to estimate size at (sexual) maturity based on mor
 | Package | Tobie Surette | [TobieSurette/gulf.stats](https://github.com/TobieSurette/gulf.stats) | See files [morphometric.maturity.R](https://github.com/TobieSurette/gulf.stats/blob/master/R/morphometric.maturity.R) and [morphometry.R](https://github.com/TobieSurette/gulf.stats/blob/master/R/morphometry.R) |
 | R scripts | Bradley Stevens | [Crabman52/Crustacean_Sensation](https://github.com/Crabman52/Crustacean_Sensation) | Include three different methods for separating mature from immature crabs based on allometric growth of body parts, with code based on Somerton's (1980) program MATURE |
 
-The following scripts do not use morphometric data and require individuals to already be classified as mature or immature. They provide various examples of how to fit maturity\~length binomial models to estimate SM50 and obtain confidence intervals. These tools can also be used to calculate size at maturity for non-crustacean fisheries. For a comprehensive examination of this type of model, see [@mainguy2024].
+The following scripts do not use morphometric data and require individuals to already be classified as mature or immature. They provide various examples of how to fit maturity\~length binomial models to estimate SM50 and obtain confidence intervals. These tools can also be used to calculate size at maturity for non-crustacean fisheries. For a comprehensive examination of this type of model, see Mainguy et al [-@mainguy2024].
 
 |  |  |  |  |
 |----------------|----------------|-----------------|-----------------------|
@@ -92,7 +92,7 @@ Two-line model (lines are fit separately; no forced intersection):
 two_line(fc, xvar = "x", yvar = "y", verbose = FALSE)
 ```
 
-Broken-stick Stevens:
+Broken-stick Stevens (only iterates over values of the x-axis variable present in the data):
 
 ```{r}
 broken_stick_stevens(fc, xvar = "x", yvar = "y", verbose = FALSE)

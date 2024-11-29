@@ -58,8 +58,8 @@ individuals to already be classified as mature or immature. They provide
 various examples of how to fit maturity~length binomial models to
 estimate SM50 and obtain confidence intervals. These tools can also be
 used to calculate size at maturity for non-crustacean fisheries. For a
-comprehensive examination of this type of model, see ([Mainguy et al.
-2024](#ref-mainguy2024)).
+comprehensive examination of this type of model, see Mainguy et al
+([2024](#ref-mainguy2024)).
 
 |  |  |  |  |
 |----|----|----|----|
@@ -114,7 +114,8 @@ two_line(fc, xvar = "x", yvar = "y", verbose = FALSE)
 #>     106.0655    1383.9744
 ```
 
-Broken-stick Stevens:
+Broken-stick Stevens (only iterates over values of the x-axis variable
+present in the data):
 
 ``` r
 broken_stick_stevens(fc, xvar = "x", yvar = "y", verbose = FALSE)

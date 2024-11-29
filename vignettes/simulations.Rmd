@@ -56,9 +56,10 @@ mytheme <- theme_classic()+ #define custom theme for ggplots
 
 The parameterization of the logistic equation we will use is: $$f(x)=\frac{1}{1+e^{-(x-a)/b}} $$ where $a$ is a location parameter and $b$ is the shape parameter.
 
-The allometric growth equation is \\begin{equation}\label{eqn:allometry}Y=\\beta X\^{\\alpha},\\end{equation}
+The allometric growth equation is
+$$Y=\beta X^{\alpha}$$
 
-which results in a linear plot when log-transformed: $\log{(Y)}= \tilde\beta+\alpha \log{(X)}$. Here, $\alpha$ is the slope of the allometric line and $\beta$ is the intercept, with $\tilde{\beta}=\log{(\beta)}$. Differences in the intercept of the allometry indicate differences in the proportionate size of the chela, irrespective of carapace width. In contrast, differences in the slope parameter represent differences in how the relative size of the chela changes with body size.
+which results in a linear plot when log-transformed: $\log{(Y)}= \tilde{\beta}+\alpha\log{(X)}$. Here, $\alpha$ is the slope of the allometric line and $\beta$ is the intercept, with $\tilde{\beta}=\log{(\beta)}$. Differences in the intercept of the allometry indicate differences in the proportionate size of the chela, irrespective of carapace width. In contrast, differences in the slope parameter represent differences in how the relative size of the chela changes with body size.
 
 ## A note on the error distribution
 
