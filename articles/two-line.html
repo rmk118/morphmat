@@ -74,7 +74,7 @@
     
 <!-- Here I will write a vignette explaining all of the two-line regression methods. This will be useful for referring readers to more complex options available in packages like `chngpt` that are not available within `morphmat`. -->
 <div class="section level3">
-<h3 id="sec-twoA">Standard<a class="anchor" aria-label="anchor" href="#sec-twoA"></a>
+<h3 id="sec-twoA">Description<a class="anchor" aria-label="anchor" href="#sec-twoA"></a>
 </h3>
 <p>Two-line models differ from broken-stick models because the
 intersection point of the line representing the immature individuals and
@@ -88,19 +88,17 @@ piecewise regression model to find the x-value/breakpoint that gives the
 lowest mean square error (MSE) by iteratively testing each observed
 x-value within the range of unknown maturity. In the second version, the
 tested x-values are evenly spaced points within the unknown range, and
-may not equal actual observed values (like REGRANS). The number and
-interval between points can be user-defined, but we will follow the
-convention of REGRANS and simply test every integer value in the unknown
-range.</p>
+may not equal actual observed values (like REGRANS). The number of (and
+therefore interval between) points can be user-defined.</p>
 <p>The SM50 could be defined as the optimal breakpoint OR as the point
 at which the two lines actually intersect; i.e. where the regression
-equations predict the same y-value. The intersection point may be lower
-than the previously determined breakpoint and can even be negative, so
-it is often more reasonable to use the breakpoint as our estimate of
-SM50.</p>
+equations predict the same y-value. The intersection point may be much
+lower or higher than the previously determined breakpoint and can even
+be negative, so it is often more reasonable to use the breakpoint as our
+estimate of SM50.</p>
 </div>
 <div class="section level2">
-<h2 id="two-line-stevens">Two-line Stevens<a class="anchor" aria-label="anchor" href="#two-line-stevens"></a>
+<h2 id="two-line-standard">Two-line: standard<a class="anchor" aria-label="anchor" href="#two-line-standard"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span> <span class="co"># set seed for reproducibility</span></span>
@@ -114,16 +112,33 @@ SM50.</p>
 <span>  x_mean <span class="op">=</span> <span class="fl">85</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="two-line_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p>The default function call iterates over 100 evenly-spaced points
+between the default upper and lower bounds (0.2 and 0.8 quantiles of the
+x-axis variable) of the region to search for possible SM50 values.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">stevens_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/two_line.html">two_line</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">stevens_est</span></span>
+<code class="sourceCode R"><span><span class="va">two_line_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/two_line.html">two_line</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">two_line_est</span></span>
 <span><span class="co">#&gt;   breakpoint intersection </span></span>
 <span><span class="co">#&gt;     88.01449    385.85516</span></span></code></pre></div>
+<p>The result can be influenced by the number of breakpoints tested:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/two_line.html">two_line</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, num_bps <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   breakpoint intersection </span></span>
+<span><span class="co">#&gt;     87.59491    529.48825</span></span>
+<span><span class="fu"><a href="../reference/two_line.html">two_line</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, num_bps <span class="op">=</span> <span class="fl">400</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   breakpoint intersection </span></span>
+<span><span class="co">#&gt;     87.63043    529.48825</span></span></code></pre></div>
+<p>Alternatively, possible breakpoints can be restricted to values of
+the x-axis variable present in the data:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/two_line.html">two_line</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, bps <span class="op">=</span> <span class="st">"obs"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   breakpoint intersection </span></span>
+<span><span class="co">#&gt;     88.03361    435.79877</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="two-line-with-logistic-transition">Two-line with logistic transition<a class="anchor" aria-label="anchor" href="#two-line-with-logistic-transition"></a>
+<h2 id="two-line-logistic-transition">Two-line: logistic transition<a class="anchor" aria-label="anchor" href="#two-line-logistic-transition"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tll_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/two_line_logistic.html">two_line_logistic</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">tll_est</span></span>
 <span><span class="co">#&gt;     SM50 </span></span>

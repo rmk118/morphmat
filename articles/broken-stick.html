@@ -101,7 +101,7 @@ is taken to be SM50.</p>
 <p>We will start by simulating a data set with a known SM50 value of 75
 mm to demonstrate the use (and limitations) of broken-stick methods.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span> <span class="co"># set seed for reproducibility</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span> <span class="co"># set seed for reproducibility</span></span>
 <span></span>
 <span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fake_crustaceans.html">fake_crustaceans</a></span><span class="op">(</span></span>
 <span>  error_scale <span class="op">=</span> <span class="fl">17</span>,</span>
@@ -134,13 +134,13 @@ as those from the “delta” and “gradient” methods included in the
 confidence intervals for the break point:</p>
 <pre><code><span><span class="co">#&gt; Delta method:</span></span>
 <span><span class="co">#&gt;           Est. CI(95%).low CI(95%).up</span></span>
-<span><span class="co">#&gt; psi1.x 59.2594     52.0697     66.449</span></span>
+<span><span class="co">#&gt; psi1.x 63.9545     57.1425    70.7665</span></span>
 <span><span class="co">#&gt; Score method:</span></span>
 <span><span class="co">#&gt;           Est. CI(95%).low CI(95%).up</span></span>
-<span><span class="co">#&gt; psi1.x 59.2594     51.6198    65.0947</span></span>
+<span><span class="co">#&gt; psi1.x 63.9545     50.1308    67.6307</span></span>
 <span><span class="co">#&gt; Gradient method:</span></span>
 <span><span class="co">#&gt;           Est. CI(95%).low CI(95%).up</span></span>
-<span><span class="co">#&gt; psi1.x 59.2594      51.016    67.7093</span></span></code></pre>
+<span><span class="co">#&gt; psi1.x 63.9545     53.7911    70.2144</span></span></code></pre>
 <p>We can also use an ANOVA test to compare the segmented model to a
 single linear model:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -149,9 +149,9 @@ single linear model:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model 1: y ~ x</span></span>
 <span><span class="co">#&gt; Model 2: y ~ x + U1.x + psi1.x</span></span>
-<span><span class="co">#&gt;   Res.Df    RSS Df Sum of Sq      F   Pr(&gt;F)    </span></span>
-<span><span class="co">#&gt; 1    798 7681.8                                 </span></span>
-<span><span class="co">#&gt; 2    796 7496.5  2    185.29 9.8375 6.02e-05 ***</span></span>
+<span><span class="co">#&gt;   Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    </span></span>
+<span><span class="co">#&gt; 1    798 7866.2                                  </span></span>
+<span><span class="co">#&gt; 2    796 7629.8  2     236.4 12.332 5.318e-06 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>
 <div class="figure">
@@ -185,13 +185,13 @@ breakpoint <span class="citation">(<a href="#ref-fong2017">Fong et al.
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;                    est Std. Error*     (lower    upper)     p.value*</span></span>
-<span><span class="co">#&gt; (Intercept) -0.1642533  0.84261672 -2.0797746 1.2232829 8.454458e-01</span></span>
-<span><span class="co">#&gt; x            0.1775513  0.01840241  0.1477799 0.2199174 4.999353e-22</span></span>
-<span><span class="co">#&gt; (x-chngpt)+  0.1626764  0.01871295  0.1230745 0.1964292 3.522081e-18</span></span>
+<span><span class="co">#&gt; (Intercept) -0.9153689  0.62858364 -1.9643531 0.4996948 1.453262e-01</span></span>
+<span><span class="co">#&gt; x            0.2005470  0.01357774  0.1688772 0.2221020 2.277627e-49</span></span>
+<span><span class="co">#&gt; (x-chngpt)+  0.1425691  0.01659954  0.1134477 0.1785179 8.793325e-18</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Threshold:</span></span>
 <span><span class="co">#&gt;        est Std. Error     (lower     upper) </span></span>
-<span><span class="co">#&gt;  59.259390   2.342262  55.983514  65.165182</span></span></code></pre></div>
+<span><span class="co">#&gt;  63.954507   2.031396  58.890638  66.853710</span></span></code></pre></div>
 <div class="figure">
 <img src="broken-stick_files/figure-html/fig-chngpt-plots-1.png" alt="Broken-stick model from the package chngpt" width="700"><p class="caption">
 Broken-stick model from the package chngpt
@@ -225,7 +225,7 @@ produces very similar results to the default bootstrap method.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">[[</span><span class="st">"chngpt"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;        est Std. Error     (lower     upper) </span></span>
-<span><span class="co">#&gt;  59.259390   4.019829  51.157970  66.915699</span></span></code></pre></div>
+<span><span class="co">#&gt;  63.954507   3.364602  55.814677  69.003917</span></span></code></pre></div>
 <p>Adding a starting breakpoint value of 75 (i.e., initializing the
 search at the correct value) through the “chngpt.init” argument does not
 affect the estimate, although it does result in narrower confidence
@@ -243,7 +243,7 @@ intervals:</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">[[</span><span class="st">"chngpt"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;        est Std. Error     (lower     upper) </span></span>
-<span><span class="co">#&gt;  59.259390   2.342262  55.983514  65.165182</span></span></code></pre></div>
+<span><span class="co">#&gt;  63.954507   2.031396  58.890638  66.853710</span></span></code></pre></div>
 <p>This method is EXTREMELY sensitive to the “lb.quantile” and
 “ub.quantile” arguments, which refer to the lower and upper bounds of
 the search range for change point estimate, respectively (the function
@@ -265,7 +265,7 @@ SM50 value closer to the true value of 75 mm.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">[[</span><span class="st">"chngpt"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="co">#&gt;      est </span></span>
-<span><span class="co">#&gt; 77.05939</span></span></code></pre></div>
+<span><span class="co">#&gt; 76.00473</span></span></code></pre></div>
 <p>The estimates and accuracy also change dramatically even with
 slightly different variations of data with the exact same underlying
 structure. Results from detailed investigations of the sensitivity of
@@ -300,7 +300,7 @@ fast and might be helpful for large data sets).</p>
 <span><span class="co">#&gt;  Maximum of Likelihood Ratio Statistics</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; data:  fc</span></span>
-<span><span class="co">#&gt; Maximal statistic = 19.533, threshold = 59.306, p-value = 4e-05</span></span>
+<span><span class="co">#&gt; Maximal statistic = 24.358, threshold = 64.292, p-value &lt; 2.2e-16</span></span>
 <span><span class="co">#&gt; alternative hypothesis: two-sided</span></span>
 <span></span>
 <span><span class="co"># Model with better upper and lower bounds to return</span></span>
@@ -318,7 +318,7 @@ fast and might be helpful for large data sets).</p>
 <span><span class="co">#&gt;  Maximum of Likelihood Ratio Statistics</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; data:  fc</span></span>
-<span><span class="co">#&gt; Maximal statistic = 7.7314, threshold = 75.475, p-value = 0.01028</span></span>
+<span><span class="co">#&gt; Maximal statistic = 13.909, threshold = 74.531, p-value = 0.00036</span></span>
 <span><span class="co">#&gt; alternative hypothesis: two-sided</span></span></code></pre></div>
 <p>It is interesting that this function returns a slightly different
 breakpoint/threshold estimate from the <code><a href="https://rdrr.io/pkg/chngpt/man/chngptm.html" class="external-link">chngptm()</a></code> function
@@ -343,7 +343,7 @@ quantile to the 0.8 quantile of the x-axis variable.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">regrans_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regrans.html">regrans</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">regrans_est</span></span>
-<span><span class="co">#&gt; [1] 69.35071</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 67.67091</span></span></code></pre></div>
 <p><img src="broken-stick_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
 <p>As with the previous broken-stick methods, REGRANS tends to
 underestimate SM50 and the model estimates are highly sensitive to the
@@ -364,7 +364,7 @@ values of the x-variable present in the data set</em>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stevens_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/broken_stick_stevens.html">broken_stick_stevens</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">stevens_est</span></span>
-<span><span class="co">#&gt; [1] 73.51211</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 68.33387</span></span></code></pre></div>
 <p><img src="broken-stick_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
 <div class="section level3 unnumbered">
 <h3 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
