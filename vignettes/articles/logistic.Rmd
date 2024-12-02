@@ -1,0 +1,228 @@
+---
+title: "Post-classification logistic regression"
+editor_options: 
+  chunk_output_type: console
+link-citations: true
+link-external-newwindow: true 
+bibliography: references.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+#| message: FALSE
+#| echo: FALSE
+#| warning: FALSE
+#| output: FALSE
+
+# List of packages required:
+packages <- c("morphmat", "broom", "drc", "drda", "qra", "lmtest", "sandwich",
+  "mclust", "dplyr", "ggplot2")
+
+# Load packages into session
+lapply(packages, require, character.only = TRUE, quietly = TRUE)
+
+mytheme <- theme_classic() + # define custom theme for ggplots
+  theme(
+    axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
+    axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
+    text = element_text(size = 13))
+```
+
+```{r}
+set.seed(12) # set seed for reproducibility
+
+fc <- fake_crustaceans(
+  error_scale = 17,
+  slope = 9,
+  L50 = 75, # known size at maturity is 75 mm
+  n = 800, # sample size
+  allo_params = c(0.9, 0.25, 1.05, 0.2),
+  x_mean = 85 # mean carapace width of the sample
+)
+
+clust_dat <- cbind(fc$x, fc$y)
+mclust_class <- mclust::Mclust(data = clust_dat,
+                               G = 2,
+                               modelNames = "EVV")
+
+fc_mclust <- fc %>%
+  rename(true_maturity = mature) %>%
+  mutate(pred_maturity = mclust_class$classification) 
+
+mature_label <- slice_max(fc_mclust, x) %>% pull(pred_maturity)
+
+fc_mclust <- fc_mclust %>%
+  mutate(
+    pred_maturity = if_else(pred_maturity == mature_label,
+                            as.factor(1),
+                            as.factor(0)),
+    pred_maturity_num = if_else(pred_maturity == 1,
+                                as.numeric(1),
+                                as.numeric(0))) %>%
+  mutate(uncertainty = mclust_class$uncertainty)
+```
+
+# Post-classification logistic regression options
+
+Beyond the familiar `stats::glm`, there are many packages that can be used to model the relationship between size and maturity status, allowing for the incorporation of random effects, temporal or spatial structuring, and other additional complexities. These include popular packages for fitting generalized linear mixed models (GLMMs) and generalized additive (mixed) models (GAMMs) such as `lmer`, `nlme`, `mgcv`, `glmmTMB`, and `sdmTMB`. While logit links are the most common for binomial models like these, testing alternative link functions—particularly the probit and complementary log-log ("cloglog") links—may be important for ensuring reliable parameter estimates [@mainguy2024]. Also see Roa et al. [-@roa1999].
+
+Helpful vignette: <https://cran.r-project.org/web/packages/qra/vignettes/timeMortality.html>
+
+## Methods to obtain confidence intervals for SM50 value
+
+1.  [confint_L.R script](https://github.com/rafamoral/L50/blob/main/confint_L.R) from Mainguy et al. [-@mainguy2024]: Delta method, Fieller method, profile-likelihood, non-parametric bootstrapping, parametric bootstrapping, Monte Carlo, Bayesian
+
+2.  R package qra: Fieller method, Delta method [@maindonald2021]
+
+3.  R package drc [@ritz2015]: Delta method. This package can also fit 5/4/3/2-parameter logistic, log-logistic, Weibull, etc. models, incorporate weights, robust nls fitting, constrained optimization, and other customization options. It also contains functions to simulate data
+
+4: R package DRDA [@malyutina2023]
+
+Other functions that could be used (that I have not tested) include `twopartm::FiellerRatio()` and `tidydelta::tidydelta()`.
+
+### Standard stats::glm
+
+```{r}
+example_glm <- glm(data = fc_mclust,
+                   pred_maturity_num ~ x,
+                   family = binomial(link = "logit"))
+
+broom::tidy(example_glm, conf.int = TRUE)
+
+broom::glance(example_glm) %>%
+  dplyr::select(-c(null.deviance, df.null)) %>%
+  mutate(across(where(is.double), ~ round(.x, digits = 2)))
+
+```
+
+### drc package
+
+```{r}
+testdrm <- drm(pred_maturity_num ~ x,
+               data = fc_mclust,
+               fct = LL.2(),
+               type = "binomial")
+testdrm
+summary(testdrm)
+confint(testdrm, "e")
+
+estfun.drc <- drc::estfun.drc
+bread.drc <- drc::bread.drc
+
+# use lmtest and sandwich packages to obtain robust standard errors
+coeftest(testdrm, vcov = sandwich) 
+ED(testdrm, c(50), "delta")
+
+plot(testdrm) # built-in plotting method
+```
+
+Custom plot example:
+
+```{r}
+sm50_est <- coef(testdrm)[2]
+low_ci <- confint(testdrm, "e")[1]
+hi_ci <- confint(testdrm, "e")[2]
+
+ggplot() +
+  geom_point(aes(x = fc_mclust$x, y = fc_mclust$pred_maturity_num),
+             shape = 1, size = 1) +
+  geom_line(aes(x = fc_mclust$x, y = predict(testdrm))) +
+  geom_vline(xintercept = sm50_est) +
+  geom_rect(aes(xmin = low_ci, xmax = hi_ci,
+    ymin = -Inf, ymax = Inf, fill = "95% CI"), alpha = 0.5) +
+  labs(y = "Probability of maturity", x = "Carapace width (mm)", fill = NULL) +
+  mytheme +
+  theme(legend.position = "inside", legend.position.inside = c(0.75, 0.25))
+```
+
+### qra package
+
+See `qra::fieller()` for details of usage and outputs.
+
+```{r}
+qra::fieller(
+  0.5,
+  b = coef(example_glm),
+  vv = vcov(example_glm),
+  type = "Fieller"
+)
+
+qra::fieller(
+  0.5,
+  b = coef(example_glm),
+  vv = vcov(example_glm),
+  type = "Delta" # probably OK because of low g value
+)
+```
+
+Custom plot example:
+
+```{r}
+qra_est <- qra::fieller(
+  0.5,
+  b = coef(example_glm),
+  vv = vcov(example_glm),
+  type = "Fieller"
+)
+
+sm50_est <- qra_est[1]
+low_ci <- qra_est[3]
+hi_ci <- qra_est[4]
+
+ggplot() +
+  geom_point(aes(x = fc_mclust$x, y = fc_mclust$pred_maturity_num),
+             shape = 1, size = 1) +
+  geom_line(aes(x = fc_mclust$x, y = predict(example_glm, type = "response"))) +
+  geom_vline(xintercept = sm50_est) +
+  geom_rect(aes(xmin = low_ci, xmax = hi_ci,
+    ymin = -Inf, ymax = Inf, fill = "95% CI"), alpha = 0.5) +
+  labs(y = "Probability of maturity", x = "Carapace width (mm)", fill = NULL) +
+  mytheme +
+  theme(legend.position = "inside", legend.position.inside = c(0.75, 0.25))
+```
+
+### DRDA package
+
+```{r}
+fit_l2 <- drda(pred_maturity_num ~ x,
+               data = fc_mclust,
+               mean_function = "logistic2")
+fit_l4 <- drda(pred_maturity_num ~ x,
+               data = fc_mclust,
+               mean_function = "logistic4")
+
+anova(fit_l2, fit_l4)
+anova(fit_l2)
+summary(fit_l2)
+
+plot(fit_l2) # built-in plotting method
+```
+
+Custom plot example:
+
+```{r}
+sum_l2 <- summary(fit_l2)[["param"]][4,]
+
+sm50_est <- sum_l2[1]
+low_ci <- sum_l2[3]
+hi_ci <- sum_l2[4]
+
+ggplot() +
+  geom_point(aes(x = fc_mclust$x, y = fc_mclust$pred_maturity_num),
+             shape = 1, size = 1) +
+  geom_line(aes(x = fc_mclust$x, y = predict(fit_l2))) +
+  geom_vline(xintercept = sm50_est) +
+  geom_rect(aes(xmin = low_ci, xmax = hi_ci,
+    ymin = -Inf, ymax = Inf, fill = "95% CI"), alpha = 0.5) +
+  labs(y = "Probability of maturity", x = "Carapace width (mm)", fill = NULL) +
+  mytheme +
+  theme(legend.position = "inside", legend.position.inside = c(0.75, 0.25))
+```
+
+## References

@@ -69,7 +69,14 @@ library(morphmat)
 set.seed(12) # for reproducibility when generating the simulated data
 
 # Generate a simulated dataset with known size at maturity
-fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
+fc <- fake_crustaceans(
+  error_scale = 17,
+  slope = 9,
+  L50 = 75,
+  n = 800,
+  allo_params = c(0.9, 0.25, 1.05, 0.2),
+  x_mean = 85
+)
 ```
 
 ### Broken-stick/piecewise regression methods
@@ -83,7 +90,7 @@ regrans(fc, "x", "y", verbose = FALSE)
 Two-line logistic:
 
 ```{r}
-two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE, SM50_start = 105)
+two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE, SM50_start = 85)
 ```
 
 Two-line model (lines are fit separately; no forced intersection):

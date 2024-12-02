@@ -86,7 +86,14 @@ library(morphmat)
 set.seed(12) # for reproducibility when generating the simulated data
 
 # Generate a simulated dataset with known size at maturity
-fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
+fc <- fake_crustaceans(
+  error_scale = 17,
+  slope = 9,
+  L50 = 75,
+  n = 800,
+  allo_params = c(0.9, 0.25, 1.05, 0.2),
+  x_mean = 85
+)
 ```
 
 ### Broken-stick/piecewise regression methods
@@ -95,15 +102,15 @@ REGRANS:
 
 ``` r
 regrans(fc, "x", "y", verbose = FALSE)
-#> [1] 89.43822
+#> [1] 67.67091
 ```
 
 Two-line logistic:
 
 ``` r
-two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE, SM50_start = 105)
-#>     SM50 
-#> 104.7636
+two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE, SM50_start = 85)
+#>    SM50 
+#> 77.6817
 ```
 
 Two-line model (lines are fit separately; no forced intersection):
@@ -111,7 +118,7 @@ Two-line model (lines are fit separately; no forced intersection):
 ``` r
 two_line(fc, xvar = "x", yvar = "y", verbose = FALSE)
 #>   breakpoint intersection 
-#>     106.0655    1383.9744
+#>     75.43651     56.76587
 ```
 
 Broken-stick Stevens (only iterates over values of the x-axis variable
@@ -119,7 +126,7 @@ present in the data):
 
 ``` r
 broken_stick_stevens(fc, xvar = "x", yvar = "y", verbose = FALSE)
-#> [1] 91.10524
+#> [1] 68.33387
 ```
 
 Other packages:
@@ -134,9 +141,9 @@ Compare estimates from all piecewise regression methods:
 ``` r
 piecewise_mods(fc, xvar = "x", yvar = "y", method = "all")
 #>                chngpt             segmented               REGRANS 
-#>              89.44561              88.71463              89.43822 
+#>              67.68312              63.95451              67.67091 
 #>               Stevens   Two_line.breakpoint Two_line.intersection 
-#>              91.10524             106.06548            1383.97444
+#>              68.33387              75.43651              56.76587
 ```
 
 ### Clustering methods
@@ -147,7 +154,7 @@ Somerton method:
 out_df <- somerton(fc, xvar = "x", yvar = "y")[[1]]
 mod <- glm(data = out_df, pred_mat_num ~ x, family = binomial(link = "logit"))
 unname(-coef(mod)[1] / coef(mod)[2])
-#> [1] 102.37
+#> [1] 77.70282
 ```
 
 ## References

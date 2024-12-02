@@ -37,7 +37,7 @@ Testing a proposed model against simulated data generated from a known underlyin
 #| label: ggplot_theme
 #| echo: false
 
-mytheme <- theme_classic()+ #define custom theme for ggplots
+mytheme <- theme_classic()+ # define custom theme for ggplots
   theme(
     axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
     axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
@@ -111,17 +111,17 @@ ggplot() +
 #| fig-asp: 0.5
 
 #Size by maturity stage histogram
-ggplot()+
-  geom_density(data=default_sim, 
-              aes(x=x, group=mature, color=mature, fill=mature), alpha=0.5)+
+ggplot() +
+  geom_density(data = default_sim,
+    aes(x = x, group = mature, color = mature, fill = mature), alpha = 0.5) +
   mytheme +
-  labs(fill=NULL, color=NULL, x="Carapace width (mm)", y="Density")+
-  scale_color_manual(values=c("0"="#368aab","1"="#993843"),
-                     breaks=c(0,1),
-                     labels=c("0"="Immature", "1"="Mature"))+
-  scale_fill_manual(values=c("0"="#7bbcd5","1"="#CA6E78"),
-                    breaks=c(0,1),
-                    labels=c("0"="Immature", "1"="Mature"))
+  labs(fill = NULL, color = NULL, x = "Carapace width (mm)", y = "Density") +
+  scale_color_manual(values = c("0" = "#368aab", "1" = "#993843"),
+    breaks = c(0, 1),
+    labels = c("0" = "Immature", "1" = "Mature")) +
+  scale_fill_manual(values = c("0" = "#7bbcd5", "1" = "#CA6E78"),
+    breaks = c(0, 1),
+    labels = c("0" = "Immature", "1" = "Mature"))
 ```
 
 Now we finally plot our two variables of interest:
@@ -134,20 +134,20 @@ Now we finally plot our two variables of interest:
 
 temp_df <- default_sim_long %>% pivot_wider(names_from = var)
 
-ggplot(data=temp_df, aes(x=x, y=y, color=mature))+
-  geom_point(alpha=0.5, size=1)+
-  facet_wrap( ~ log, scales = "free", 
-              labeller = as_labeller(
-                c("FALSE" = "Normal scale", "TRUE" = "Log scale")))+
-  mytheme+
-  labs(x="Carapace width (mm)", y="Chela height (mm)", color=NULL)+
-  scale_color_manual(values=c("0"="#7bbcd5","1"="#CA6E78"),
-                     breaks=c(0,1),
-                     labels=c("0"="Immature", "1"="Mature"))+
-  geom_vline(data = filter(temp_df,log==TRUE), aes(xintercept = log(100)),
-             lty="dashed", color="grey")+
-  geom_vline(data = filter(temp_df,log==FALSE), aes(xintercept = 100),
-             lty="dashed", color="grey")
+ggplot(data = temp_df, aes(x = x, y = y, color = mature)) +
+  geom_point(alpha = 0.5, size = 1) +
+  facet_wrap(~log, scales = "free",
+    labeller = as_labeller(
+      c("FALSE" = "Normal scale", "TRUE" = "Log scale"))) +
+  mytheme +
+  labs(x = "Carapace width (mm)", y = "Chela height (mm)", color = NULL) +
+  scale_color_manual(values = c("0" = "#7bbcd5", "1" = "#CA6E78"),
+    breaks = c(0, 1),
+    labels = c("0" = "Immature", "1" = "Mature")) +
+  geom_vline(data = filter(temp_df, log == TRUE), aes(xintercept = log(100)),
+    lty = "dashed", color = "grey") +
+  geom_vline(data = filter(temp_df, log == FALSE), aes(xintercept = 100),
+    lty = "dashed", color = "grey")
 ```
 
 # Changing parameters
@@ -266,14 +266,14 @@ Another way of visualizing the impact of changing the slope parameter $(a)$ is b
 #| fig-cap: "Density plots illustrating smoothed distributions of mature and immature crabs over a range of carapace widths for four different values controlling the shape of the underlying logistic function."
 
 #Size by maturity stage density plots
-fake_crustaceans %>% 
-  filter(slope_options %in% c(1, 4, 7, 10)) %>% 
-  ggplot()+
-  geom_density(aes(x = x, group = mature, color = mature, fill = mature), 
-               alpha = 0.5)+
+fake_crustaceans %>%
+  filter(slope_options %in% c(1, 4, 7, 10)) %>%
+  ggplot() +
+  geom_density(aes(x = x, group = mature, color = mature, fill = mature),
+    alpha = 0.5) +
   mytheme +
-  facet_wrap(~slope_options, ncol = 1)+
-  labs(fill = NULL, color = NULL, x = "Carapace width (mm)", y = "Density")+
+  facet_wrap(~slope_options, ncol = 1) +
+  labs(fill = NULL, color = NULL, x = "Carapace width (mm)", y = "Density") +
   scale_color_manual(
     values = c("0" = "#368aab", "1" = "#993843"), breaks = c(0, 1),
     labels = c("0" = "Immature", "1" = "Mature")) +
@@ -295,16 +295,16 @@ Let's visualize the data with the default slope parameter of 5 and minimal error
 
 
 # Lines only - original scale
-fake_crustaceans %>% filter(slope_options == 5, errs == "none") %>% 
-ggplot()+
-  geom_point(aes(x = x, y = y, color = mature), size = 1, alpha = 0.5)+
-  facet_wrap( ~ name)+
-  mytheme+
-  labs(x = "Carapace width (mm)", y = "Chela height (mm)", color = NULL)+
-  geom_vline(xintercept = 100, lty = "dashed", color = "gray")+
+fake_crustaceans %>% filter(slope_options == 5, errs == "none") %>%
+  ggplot() +
+  geom_point(aes(x = x, y = y, color = mature), size = 1, alpha = 0.5) +
+  facet_wrap(~name) +
+  mytheme +
+  labs(x = "Carapace width (mm)", y = "Chela height (mm)", color = NULL) +
+  geom_vline(xintercept = 100, lty = "dashed", color = "gray") +
   scale_color_manual(values = c("0" = "#7bbcd5", "1" = "#CA6E78"),
-                     breaks = c(0, 1),
-                     labels = c("0" = "Immature", "1" = "Mature"))
+    breaks = c(0, 1),
+    labels = c("0" = "Immature", "1" = "Mature"))
 
 ```
 
@@ -316,18 +316,19 @@ ggplot()+
 #| fig-cap: "Log chela height vs. log carapace width for the different allometric parameter sets"
 
 # Lines only - log scale
-fake_crustaceans %>% filter(slope_options == 5, errs == "none") %>% 
-ggplot()+
-  geom_point(aes(x = log_x, y = log_y, color = mature), size = 1, alpha = 0.5)+
-  facet_wrap( ~ name)+
-  mytheme+
-  labs(x = "Log carapace width (mm)", y = "Log chela height (mm)", color = NULL)+
-  geom_vline(xintercept = log(100), lty = "dashed", color = "gray")+
+fake_crustaceans %>% 
+  filter(slope_options == 5, errs == "none") %>%
+  ggplot() +
+  geom_point(aes(x = log_x, y = log_y, color = mature), size = 1, alpha = 0.5) +
+  facet_wrap(~name) +
+  mytheme +
+  labs(x = "Log carapace width (mm)",
+       y = "Log chela height (mm)",
+       color = NULL) +
+  geom_vline(xintercept = log(100), lty = "dashed", color = "gray") +
   scale_color_manual(values = c("0" = "#7bbcd5", "1" = "#CA6E78"),
-                     breaks = c(0, 1),
-                     labels = c("0" = "Immature", "1" = "Mature"))
-
-
+    breaks = c(0, 1),
+    labels = c("0" = "Immature", "1" = "Mature"))
 ```
 
 :::
@@ -369,7 +370,6 @@ fake_crustaceans %>% filter(slope_options == 5) %>%
 #| code-fold: true
 #| fig-cap: "Log chela height vs. log carapace width for the different allometric parameter sets and error options"
 
-
 # Points and lines for one shape parameter and 3 error combos - log scale
 fake_crustaceans %>% filter(slope_options == 5) %>%
   ggplot() +
@@ -402,23 +402,24 @@ Keeping the error levels low, here is what each allometric parameter set looks l
 #| code-fold: true
 #| fig-cap: "Chela height vs. carapace width for the different allometric parameter sets and logistic slope options"
 
-fake_crustaceans %>% filter(errs == "low", slope_options %in% c(1, 4, 7, 10)) %>% 
-ggplot()+
-  geom_vline(xintercept = 100, lty = "dashed", color = "gray")+
+fake_crustaceans %>% 
+  filter(errs == "low", slope_options %in% c(1, 4, 7, 10)) %>%
+  ggplot() +
+  geom_vline(xintercept = 100, lty = "dashed", color = "gray") +
   geom_point(aes(x = x, y = y, color = mature, fill = mature),
-             shape = 21, alpha = 0.5, size = 1, stroke = 0)+
-  facet_grid(slope_options ~ name)+
-  mytheme+
+    shape = 21, alpha = 0.5, size = 1, stroke = 0) +
+  facet_grid(slope_options ~ name) +
+  mytheme +
   labs(x = "Carapace width (mm)", y = "Chela height (mm)",
-       color = NULL, fill = NULL)+
+    color = NULL, fill = NULL) +
   scale_color_manual(
     values = c("0" = "#368aab", "1" = "#993843"), breaks = c(0, 1),
     labels = c("0" = "Immature", "1" = "Mature")) +
   scale_fill_manual(
     values = c("0" = "#7bbcd5", "1" = "#CA6E78"), breaks = c(0, 1),
     labels = c("0" = "Immature", "1" = "Mature")) +
-  guides(lty = "none", 
-         fill = guide_legend(override.aes = list(size = 3, alpha = 1))) +
+  guides(lty = "none",
+    fill = guide_legend(override.aes = list(size = 3, alpha = 1))) +
   scale_x_continuous(breaks = c(100, 200))
 
 ```
@@ -429,23 +430,24 @@ ggplot()+
 #| code-fold: true
 #| fig-cap: "Log chela height vs. log carapace width for the different allometric parameter sets and logistic slope options"
 
-fake_crustaceans %>% filter(errs == "low", slope_options %in% c(1, 4, 7, 10)) %>% 
-ggplot()+
-  geom_vline(xintercept = log(100), lty = "dashed", color = "gray")+
+fake_crustaceans %>% 
+  filter(errs == "low", slope_options %in% c(1, 4, 7, 10)) %>%
+  ggplot() +
+  geom_vline(xintercept = log(100), lty = "dashed", color = "gray") +
   geom_point(aes(x = log_x, y = log_y, color = mature, fill = mature),
-             shape = 21, alpha = 0.5, size = 1, stroke = 0)+
-  facet_grid(slope_options ~ name)+
-  mytheme+
+    shape = 21, alpha = 0.5, size = 1, stroke = 0) +
+  facet_grid(slope_options ~ name) +
+  mytheme +
   labs(x = "Log carapace width (mm)", y = "Log chela height (mm)",
-       color = NULL, fill = NULL)+
+    color = NULL, fill = NULL) +
   scale_color_manual(
     values = c("0" = "#368aab", "1" = "#993843"), breaks = c(0, 1),
     labels = c("0" = "Immature", "1" = "Mature")) +
   scale_fill_manual(
     values = c("0" = "#7bbcd5", "1" = "#CA6E78"), breaks = c(0, 1),
     labels = c("0" = "Immature", "1" = "Mature")) +
-  guides(lty = "none", 
-         fill = guide_legend(override.aes = list(size = 3, alpha = 1))) +
+  guides(lty = "none",
+    fill = guide_legend(override.aes = list(size = 3, alpha = 1))) +
   scale_x_continuous(breaks = c(3, 4, 5))
 
 ```

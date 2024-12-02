@@ -1,0 +1,194 @@
+---
+title: "Two-line models"
+output: rmarkdown::html_vignette
+link-citations: true
+link-external-newwindow: true 
+editor_options: 
+  chunk_output_type: console
+vignette: >
+  %\VignetteIndexEntry{Two-line models}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+bibliography: references.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  #collapse = TRUE,
+  comment = "#>",
+  message = FALSE
+)
+```
+
+```{r setup}
+#| message: FALSE
+#| echo: FALSE
+#| warning: FALSE
+#| output: FALSE
+
+# List of packages required:
+packages <- c("morphmat", "chngpt", "nlstools", "dplyr", "ggplot2")
+
+# Load packages into session
+lapply(packages, require, character.only = TRUE, quietly = TRUE)
+```
+
+```{r}
+#| label: setup-2
+#| echo: false
+
+mytheme <- theme_classic() + # define custom theme for ggplots
+  theme(
+    axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
+    axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
+    text = element_text(size = 13))
+```
+
+<!-- Here I will write a vignette explaining all of the two-line regression methods. This will be useful for referring readers to more complex options available in packages like `chngpt` that are not available within `morphmat`. -->
+
+## Description {#sec-twoA}
+
+Two-line models differ from broken-stick models because the intersection point of the line representing the immature individuals and the line representing mature individuals is not necessarily the same as the optimal breakpoint value (the value on the x-axis where the y-values switch from being predicted by the immature line to being predicted by the mature line).
+
+We will test two slightly different versions of this approach using code from Crab_Maturity [@olsen2020]. The first version uses a piecewise regression model to find the x-value/breakpoint that gives the lowest mean square error (MSE) by iteratively testing each observed x-value within the range of unknown maturity. In the second version, the tested x-values are evenly spaced points within the unknown range, and may not equal actual observed values (like REGRANS). The number of (and therefore interval between) points can be user-defined.
+
+The SM50 could be defined as the optimal breakpoint OR as the point at which the two lines actually intersect; i.e. where the regression equations predict the same y-value. The intersection point may be much lower or higher than the previously determined breakpoint and can even be negative, so it is often more reasonable to use the breakpoint as our estimate of SM50.
+
+# Two-line: standard
+
+```{r}
+#| label: generate-crabs
+
+set.seed(12) # set seed for reproducibility
+
+fc <- fake_crustaceans(
+  error_scale = 17,
+  slope = 9,
+  L50 = 75, # known size at maturity is 75 mm
+  n = 800, # sample size
+  allo_params = c(0.9, 0.25, 1.05, 0.2),
+  x_mean = 85 # mean carapace width of the sample
+)
+```
+
+```{r}
+#| echo: false
+
+ggplot() +
+  geom_point(data = fc, aes(x, y), alpha = 0.4) +
+  labs(x = "CW (mm)", y = "CH (mm)") +
+  mytheme
+```
+
+The default function call iterates over 100 evenly-spaced points between the default upper and lower bounds (0.2 and 0.8 quantiles of the x-axis variable) of the region to search for possible SM50 values.
+
+```{r}
+two_line_est <- two_line(fc, "x", "y", verbose = FALSE)
+two_line_est
+```
+
+```{r}
+TL_full <- two_line(fc, "x", "y", verbose = TRUE)
+
+# Plot results
+ggplot(data = TL_full$data) +
+  geom_point(aes(x, y, color = as.factor(group))) +
+  labs(x = "CW (mm)", y = "CH (mm)", color = "Predicted maturity",
+    linetype = NULL) +
+  mytheme +
+  scale_color_manual(
+    values = c("1" = "#7bbcd5", "2" = "#CA6E78"),
+    breaks = c(1, 2),
+    labels = c("1" = "Immature", "2" = "Mature")) +
+  annotate(
+    geom = "segment",
+      x = 0,
+      y = TL_full$imm_int,
+      xend = TL_full$breakpoint,
+      yend = TL_full$imm_int + TL_full$imm_slope * TL_full$breakpoint,
+    color = "#368aab",
+    linewidth = 1
+  ) +
+  annotate(
+    geom = "segment",
+    x = TL_full$breakpoint,
+    y = TL_full$mat_int + TL_full$mat_slope * TL_full$breakpoint,
+    xend = max(TL_full$data$x),
+    yend = TL_full$mat_int + TL_full$mat_slope * max(TL_full$data$x),
+    color = "#993843",
+    linewidth = 1) +
+  geom_vline(aes(xintercept = TL_full$breakpoint, linetype = "Estimated SM50"),
+             linewidth = 0.5) +
+  geom_vline(aes(xintercept = 75, linetype = "True SM50"), linewidth = 0.5) +
+  annotate("text", x = c(40, 40, 40), y = c(35, 30, 32),
+    label = c(
+      sprintf("SM[50] == %.3g * mm",
+              TL_full$breakpoint),
+      sprintf(
+        "y[1] ==  %.3g + %.3g * x",
+        TL_full$imm_int,
+        TL_full$imm_slope),
+      sprintf(
+        "y[2] == %.3g + %.3g * x", TL_full$mat_int, TL_full$mat_slope)),
+    parse = TRUE)
+```
+
+The result is relatively robust to the number of breakpoints tested:
+
+```{r}
+#| collapse: true
+
+two_line(fc, "x", "y", verbose = FALSE, num_bps = 50)
+two_line(fc, "x", "y", verbose = FALSE, num_bps = 400)
+```
+
+Alternatively, possible breakpoints can be restricted to values of the x-axis variable present in the data:
+
+```{r}
+two_line(fc, "x", "y", verbose = FALSE, bps = "obs")
+```
+
+# Two-line: logistic transition
+
+```{r}
+tll_est <- two_line_logistic(fc, "x", "y", verbose = FALSE)
+tll_est
+```
+
+```{r}
+tll_full <- two_line_logistic(fc, "x", "y", verbose = TRUE)
+
+nlstools::overview(tll_full)
+
+tll_confint <- nlstools::confint2(tll_full, parm = "SM50",
+                     method = "asymptotic") # or method = "profile"
+```
+
+Custom plot:
+
+```{r}
+fc %>%
+  mutate(y_pred = predict(tll_full)) %>%
+  ggplot() +
+  geom_rect(aes(
+    xmin = tll_confint["SM50", 1],
+    xmax = tll_confint["SM50", 2],
+    ymin = -Inf,
+    ymax = Inf,
+    fill = "lightgrey"), data = data.frame(x=c(1))
+  ) +
+  geom_vline(aes(
+    xintercept = summary(tll_full)$parameters["SM50", "Estimate"],
+    linetype = "Est. SM50"), linewidth = 0.5) +
+  geom_point(aes(x, y)) + 
+  mytheme +
+  geom_vline(aes(xintercept = 75, linetype = "True SM50"), linewidth = 0.5) +
+  geom_line(aes(x = x, y = y_pred),
+            linewidth = 1.5,
+            color = "red") +
+  scale_linetype_manual(values = c("solid", "dotted")) +
+  labs(x = "CW (mm)", y = "CH (mm)", linetype = NULL, fill = NULL) +
+  scale_fill_manual(values = "lightgrey", labels = "95% CI")
+```
+
+# References

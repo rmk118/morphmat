@@ -56,7 +56,12 @@ If verbose is FALSE (the default), an estimate of SM50. Otherwise,
 output is the NLS model object.
 }
 \description{
-Two-line logistic model
+Fits a nonlinear model made up of two distinct line segments
+connected by a logistic curve.
+}
+\details{
+This relies on \code{minpack.lm::nlsLM()}, which is often able to
+converge when the default \code{stats::nls()} function cannot find a solution.
 }
 \examples{
 set.seed(12)

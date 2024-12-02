@@ -1,7 +1,7 @@
 ---
 title: "Broken-stick methods"
 output: rmarkdown::html_vignette
-bibliography: references.bib
+bibliography: ../references.bib
 link-citations: true
 link-external-newwindow: true 
 vignette: >
@@ -26,25 +26,23 @@ knitr::opts_chunk$set(
 #| warning: FALSE
 #| output: FALSE
 
-library(morphmat)
-library(chngpt)
-library(segmented)
-library(dplyr)
-library(ggplot2)
+# List of packages required:
+packages <- c("morphmat", "chngpt", "segmented", "dplyr", "ggplot2")
+
+# Load packages into session
+lapply(packages, require, character.only = TRUE, quietly = TRUE)
 ```
 
 ```{r}
 #| label: setup-2
 #| echo: false
 
-mytheme <- theme_classic() + #define custom theme for ggplots
+mytheme <- theme_classic() + # define custom theme for ggplots
   theme(
     axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
     axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
     text = element_text(size = 13))
 ```
-
-<!-- Here I will write a vignette explaining all of the broken-stick regression methods. This will be useful for referring readers to more complex options available in packages like `segmented` that are not available within `morphmat`. -->
 
 Sources (more will be added): Somerton [-@somerton1980]; Muggeo [-@muggeo2003; @muggeo2008; @muggeo2017]; Hall et al. [-@hall2006]
 
@@ -58,6 +56,7 @@ Sources (more will be added): Somerton [-@somerton1980]; Muggeo [-@muggeo2003; @
 At $\log{x}=c$, the bottom equation becomes $\tilde{\beta_1}+(\log{x})(\alpha_1-\alpha_2)+\alpha_2\log{x}$, equivalent to the top equation. Note that in this formulation, there is only one intercept term $(\beta_1)$, so the immature and mature lines cannot have the same slope without being equivalent lines. In this model, the estimated value of the breakpoint parameter $c$ is taken to be SM50.
 
 We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate the use (and limitations) of broken-stick methods.
+
 ```{r}
 #| label: generate-crabs
 
@@ -66,10 +65,10 @@ set.seed(12) # set seed for reproducibility
 fc <- fake_crustaceans(
   error_scale = 17,
   slope = 9,
-  L50 = 75,
-  n = 800,
+  L50 = 75, # known size at maturity is 75 mm
+  n = 800, # sample size
   allo_params = c(0.9, 0.25, 1.05, 0.2),
-  x_mean = 85
+  x_mean = 85 # mean carapace width of the sample
 )
 ```
 
@@ -107,6 +106,7 @@ segmented::confint.segmented(lm_orig_seg, method = "gradient")
 ```
 
 We can also use an ANOVA test to compare the segmented model to a single linear model:
+
 ```{r}
 #| label: segmented-anova
 
@@ -225,7 +225,7 @@ summary(
 )[["chngpt"]]
 ```
 
-This method is EXTREMELY sensitive to the "lb.quantile" and "ub.quantile" arguments, which refer to the lower and upper bounds of the search range for change point estimate, respectively (the function defaults are 0.05 and 0.95).  For example, if we change the lower quantile bound to 0.33 and the upper to 0.66, the model will return an SM50 value closer to the true value of 75 mm.
+This method is EXTREMELY sensitive to the "lb.quantile" and "ub.quantile" arguments, which refer to the lower and upper bounds of the search range for change point estimate, respectively (the function defaults are 0.05 and 0.95). For example, if we change the lower quantile bound to 0.33 and the upper to 0.66, the model will return an SM50 value closer to the true value of 75 mm.
 
 ```{r}
 #| label: chngpt-more-accurate
@@ -312,6 +312,8 @@ As with the previous broken-stick methods, REGRANS tends to underestimate SM50 a
 
 A third algorithm for using segmented regression to estimate SM50 was written by Dr. Bradley Stevens at the University of Maryland Eastern Shore. This code is part of the [Crab_Maturity program](https://github.com/Crabman52/Crustacean_Sensation) available on GitHub. There are several different methods included within Crab_Maturity; this segmented regression approach is included here because it differs from the `segmented` and REGRANS methods in that *possible SM50 values are restricted to values of the x-variable present in the data set*.
 
+See Olsen and Stevens [-@olsen2020] for an example real-world application.
+
 ```{r}
 stevens_est <- broken_stick_stevens(fc, "x", "y", verbose = FALSE)
 stevens_est
@@ -332,5 +334,4 @@ ggplot() +
   mytheme
 ```
 
-
-### References
+## References

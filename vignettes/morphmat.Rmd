@@ -1,10 +1,14 @@
 ---
 title: "morphmat"
 output: rmarkdown::html_vignette
+link-citations: true
+link-external-newwindow: true 
 vignette: >
   %\VignetteIndexEntry{morphmat}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -15,11 +19,20 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+#| message: FALSE
+#| echo: FALSE
+#| warning: FALSE
+#| output: FALSE
+
 library(morphmat)
-library(ggplot2)
+library(dplyr) # tidy data manipulation
+library(broom) # cleaning model output
+library(ggplot2) # for plotting
+library(mclust) # recommended clustering method
+library(gtsummary) # creates table comparing mature vs. immature 
 ```
 
-We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate an example workflow using `morphmat`.
+We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate an example workflow using `morphmat`. See `vignette("simulations")` and the `fake_crustaceans()` documentation for more details on the structure of our artificial data set.
 ```{r}
 #| label: generate-crabs
 
@@ -28,10 +41,10 @@ set.seed(12) # set seed for reproducibility
 fc <- fake_crustaceans(
   error_scale = 17,
   slope = 9,
-  L50 = 75,
-  n = 800,
+  L50 = 75, # known size at maturity is 75 mm
+  n = 800, # sample size
   allo_params = c(0.9, 0.25, 1.05, 0.2),
-  x_mean = 85
+  x_mean = 85 # mean carapace width of the sample
 )
 
 mytheme <- theme_classic() + # define custom theme for ggplots
@@ -64,13 +77,89 @@ ggplot() +
 ## mclust for classification
 
 ```{r}
+#| messages: false
 
+clust_dat <- cbind(fc$x, fc$y)
+mclust_class <- mclust::Mclust(data = clust_dat,
+                               G = 2,
+                               modelNames = "EVV")
+
+broom::glance(mclust_class) %>% select(-hypvol)
+
+fc_mclust <- fc %>%
+  rename(true_maturity = mature) %>%
+  mutate(pred_maturity = mclust_class$classification) 
+
+mature_label <- slice_max(fc_mclust, x) %>% pull(pred_maturity)
+
+fc_mclust <- fc_mclust %>%
+  mutate(
+    pred_maturity = if_else(pred_maturity == mature_label,
+                            as.factor(1), as.factor(0)),
+    pred_maturity_num = if_else(pred_maturity == 1,
+                                as.numeric(1), as.numeric(0))
+  ) %>%
+  mutate(uncertainty = mclust_class$uncertainty)
 ```
 
+## Compare the mature and immature groups
+```{r}
+fc_mclust %>%
+  mutate(mature = if_else(pred_maturity == 0, "Immature", "Mature")) %>%
+  tbl_summary(include = c(x, y),
+    by = mature,
+    type = all_continuous() ~ "continuous2",
+    label = list(x ~ "Carapace width (mm)", y ~ "Chela height (mm)"),
+    statistic = list(
+      all_continuous() ~ c("{mean} (\U00B1{sd})",
+        "{min}-{max}"))) %>%
+  add_p() %>%
+  modify_header(label ~ "",
+    all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>%
+  add_stat_label(label = all_continuous() ~ c("Mean (\U00B1SD)", "Min - Max"))
+```
+
+```{r}
+#| label: fig-cluster1
+#| fig-cap: "Predicted clusters using mixture-based clustering."
+
+ggplot(data = fc_mclust) +
+  mytheme +
+  geom_point(aes(x, y, color = pred_maturity, fill = pred_maturity),
+             alpha = 0.5, shape = 21) +
+  scale_color_manual(values = c("0" = "#368aab", "1" = "#993843"),
+                     breaks = c(0, 1), labels = c("0" = "Immature", "1" = "Mature")) +
+  scale_fill_manual(values = c("0" = "#7bbcd5", "1" = "#CA6E78"),
+                    breaks = c(0, 1), labels = c("0" = "Immature", "1" = "Mature")) +
+  labs(x = "Carapace width (mm)", y = "Chela height (mm)",
+       color = "Predicted clusters", fill = "Predicted clusters")
+```
 
 ## GLM for obtaining SM50 value
 
+This is the most basic way to obtain an SM50 estimate from allometric data that has been clustered into mature and immature groups:
+```{r}
+mod <- glm(data = fc_mclust,
+           pred_maturity_num ~ x,
+           family = binomial(link = "logit"))
+unname(-coef(mod)[1] / coef(mod)[2]) # SM50 = -A/B
+```
+
 # Comparing clustering approaches
+```{r}
+# Here there will be a function where you can compare the results of many
+# different clustering methods: mclust, Somerton, infl_pt, kmeans, & hclust
+
+# cluster_mods(fc, xvar = "x", yvar = "y", method = c("all"))
+```
 
 # Comparison with piecewise regression models
+
+```{r}
+piecewise_mods(fc, xvar = "x", yvar = "y", method = c("all"))
+
+piecewise_mods(fc, xvar = "x", yvar = "y", method = c("all"),
+                   log = TRUE) %>% exp()
+```
+
 

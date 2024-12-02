@@ -1,5 +1,11 @@
 #' Two-line logistic model
 #'
+#' @description Fits a nonlinear model made up of two distinct line segments
+#'   connected by a logistic curve.
+#'
+#' @details This relies on `minpack.lm::nlsLM()`, which is often able to
+#'   converge when the default `stats::nls()` function cannot find a solution.
+#'
 #' @param dat data frame or matrix containing the data
 #' @param xvar Name of column (integer or double) of measurements for the x-axis
 #'   variable (e.g., carapace width).
@@ -28,8 +34,15 @@
 #'
 #' @examples
 #' set.seed(12)
-#' fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
-#' two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE)
+#' fc <- fake_crustaceans(
+#'   error_scale = 17,
+#'   slope = 9,
+#'   L50 = 75,
+#'   n = 800,
+#'   allo_params = c(0.9, 0.25, 1.05, 0.2),
+#'   x_mean = 85
+#' )
+#' two_line_logistic(fc, "x", "y", verbose = FALSE)
 two_line_logistic <- function(dat,
                               xvar,
                               yvar,
