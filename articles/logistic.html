@@ -75,36 +75,7 @@
 
     
     
-<pre><code><span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[4]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[5]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[6]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[7]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[8]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[9]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[10]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span> <span class="co"># set seed for reproducibility</span></span>
 <span></span>
 <span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fake_crustaceans.html">fake_crustaceans</a></span><span class="op">(</span></span>
@@ -137,7 +108,7 @@
 <span>                                <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>uncertainty <span class="op">=</span> <span class="va">mclust_class</span><span class="op">$</span><span class="va">uncertainty</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="post-classification-logistic-regression-options">Post-classification logistic regression options<a class="anchor" aria-label="anchor" href="#post-classification-logistic-regression-options"></a>
+<h2 id="post-classification-logistic-regression">Post-classification logistic regression<a class="anchor" aria-label="anchor" href="#post-classification-logistic-regression"></a>
 </h2>
 <p>Beyond the familiar <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">stats::glm</a></code>, there are many packages
 that can be used to model the relationship between size and maturity
@@ -152,60 +123,68 @@ probit and complementary log-log (“cloglog”) links—may be important for
 ensuring reliable parameter estimates <span class="citation">(<a href="#ref-mainguy2024">Mainguy et al. 2024</a>)</span>. Also see Roa et
 al. <span class="citation">(<a href="#ref-roa1999">1999</a>)</span>.</p>
 <p>Helpful vignette: <a href="https://cran.r-project.org/web/packages/qra/vignettes/timeMortality.html" class="external-link uri">https://cran.r-project.org/web/packages/qra/vignettes/timeMortality.html</a></p>
+<p>Even if no covariates are included in the model, many choices must be
+made when fitting a binomial model for the probability of maturity at a
+given length. These include:</p>
+<ul>
+<li>The model to be fitted (most commonly 2-parameter logistic models,
+but many alternative formulations with up to 5 parameters)</li>
+<li>Alternative link functions (logit, probit, cloglog, etc.)</li>
+<li>Constrained optimization (i.e., set lower and upper bounds on the
+possible values of the parameters to be estimated)</li>
+<li>Initial values provided for the parameters to be estimated</li>
+</ul>
 <div class="section level3">
-<h3 id="methods-to-obtain-confidence-intervals-for-sm50-value">Methods to obtain confidence intervals for SM50 value<a class="anchor" aria-label="anchor" href="#methods-to-obtain-confidence-intervals-for-sm50-value"></a>
+<h3 id="example-methods-to-obtain-confidence-intervals-for-sm50-value">Example methods to obtain confidence intervals for SM50 value<a class="anchor" aria-label="anchor" href="#example-methods-to-obtain-confidence-intervals-for-sm50-value"></a>
 </h3>
-<ol style="list-style-type: decimal">
-<li><p><a href="https://github.com/rafamoral/L50/blob/main/confint_L.R" class="external-link">confint_L.R
-script</a> from Mainguy et al. <span class="citation">(<a href="#ref-mainguy2024">2024</a>)</span>: Delta method, Fieller method,
-profile-likelihood, non-parametric bootstrapping, parametric
-bootstrapping, Monte Carlo, Bayesian</p></li>
-<li><p>R package qra: Fieller method, Delta method <span class="citation">(<a href="#ref-maindonald2021">Maindonald
-2021</a>)</span></p></li>
-<li><p>R package drc <span class="citation">(<a href="#ref-ritz2015">Ritz et al. 2015</a>)</span>: Delta method. This
-package can also fit 5/4/3/2-parameter logistic, log-logistic, Weibull,
-etc. models, incorporate weights, robust nls fitting, constrained
-optimization, and other customization options. It also contains
-functions to simulate data</p></li>
-</ol>
-<p>4: R package DRDA <span class="citation">(<a href="#ref-malyutina2023">Malyutina, Tang, and Pessia
-2023</a>)</span></p>
-<p>Other functions that could be used (that I have not tested) include
-<code>twopartm::FiellerRatio()</code> and
-<code>tidydelta::tidydelta()</code>.</p>
+<p>A great place to start is the <a href="https://github.com/rafamoral/L50/blob/main/confint_L.R" class="external-link">confint_L.R
+script</a> from Mainguy et al. <span class="citation">(<a href="#ref-mainguy2024">2024</a>)</span>. This script can be used to
+quantify the uncertainty around the SM50 parameter using the Delta
+method, Fieller method, profile-likelihood, three resampling techniques
+(non-parametric bootstrapping, parametric bootstrapping, and Monte
+Carlo), and Bayesian credible intervals. For the resampling methods,
+three types of intervals can be calculated: equal-tailed intervals
+(ETI/percentile), bias corrected accelerated intervals (BCa), or highest
+density intervals (HDI).</p>
 <div class="section level4">
-<h4 id="standard-statsglm">Standard stats::glm<a class="anchor" aria-label="anchor" href="#standard-statsglm"></a>
+<h4 id="standard-glm">Standard glm<a class="anchor" aria-label="anchor" href="#standard-glm"></a>
 </h4>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">example_glm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">fc_mclust</span>,</span>
 <span>                   <span class="va">pred_maturity_num</span> <span class="op">~</span> <span class="va">x</span>,</span>
 <span>                   family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">example_glm</span>, conf.int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 7</span></span></span>
+<span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">example_glm</span>, conf.int <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 7</span></span></span>
 <span><span class="co">#&gt;   term        estimate std.error statistic  p.value conf.low conf.high</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> (Intercept)   -<span style="color: #BB0000;">7.76</span>    0.615       -<span style="color: #BB0000;">12.6</span> 1.54<span style="color: #949494;">e</span><span style="color: #BB0000;">-36</span>  -<span style="color: #BB0000;">9.01</span>      -<span style="color: #BB0000;">6.60</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> x              0.104   0.007<span style="text-decoration: underline;">72</span>      13.4 4.63<span style="color: #949494;">e</span><span style="color: #BB0000;">-41</span>   0.089<span style="text-decoration: underline;">1</span>     0.119</span></span>
-<span></span>
-<span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance</a></span><span class="op">(</span><span class="va">example_glm</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> x              0.104   0.007<span style="text-decoration: underline;">72</span>      13.4 4.63<span style="color: #949494;">e</span><span style="color: #BB0000;">-41</span>   0.089<span style="text-decoration: underline;">1</span>     0.119</span></span></code></pre>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance</a></span><span class="op">(</span><span class="va">example_glm</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">null.deviance</span>, <span class="va">df.null</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu">where</span><span class="op">(</span><span class="va">is.double</span><span class="op">)</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">.x</span>, digits <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu">across</span><span class="op">(</span><span class="fu">where</span><span class="op">(</span><span class="va">is.double</span><span class="op">)</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">.x</span>, digits <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
 <span><span class="co">#&gt;   logLik   AIC   BIC deviance df.residual  nobs</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  -<span style="color: #BB0000;">352.</span>  708.  718.     704.         798   800</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  -<span style="color: #BB0000;">352.</span>  708.  718.     704.         798   800</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="drc-package">drc package<a class="anchor" aria-label="anchor" href="#drc-package"></a>
 </h4>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>The R package <a href="https://cran.r-project.org/web/packages/drc/drc.pdf" class="external-link">drc</a> was
+designed for analysis of dose-response data, and includes many functions
+that are useful for fitting logistic models <span class="citation">(<a href="#ref-ritz2015">Ritz et al. 2015</a>)</span>. This package can fit
+a variety of 5/4/3/2-parameter logistic, log-logistic, and Weibull
+models and find confidence intervals for the estimated parameters, among
+other functions.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">testdrm</span> <span class="op">&lt;-</span> <span class="fu">drc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/drc/man/drm.html" class="external-link">drm</a></span><span class="op">(</span><span class="va">pred_maturity_num</span> <span class="op">~</span> <span class="va">x</span>,</span>
 <span>               data <span class="op">=</span> <span class="va">fc_mclust</span>,</span>
 <span>               fct <span class="op">=</span> <span class="fu">LL.2</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>               type <span class="op">=</span> <span class="st">"binomial"</span><span class="op">)</span></span>
-<span><span class="va">testdrm</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="va">testdrm</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A 'drc' model.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
@@ -213,9 +192,10 @@ functions to simulate data</p></li>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt; b:(Intercept)  e:(Intercept)  </span></span>
-<span><span class="co">#&gt;        -7.996         74.001</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">testdrm</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;        -7.996         74.001</span></span></code></pre>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">testdrm</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model fitted: Log-logistic (ED50 as parameter) with lower limit at 0 and upper limit at 1 (2 parms)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Parameter estimates:</span></span>
@@ -224,35 +204,37 @@ functions to simulate data</p></li>
 <span><span class="co">#&gt; b:(Intercept) -7.99575    0.59870 -13.355 &lt; 2.2e-16 ***</span></span>
 <span><span class="co">#&gt; e:(Intercept) 74.00087    0.93113  79.475 &lt; 2.2e-16 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
-<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">testdrm</span>, <span class="st">"e"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                 2.5 %   97.5 %</span></span>
-<span><span class="co">#&gt; e:(Intercept) 72.1759 75.82584</span></span>
-<span></span>
-<span><span class="va">estfun.drc</span> <span class="op">&lt;-</span> <span class="fu">drc</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/drc/man/bread.drc.html" class="external-link">estfun.drc</a></span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">testdrm</span>, <span class="st">"e"</span><span class="op">)</span> <span class="co"># specifies the 'e' parameter, the inflection point</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;                 2.5 %   97.5 %</span></span>
+<span><span class="co">#&gt; e:(Intercept) 72.1759 75.82584</span></span></code></pre>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">estfun.drc</span> <span class="op">&lt;-</span> <span class="fu">drc</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/drc/man/bread.drc.html" class="external-link">estfun.drc</a></span></span>
 <span><span class="va">bread.drc</span> <span class="op">&lt;-</span> <span class="fu">drc</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/drc/man/bread.drc.html" class="external-link">bread.drc</a></span></span>
 <span></span>
 <span><span class="co"># use lmtest and sandwich packages to obtain robust standard errors</span></span>
-<span><span class="fu">lmtest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">testdrm</span>, vcov <span class="op">=</span> <span class="va">sandwich</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="fu">lmtest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">testdrm</span>, vcov <span class="op">=</span> <span class="va">sandwich</span><span class="op">)</span> </span></code></pre></div>
+<pre><code><span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; t test of coefficients:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;               Estimate Std. Error t value  Pr(&gt;|t|)    </span></span>
 <span><span class="co">#&gt; b:(Intercept) -7.99575    0.60852 -13.140 &lt; 2.2e-16 ***</span></span>
 <span><span class="co">#&gt; e:(Intercept) 74.00087    0.96722  76.508 &lt; 2.2e-16 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
-<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
-<span><span class="fu">drc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/drc/man/ED.drc.html" class="external-link">ED</a></span><span class="op">(</span><span class="va">testdrm</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span>, <span class="st">"delta"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">drc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/drc/man/ED.drc.html" class="external-link">ED</a></span><span class="op">(</span><span class="va">testdrm</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span>, <span class="st">"delta"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Estimated effective doses</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;        Estimate Std. Error    Lower    Upper</span></span>
-<span><span class="co">#&gt; e:1:50 74.00087    0.93113 72.17590 75.82584</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">testdrm</span><span class="op">)</span> <span class="co"># built-in plotting method</span></span></code></pre></div>
-<p><img src="logistic_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<span><span class="co">#&gt; e:1:50 74.00087    0.93113 72.17590 75.82584</span></span></code></pre>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">testdrm</span><span class="op">)</span> <span class="co"># built-in plotting method</span></span></code></pre></div>
+<p><img src="logistic_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p>Custom plot example:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sm50_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">testdrm</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
 <span><span class="va">low_ci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">testdrm</span>, <span class="st">"e"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="va">hi_ci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">testdrm</span>, <span class="st">"e"</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
@@ -267,32 +249,117 @@ functions to simulate data</p></li>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Probability of maturity"</span>, x <span class="op">=</span> <span class="st">"Carapace width (mm)"</span>, fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="va">mytheme</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"inside"</span>, legend.position.inside <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.75</span>, <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="logistic_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><img src="logistic_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+</div>
+<div class="section level4">
+<h4 id="drda-package">DRDA package<a class="anchor" aria-label="anchor" href="#drda-package"></a>
+</h4>
+<p>The R package DRDA is a newer alternative to drc that uses an
+improved optimization methodology to improve the accuracy of parameter
+estimates <span class="citation">(<a href="#ref-malyutina2023">Malyutina, Tang, and Pessia
+2023</a>)</span>.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_l2</span> <span class="op">&lt;-</span> <span class="fu">drda</span><span class="op">(</span><span class="va">pred_maturity_num</span> <span class="op">~</span> <span class="va">x</span>,</span>
+<span>               data <span class="op">=</span> <span class="va">fc_mclust</span>,</span>
+<span>               mean_function <span class="op">=</span> <span class="st">"logistic2"</span><span class="op">)</span></span>
+<span><span class="va">fit_l4</span> <span class="op">&lt;-</span> <span class="fu">drda</span><span class="op">(</span><span class="va">pred_maturity_num</span> <span class="op">~</span> <span class="va">x</span>,</span>
+<span>               data <span class="op">=</span> <span class="va">fc_mclust</span>,</span>
+<span>               mean_function <span class="op">=</span> <span class="st">"logistic4"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">fit_l2</span>, <span class="va">fit_l4</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; Analysis of Deviance Table</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model 1: a</span></span>
+<span><span class="co">#&gt; Model 2: 1 / (1 + exp(-e * (x - p)))</span></span>
+<span><span class="co">#&gt; Model 3: a + d / (1 + exp(-e * (x - p)))</span></span>
+<span><span class="co">#&gt; Model 4: a + d / (1 + n * exp(-e * (x - p)))^(1 / n) (Full)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model 2 is the best model according to the Akaike Information Criterion.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;         Resid. Df Resid. Dev Df     AIC     BIC Deviance    LRT Pr(&gt;Chi)    </span></span>
+<span><span class="co">#&gt; Model 1       799     184.04    1098.73 1108.10                             </span></span>
+<span><span class="co">#&gt; Model 2       798     114.59  1  721.74  735.79  -69.443 378.99   &lt;2e-16 ***</span></span>
+<span><span class="co">#&gt; Model 3       796     114.50  2  725.11  748.53   -0.091   0.63   0.7290    </span></span>
+<span><span class="co">#&gt; Model 4       795     114.39  1  726.33  754.44   -0.111   0.78   0.3783    </span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit_l2</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call: drda(formula = pred_maturity_num ~ x, data = fc_mclust, mean_function = "logistic2")</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pearson Residuals:</span></span>
+<span><span class="co">#&gt;     Min       1Q   Median       3Q      Max  </span></span>
+<span><span class="co">#&gt; -2.5524  -0.5319   0.1131   0.5676   2.4444  </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Parameters:</span></span>
+<span><span class="co">#&gt;                   Estimate Std. Error Lower .95 Upper .95</span></span>
+<span><span class="co">#&gt; Minimum             0.0000         NA        NA        NA</span></span>
+<span><span class="co">#&gt; Height              1.0000         NA        NA        NA</span></span>
+<span><span class="co">#&gt; Growth rate         0.1063   0.009468    0.0877     0.125</span></span>
+<span><span class="co">#&gt; Midpoint at        75.0850   0.802979   73.5112    76.659</span></span>
+<span><span class="co">#&gt; Residual std err.   0.3790   0.009492    0.3603     0.398</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Residual standard error on 798 degrees of freedom</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Log-likelihood: -357.87</span></span>
+<span><span class="co">#&gt; AIC: 721.74</span></span>
+<span><span class="co">#&gt; BIC: 735.79</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Optimization algorithm converged in 291 iterations</span></span></code></pre>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit_l2</span><span class="op">)</span> <span class="co"># built-in plotting method</span></span></code></pre></div>
+<p><img src="logistic_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
+<p>Custom plot example:</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sum_l2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit_l2</span><span class="op">)</span><span class="op">[[</span><span class="st">"param"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">4</span>,<span class="op">]</span></span>
+<span></span>
+<span><span class="va">sm50_est</span> <span class="op">&lt;-</span> <span class="va">sum_l2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span><span class="va">low_ci</span> <span class="op">&lt;-</span> <span class="va">sum_l2</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span></span>
+<span><span class="va">hi_ci</span> <span class="op">&lt;-</span> <span class="va">sum_l2</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fc_mclust</span><span class="op">$</span><span class="va">x</span>, y <span class="op">=</span> <span class="va">fc_mclust</span><span class="op">$</span><span class="va">pred_maturity_num</span><span class="op">)</span>,</span>
+<span>             shape <span class="op">=</span> <span class="fl">1</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fc_mclust</span><span class="op">$</span><span class="va">x</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit_l2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">sm50_est</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_rect</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">low_ci</span>, xmax <span class="op">=</span> <span class="va">hi_ci</span>,</span>
+<span>    ymin <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>, ymax <span class="op">=</span> <span class="cn">Inf</span>, fill <span class="op">=</span> <span class="st">"95% CI"</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Probability of maturity"</span>, x <span class="op">=</span> <span class="st">"Carapace width (mm)"</span>, fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="va">mytheme</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"inside"</span>, legend.position.inside <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.75</span>, <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="logistic_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="qra-package">qra package<a class="anchor" aria-label="anchor" href="#qra-package"></a>
 </h4>
-<p>See <code><a href="https://rdrr.io/pkg/qra/man/fieller.html" class="external-link">qra::fieller()</a></code> for details of usage and outputs.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>The R package <a href="https://cran.r-project.org/web/packages/qra/index.html" class="external-link">qra</a> is
+another useful package initially designed for analyzing dose-response
+data <span class="citation">(<a href="#ref-maindonald2021">Maindonald
+2021</a>)</span>. It includes implementations of the the Fieller and
+Delta methods for estimating confidence intervals for the SM50 parameter
+when it is not directly estimated during model-fitting. See
+<code><a href="https://rdrr.io/pkg/qra/man/fieller.html" class="external-link">qra::fieller()</a></code> for details of usage and outputs.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">qra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/qra/man/fieller.html" class="external-link">fieller</a></span><span class="op">(</span></span>
 <span>  <span class="fl">0.5</span>,</span>
 <span>  b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">example_glm</span><span class="op">)</span>,</span>
 <span>  vv <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">example_glm</span><span class="op">)</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"Fieller"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt;        est        var        lwr        upr          g </span></span>
-<span><span class="co">#&gt; 74.8902398  0.8919419 72.9346488 76.6805775  0.0213313</span></span>
-<span></span>
-<span><span class="fu">qra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/qra/man/fieller.html" class="external-link">fieller</a></span><span class="op">(</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;        est        var        lwr        upr          g </span></span>
+<span><span class="co">#&gt; 74.8902398  0.8919419 72.9346488 76.6805775  0.0213313</span></span></code></pre>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">qra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/qra/man/fieller.html" class="external-link">fieller</a></span><span class="op">(</span></span>
 <span>  <span class="fl">0.5</span>,</span>
 <span>  b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">example_glm</span><span class="op">)</span>,</span>
 <span>  vv <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">example_glm</span><span class="op">)</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"Delta"</span> <span class="co"># probably OK because of low g value</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt;        est        var        lwr        upr          g </span></span>
-<span><span class="co">#&gt; 74.8902398  0.8919419 73.0391634 76.7413162  0.0000000</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;        est        var        lwr        upr          g </span></span>
+<span><span class="co">#&gt; 74.8902398  0.8919419 73.0391634 76.7413162  0.0000000</span></span></code></pre>
 <p>Custom plot example:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qra_est</span> <span class="op">&lt;-</span> <span class="fu">qra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/qra/man/fieller.html" class="external-link">fieller</a></span><span class="op">(</span></span>
 <span>  <span class="fl">0.5</span>,</span>
 <span>  b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">example_glm</span><span class="op">)</span>,</span>
@@ -314,96 +381,14 @@ functions to simulate data</p></li>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Probability of maturity"</span>, x <span class="op">=</span> <span class="st">"Carapace width (mm)"</span>, fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="va">mytheme</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"inside"</span>, legend.position.inside <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.75</span>, <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="logistic_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
+<p><img src="logistic_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
 </div>
 <div class="section level4">
-<h4 id="drda-package">DRDA package<a class="anchor" aria-label="anchor" href="#drda-package"></a>
+<h4 id="others">Others<a class="anchor" aria-label="anchor" href="#others"></a>
 </h4>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit_l2</span> <span class="op">&lt;-</span> <span class="fu">drda</span><span class="op">(</span><span class="va">pred_maturity_num</span> <span class="op">~</span> <span class="va">x</span>,</span>
-<span>               data <span class="op">=</span> <span class="va">fc_mclust</span>,</span>
-<span>               mean_function <span class="op">=</span> <span class="st">"logistic2"</span><span class="op">)</span></span>
-<span><span class="va">fit_l4</span> <span class="op">&lt;-</span> <span class="fu">drda</span><span class="op">(</span><span class="va">pred_maturity_num</span> <span class="op">~</span> <span class="va">x</span>,</span>
-<span>               data <span class="op">=</span> <span class="va">fc_mclust</span>,</span>
-<span>               mean_function <span class="op">=</span> <span class="st">"logistic4"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">fit_l2</span>, <span class="va">fit_l4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Analysis of Deviance Table</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Model 1: a</span></span>
-<span><span class="co">#&gt; Model 2: 1 / (1 + exp(-e * (x - p)))</span></span>
-<span><span class="co">#&gt; Model 3: a + d / (1 + exp(-e * (x - p)))</span></span>
-<span><span class="co">#&gt; Model 4: a + d / (1 + n * exp(-e * (x - p)))^(1 / n) (Full)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Model 2 is the best model according to the Akaike Information Criterion.</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;         Resid. Df Resid. Dev Df     AIC     BIC Deviance    LRT Pr(&gt;Chi)    </span></span>
-<span><span class="co">#&gt; Model 1       799     184.04    1098.73 1108.10                             </span></span>
-<span><span class="co">#&gt; Model 2       798     114.59  1  721.74  735.79  -69.443 378.99   &lt;2e-16 ***</span></span>
-<span><span class="co">#&gt; Model 3       796     114.50  2  725.11  748.53   -0.091   0.63   0.7290    </span></span>
-<span><span class="co">#&gt; Model 4       795     114.39  1  726.33  754.44   -0.111   0.78   0.3783    </span></span>
-<span><span class="co">#&gt; ---</span></span>
-<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">fit_l2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Analysis of Deviance Table</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Model 1: a</span></span>
-<span><span class="co">#&gt; Model 2: 1 / (1 + exp(-e * (x - p))) (Fit)</span></span>
-<span><span class="co">#&gt; Model 3: a + d / (1 + n * exp(-e * (x - p)))^(1 / n) (Full)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Model 2 is the best model according to the Akaike Information Criterion.</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;         Resid. Df Resid. Dev Df     AIC     BIC Deviance    LRT Pr(&gt;Chi)    </span></span>
-<span><span class="co">#&gt; Model 1       799     184.04  1 1098.73 1108.10                             </span></span>
-<span><span class="co">#&gt; Model 2       798     114.59  2  721.74  735.79  -69.443 378.99   &lt;2e-16 ***</span></span>
-<span><span class="co">#&gt; Model 3       795     114.39  5  726.33  754.44   -0.202   1.41   0.7036    </span></span>
-<span><span class="co">#&gt; ---</span></span>
-<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit_l2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Call: drda(formula = pred_maturity_num ~ x, data = fc_mclust, mean_function = "logistic2")</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Pearson Residuals:</span></span>
-<span><span class="co">#&gt;     Min       1Q   Median       3Q      Max  </span></span>
-<span><span class="co">#&gt; -2.5524  -0.5319   0.1131   0.5676   2.4444  </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Parameters:</span></span>
-<span><span class="co">#&gt;                   Estimate Std. Error Lower .95 Upper .95</span></span>
-<span><span class="co">#&gt; Minimum             0.0000         NA        NA        NA</span></span>
-<span><span class="co">#&gt; Height              1.0000         NA        NA        NA</span></span>
-<span><span class="co">#&gt; Growth rate         0.1063   0.009468    0.0877     0.125</span></span>
-<span><span class="co">#&gt; Midpoint at        75.0850   0.802979   73.5112    76.659</span></span>
-<span><span class="co">#&gt; Residual std err.   0.3790   0.009492    0.3603     0.398</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Residual standard error on 798 degrees of freedom</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Log-likelihood: -357.87</span></span>
-<span><span class="co">#&gt; AIC: 721.74</span></span>
-<span><span class="co">#&gt; BIC: 735.79</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Optimization algorithm converged in 291 iterations</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit_l2</span><span class="op">)</span> <span class="co"># built-in plotting method</span></span></code></pre></div>
-<p><img src="logistic_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
-<p>Custom plot example:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sum_l2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit_l2</span><span class="op">)</span><span class="op">[[</span><span class="st">"param"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">4</span>,<span class="op">]</span></span>
-<span></span>
-<span><span class="va">sm50_est</span> <span class="op">&lt;-</span> <span class="va">sum_l2</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
-<span><span class="va">low_ci</span> <span class="op">&lt;-</span> <span class="va">sum_l2</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span></span>
-<span><span class="va">hi_ci</span> <span class="op">&lt;-</span> <span class="va">sum_l2</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fc_mclust</span><span class="op">$</span><span class="va">x</span>, y <span class="op">=</span> <span class="va">fc_mclust</span><span class="op">$</span><span class="va">pred_maturity_num</span><span class="op">)</span>,</span>
-<span>             shape <span class="op">=</span> <span class="fl">1</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fc_mclust</span><span class="op">$</span><span class="va">x</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit_l2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">sm50_est</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_rect</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">low_ci</span>, xmax <span class="op">=</span> <span class="va">hi_ci</span>,</span>
-<span>    ymin <span class="op">=</span> <span class="op">-</span><span class="cn">Inf</span>, ymax <span class="op">=</span> <span class="cn">Inf</span>, fill <span class="op">=</span> <span class="st">"95% CI"</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Probability of maturity"</span>, x <span class="op">=</span> <span class="st">"Carapace width (mm)"</span>, fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="va">mytheme</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"inside"</span>, legend.position.inside <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.75</span>, <span class="fl">0.25</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="logistic_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
+<p>Other functions that could be used (that I have not tested) include
+<a href="https://cran.r-project.org/web/packages/twopartm/index.html" class="external-link"><code>twopartm::FiellerRatio()</code></a>
+and <a href="https://javiermtzrdz.github.io/tidydelta/" class="external-link"><code>tidydelta::tidydelta()</code></a>.</p>
 </div>
 </div>
 <div class="section level3">

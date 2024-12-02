@@ -75,20 +75,6 @@
 
     
     
-<pre><code><span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[4]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[5]]</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre>
 <!-- Here I will write a vignette explaining all of the two-line regression methods. This will be useful for referring readers to more complex options available in packages like `chngpt` that are not available within `morphmat`. -->
 <div class="section level3">
 <h3 id="sec-twoA">Description<a class="anchor" aria-label="anchor" href="#sec-twoA"></a>
@@ -118,7 +104,7 @@ estimate of SM50.</p>
 <div class="section level2">
 <h2 id="two-line-standard">Two-line: standard<a class="anchor" aria-label="anchor" href="#two-line-standard"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span> <span class="co"># set seed for reproducibility</span></span>
 <span></span>
 <span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fake_crustaceans.html">fake_crustaceans</a></span><span class="op">(</span></span>
@@ -129,16 +115,16 @@ estimate of SM50.</p>
 <span>  allo_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.25</span>, <span class="fl">1.05</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
 <span>  x_mean <span class="op">=</span> <span class="fl">85</span> <span class="co"># mean carapace width of the sample</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="two-line_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p><img src="two-line_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p>The default function call iterates over 100 evenly-spaced points
 between the default upper and lower bounds (0.2 and 0.8 quantiles of the
 x-axis variable) of the region to search for possible SM50 values.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">two_line_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/two_line.html">two_line</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">two_line_est</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;   breakpoint intersection </span></span>
 <span><span class="co">#&gt;     75.43651     56.76587</span></span></code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">TL_full</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/two_line.html">two_line</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot results</span></span>
@@ -182,10 +168,10 @@ x-axis variable) of the region to search for possible SM50 values.</p>
 <span>      <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span></span>
 <span>        <span class="st">"y[2] == %.3g + %.3g * x"</span>, <span class="va">TL_full</span><span class="op">$</span><span class="va">mat_int</span>, <span class="va">TL_full</span><span class="op">$</span><span class="va">mat_slope</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    parse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="two-line_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="two-line_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <p>The result is relatively robust to the number of breakpoints
 tested:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/two_line.html">two_line</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, num_bps <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   breakpoint intersection </span></span>
 <span><span class="co">#&gt;     75.51575     56.76587</span></span>
@@ -194,7 +180,7 @@ tested:</p>
 <span><span class="co">#&gt;     75.53869     56.31673</span></span></code></pre></div>
 <p>Alternatively, possible breakpoints can be restricted to values of
 the x-axis variable present in the data:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/two_line.html">two_line</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, bps <span class="op">=</span> <span class="st">"obs"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;   breakpoint intersection </span></span>
 <span><span class="co">#&gt;     75.60928     56.61033</span></span></code></pre>
@@ -202,12 +188,12 @@ the x-axis variable present in the data:</p>
 <div class="section level2">
 <h2 id="two-line-logistic-transition">Two-line: logistic transition<a class="anchor" aria-label="anchor" href="#two-line-logistic-transition"></a>
 </h2>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tll_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/two_line_logistic.html">two_line_logistic</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">tll_est</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;     SM50 </span></span>
 <span><span class="co">#&gt; 77.68165</span></span></code></pre>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tll_full</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/two_line_logistic.html">two_line_logistic</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">nlstools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nlstools/man/nlstools.html" class="external-link">overview</a></span><span class="op">(</span><span class="va">tll_full</span><span class="op">)</span></span></code></pre></div>
@@ -253,11 +239,11 @@ the x-axis variable present in the data:</p>
 <span><span class="co">#&gt; slope2 -0.1960934  0.2285040 -0.9951569  1.0000000 -0.3466532 -0.5693816</span></span>
 <span><span class="co">#&gt; SM50   -0.5682064  0.6113271  0.3491050 -0.3466532  1.0000000 -0.2245592</span></span>
 <span><span class="co">#&gt; alpha   0.4767719 -0.5474000  0.6073642 -0.5693816 -0.2245592  1.0000000</span></span></code></pre>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tll_confint</span> <span class="op">&lt;-</span> <span class="fu">nlstools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nlstools/man/confint2.html" class="external-link">confint2</a></span><span class="op">(</span><span class="va">tll_full</span>, parm <span class="op">=</span> <span class="st">"SM50"</span>,</span>
 <span>                     method <span class="op">=</span> <span class="st">"asymptotic"</span><span class="op">)</span> <span class="co"># or method = "profile"</span></span></code></pre></div>
 <p>Custom plot:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fc</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>y_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">tll_full</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -280,7 +266,7 @@ the x-axis variable present in the data:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_linetype_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"solid"</span>, <span class="st">"dotted"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"CW (mm)"</span>, y <span class="op">=</span> <span class="st">"CH (mm)"</span>, linetype <span class="op">=</span> <span class="cn">NULL</span>, fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="st">"lightgrey"</span>, labels <span class="op">=</span> <span class="st">"95% CI"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="two-line_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
+<p><img src="two-line_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

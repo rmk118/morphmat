@@ -51,7 +51,8 @@
 <span>  <span class="va">xvar</span>,</span>
 <span>  <span class="va">yvar</span>,</span>
 <span>  log <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mclust"</span>, <span class="st">"Somerton"</span>, <span class="st">"kmeans"</span>, <span class="st">"hclust"</span>, <span class="st">"infl_pt"</span>, <span class="st">"all"</span><span class="op">)</span></span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mclust"</span>, <span class="st">"Somerton"</span>, <span class="st">"kmeans"</span>, <span class="st">"hclust"</span>, <span class="st">"infl_pt"</span>, <span class="st">"all"</span><span class="op">)</span>,</span>
+<span>  plot <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -74,18 +75,26 @@ variable (e.g., claw height).</p></dd>
 
 
 <dt id="arg-log">log<a class="anchor" aria-label="anchor" href="#arg-log"></a></dt>
-<dd><p>Boolean; should both variables be log-transformed before performing the
-regression? Defaults to FALSE.</p></dd>
+<dd><p>Boolean; should both variables be log-transformed before
+performing the regression? Defaults to FALSE.</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>Classification method to use. A single string or vector
-containing one or more of c("mclust", "Somerton", "kmeans", "hclust", "infl_pt"), or "all" to return the results of all methods for comparison.</p></dd>
+containing one or more of c("mclust", "Somerton", "kmeans", "hclust",
+"infl_pt"), or "all" to return the results of all methods for comparison.</p></dd>
+
+
+<dt id="arg-plot">plot<a class="anchor" aria-label="anchor" href="#arg-plot"></a></dt>
+<dd><p>Boolean; optionally display a plot of the input data shaded
+according to the maturity classifications from the specified method(s).
+Defaults to FALSE.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An estimate of SM50 from the specified method(s).</p>
+    <p>A data frame with each point classified according to the specified
+method(s).</p>
     </div>
 
     <div class="section level2">
@@ -93,107 +102,610 @@ containing one or more of c("mclust", "Somerton", "kmeans", "hclust", "infl_pt")
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="fake_crustaceans.html">fake_crustaceans</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">100</span>, L50 <span class="op">=</span> <span class="fl">100</span>, allo_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.2</span>, <span class="fl">1.1</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">cluster_mods</span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"kmeans"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          xvar     yvar</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    75.38865 15.23920</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   136.54339 45.87786</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    85.86511 16.92335</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    86.59990 16.94732</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    65.04716 13.22994</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    99.55408 32.83798</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    98.69303 19.95659</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    92.43490 16.95435</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   102.87072 33.10017</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  113.56030 37.01815</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11   89.44561 16.65966</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12   79.12235 16.67990</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13   89.40867 16.59422</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  105.23904 33.84619</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  101.95168 19.91354</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16   90.93071 17.80021</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17  128.77758 40.23859</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18  111.81025 38.40130</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19  115.13936 36.00876</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20   99.13390 20.54175</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21  109.47283 34.12359</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22  145.14403 47.01046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23  125.23958 39.72831</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24   98.95082 30.88344</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25   84.49510 17.39401</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26   99.65230 20.61357</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27  101.01789 19.53285</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28  107.62245 34.70028</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29  107.91600 37.02303</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30  112.24129 34.84253</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31  118.47962 35.78884</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32  146.44072 45.60869</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33   94.17943 18.30612</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34   83.59016 16.46103</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35   97.55087 19.09151</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36   95.29717 18.30308</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37  110.49568 35.19487</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38   95.40975 19.62598</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39  120.96211 41.17689</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40   84.91098 17.85249</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41  107.09968 36.41382</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42   81.88014 16.17739</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43  116.56269 40.69230</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44   73.08749 14.94097</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45   98.82993 31.92601</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46  113.98932 37.07901</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47   85.45893 17.69469</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48  108.79996 22.12360</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49  119.62907 36.32811</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50   95.14802 18.34427</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51  104.14630 18.36215</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52  102.74659 32.58723</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53  114.13654 38.72763</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54  145.40670 45.19577</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55   83.98220 25.13179</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56  119.69304 41.47791</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57  115.78499 37.62930</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58   78.71454 22.97434</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59   99.99923 20.76300</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60  111.28409 35.69627</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61  113.13093 36.73550</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62  124.88841 40.34772</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63  122.11537 39.69475</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64  108.94258 33.34561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65  121.68650 39.48582</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66  121.93580 41.68790</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67  144.08211 46.75849</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68   62.01480 13.20176</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69  124.42241 39.51942</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70  127.90123 40.06073</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71   94.49199 31.06592</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72  110.00640 33.61806</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73   96.41187 19.98987</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74  101.34961 19.74040</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75  102.93379 20.95561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76   92.32324 18.15865</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77   79.57892 15.65607</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78   97.32099 19.78192</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79  115.33512 39.78074</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80  101.44063 30.70302</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81  105.08516 20.90106</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82   79.51881 15.62635</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83  100.95779 32.92634</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84  128.28932 38.88932</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85  104.53241 20.31787</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86  122.94313 37.65059</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87  101.46551 19.94880</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88  127.27418 43.76838</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89   94.16222 18.31404</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90   85.73203 16.49705</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91  112.52897 36.28876</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92   85.30652 16.89971</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93  122.95119 40.92803</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94  107.58525 35.14126</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95  125.67406 40.66184</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96   98.15421 20.05136</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97  114.04563 35.65158</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98   91.10524 19.66188</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99  100.21973 33.14270</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100  84.85402 17.61139</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          xvar     yvar pred_mat method</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    75.38865 15.23920        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   136.54339 45.87786        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    85.86511 16.92335        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    86.59990 16.94732        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    65.04716 13.22994        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    99.55408 32.83798        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    98.69303 19.95659        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    92.43490 16.95435        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   102.87072 33.10017        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  113.56030 37.01815        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   89.44561 16.65966        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   79.12235 16.67990        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13   89.40867 16.59422        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  105.23904 33.84619        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  101.95168 19.91354        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16   90.93071 17.80021        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  128.77758 40.23859        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  111.81025 38.40130        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  115.13936 36.00876        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20   99.13390 20.54175        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  109.47283 34.12359        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  145.14403 47.01046        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  125.23958 39.72831        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24   98.95082 30.88344        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25   84.49510 17.39401        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26   99.65230 20.61357        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  101.01789 19.53285        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28  107.62245 34.70028        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29  107.91600 37.02303        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30  112.24129 34.84253        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31  118.47962 35.78884        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32  146.44072 45.60869        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33   94.17943 18.30612        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34   83.59016 16.46103        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35   97.55087 19.09151        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36   95.29717 18.30308        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37  110.49568 35.19487        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38   95.40975 19.62598        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39  120.96211 41.17689        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40   84.91098 17.85249        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41  107.09968 36.41382        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42   81.88014 16.17739        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43  116.56269 40.69230        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44   73.08749 14.94097        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45   98.82993 31.92601        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46  113.98932 37.07901        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47   85.45893 17.69469        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48  108.79996 22.12360        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49  119.62907 36.32811        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50   95.14802 18.34427        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51  104.14630 18.36215        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52  102.74659 32.58723        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53  114.13654 38.72763        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54  145.40670 45.19577        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55   83.98220 25.13179        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56  119.69304 41.47791        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57  115.78499 37.62930        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58   78.71454 22.97434        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59   99.99923 20.76300        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60  111.28409 35.69627        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61  113.13093 36.73550        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62  124.88841 40.34772        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63  122.11537 39.69475        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64  108.94258 33.34561        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65  121.68650 39.48582        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66  121.93580 41.68790        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67  144.08211 46.75849        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68   62.01480 13.20176        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69  124.42241 39.51942        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70  127.90123 40.06073        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71   94.49199 31.06592        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72  110.00640 33.61806        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73   96.41187 19.98987        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74  101.34961 19.74040        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75  102.93379 20.95561        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76   92.32324 18.15865        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77   79.57892 15.65607        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78   97.32099 19.78192        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79  115.33512 39.78074        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80  101.44063 30.70302        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81  105.08516 20.90106        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82   79.51881 15.62635        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83  100.95779 32.92634        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84  128.28932 38.88932        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85  104.53241 20.31787        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86  122.94313 37.65059        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87  101.46551 19.94880        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88  127.27418 43.76838        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89   94.16222 18.31404        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90   85.73203 16.49705        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91  112.52897 36.28876        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92   85.30652 16.89971        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93  122.95119 40.92803        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94  107.58525 35.14126        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95  125.67406 40.66184        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96   98.15421 20.05136        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97  114.04563 35.65158        1 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98   91.10524 19.66188        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99  100.21973 33.14270        0 kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100  84.85402 17.61139        0 kmeans</span>
+<span class="r-in"><span><span class="fu">cluster_mods</span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="cluster_mods-1.png" alt="" width="700" height="433"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          xvar     yvar pred_mat   method</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    75.38865 15.23920        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   136.54339 45.87786        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    85.86511 16.92335        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    86.59990 16.94732        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    65.04716 13.22994        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    99.55408 32.83798        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    98.69303 19.95659        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    92.43490 16.95435        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   102.87072 33.10017        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  113.56030 37.01815        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   89.44561 16.65966        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   79.12235 16.67990        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13   89.40867 16.59422        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  105.23904 33.84619        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  101.95168 19.91354        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16   90.93071 17.80021        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  128.77758 40.23859        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  111.81025 38.40130        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  115.13936 36.00876        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20   99.13390 20.54175        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  109.47283 34.12359        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  145.14403 47.01046        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  125.23958 39.72831        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24   98.95082 30.88344        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25   84.49510 17.39401        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26   99.65230 20.61357        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  101.01789 19.53285        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28  107.62245 34.70028        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29  107.91600 37.02303        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30  112.24129 34.84253        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31  118.47962 35.78884        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32  146.44072 45.60869        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33   94.17943 18.30612        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34   83.59016 16.46103        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35   97.55087 19.09151        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36   95.29717 18.30308        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37  110.49568 35.19487        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38   95.40975 19.62598        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39  120.96211 41.17689        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40   84.91098 17.85249        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41  107.09968 36.41382        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42   81.88014 16.17739        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43  116.56269 40.69230        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44   73.08749 14.94097        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45   98.82993 31.92601        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46  113.98932 37.07901        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47   85.45893 17.69469        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48  108.79996 22.12360        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49  119.62907 36.32811        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50   95.14802 18.34427        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51  104.14630 18.36215        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52  102.74659 32.58723        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53  114.13654 38.72763        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54  145.40670 45.19577        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55   83.98220 25.13179        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56  119.69304 41.47791        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57  115.78499 37.62930        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58   78.71454 22.97434        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59   99.99923 20.76300        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60  111.28409 35.69627        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61  113.13093 36.73550        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62  124.88841 40.34772        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63  122.11537 39.69475        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64  108.94258 33.34561        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65  121.68650 39.48582        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66  121.93580 41.68790        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67  144.08211 46.75849        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68   62.01480 13.20176        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69  124.42241 39.51942        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70  127.90123 40.06073        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71   94.49199 31.06592        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72  110.00640 33.61806        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73   96.41187 19.98987        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74  101.34961 19.74040        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75  102.93379 20.95561        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76   92.32324 18.15865        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77   79.57892 15.65607        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78   97.32099 19.78192        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79  115.33512 39.78074        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80  101.44063 30.70302        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81  105.08516 20.90106        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82   79.51881 15.62635        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83  100.95779 32.92634        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84  128.28932 38.88932        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85  104.53241 20.31787        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86  122.94313 37.65059        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87  101.46551 19.94880        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88  127.27418 43.76838        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89   94.16222 18.31404        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90   85.73203 16.49705        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91  112.52897 36.28876        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92   85.30652 16.89971        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93  122.95119 40.92803        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94  107.58525 35.14126        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95  125.67406 40.66184        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96   98.15421 20.05136        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97  114.04563 35.65158        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98   91.10524 19.66188        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99  100.21973 33.14270        1  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100  84.85402 17.61139        0  infl_pt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101  75.38865 15.23920        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102 136.54339 45.87786        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103  85.86511 16.92335        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104  86.59990 16.94732        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 105  65.04716 13.22994        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 106  99.55408 32.83798        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 107  98.69303 19.95659        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 108  92.43490 16.95435        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 109 102.87072 33.10017        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 110 113.56030 37.01815        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111  89.44561 16.65966        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 112  79.12235 16.67990        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 113  89.40867 16.59422        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 114 105.23904 33.84619        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 115 101.95168 19.91354        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 116  90.93071 17.80021        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 117 128.77758 40.23859        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 118 111.81025 38.40130        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 119 115.13936 36.00876        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 120  99.13390 20.54175        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 121 109.47283 34.12359        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 122 145.14403 47.01046        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 123 125.23958 39.72831        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 124  98.95082 30.88344        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 125  84.49510 17.39401        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 126  99.65230 20.61357        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 127 101.01789 19.53285        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 128 107.62245 34.70028        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 129 107.91600 37.02303        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 130 112.24129 34.84253        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 131 118.47962 35.78884        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 132 146.44072 45.60869        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 133  94.17943 18.30612        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 134  83.59016 16.46103        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135  97.55087 19.09151        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 136  95.29717 18.30308        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 137 110.49568 35.19487        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 138  95.40975 19.62598        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 139 120.96211 41.17689        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 140  84.91098 17.85249        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 141 107.09968 36.41382        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 142  81.88014 16.17739        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 143 116.56269 40.69230        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 144  73.08749 14.94097        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 145  98.82993 31.92601        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 146 113.98932 37.07901        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 147  85.45893 17.69469        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 148 108.79996 22.12360        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 149 119.62907 36.32811        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 150  95.14802 18.34427        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 151 104.14630 18.36215        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 152 102.74659 32.58723        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 153 114.13654 38.72763        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 154 145.40670 45.19577        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 155  83.98220 25.13179        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 156 119.69304 41.47791        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 157 115.78499 37.62930        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 158  78.71454 22.97434        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 159  99.99923 20.76300        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 160 111.28409 35.69627        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 161 113.13093 36.73550        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 162 124.88841 40.34772        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 163 122.11537 39.69475        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 164 108.94258 33.34561        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 165 121.68650 39.48582        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 166 121.93580 41.68790        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 167 144.08211 46.75849        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 168  62.01480 13.20176        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 169 124.42241 39.51942        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 170 127.90123 40.06073        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 171  94.49199 31.06592        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 172 110.00640 33.61806        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 173  96.41187 19.98987        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 174 101.34961 19.74040        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 175 102.93379 20.95561        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 176  92.32324 18.15865        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 177  79.57892 15.65607        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 178  97.32099 19.78192        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 179 115.33512 39.78074        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 180 101.44063 30.70302        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 181 105.08516 20.90106        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 182  79.51881 15.62635        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 183 100.95779 32.92634        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 184 128.28932 38.88932        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 185 104.53241 20.31787        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 186 122.94313 37.65059        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 187 101.46551 19.94880        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 188 127.27418 43.76838        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 189  94.16222 18.31404        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 190  85.73203 16.49705        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 191 112.52897 36.28876        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 192  85.30652 16.89971        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 193 122.95119 40.92803        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 194 107.58525 35.14126        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 195 125.67406 40.66184        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 196  98.15421 20.05136        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 197 114.04563 35.65158        1   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 198  91.10524 19.66188        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 199 100.21973 33.14270        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200  84.85402 17.61139        0   kmeans</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 201  75.38865 15.23920        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 202 136.54339 45.87786        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 203  85.86511 16.92335        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 204  86.59990 16.94732        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205  65.04716 13.22994        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 206  99.55408 32.83798        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 207  98.69303 19.95659        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 208  92.43490 16.95435        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 209 102.87072 33.10017        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 210 113.56030 37.01815        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 211  89.44561 16.65966        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 212  79.12235 16.67990        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 213  89.40867 16.59422        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 214 105.23904 33.84619        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 215 101.95168 19.91354        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 216  90.93071 17.80021        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 217 128.77758 40.23859        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 218 111.81025 38.40130        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219 115.13936 36.00876        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 220  99.13390 20.54175        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 221 109.47283 34.12359        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 222 145.14403 47.01046        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 223 125.23958 39.72831        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 224  98.95082 30.88344        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 225  84.49510 17.39401        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 226  99.65230 20.61357        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 227 101.01789 19.53285        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 228 107.62245 34.70028        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 229 107.91600 37.02303        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 230 112.24129 34.84253        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231 118.47962 35.78884        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 232 146.44072 45.60869        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 233  94.17943 18.30612        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 234  83.59016 16.46103        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 235  97.55087 19.09151        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 236  95.29717 18.30308        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 237 110.49568 35.19487        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 238  95.40975 19.62598        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 239 120.96211 41.17689        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 240  84.91098 17.85249        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 241 107.09968 36.41382        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 242  81.88014 16.17739        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 243 116.56269 40.69230        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 244  73.08749 14.94097        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 245  98.82993 31.92601        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 246 113.98932 37.07901        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 247  85.45893 17.69469        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 248 108.79996 22.12360        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 249 119.62907 36.32811        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 250  95.14802 18.34427        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 251 104.14630 18.36215        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 252 102.74659 32.58723        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 253 114.13654 38.72763        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 254 145.40670 45.19577        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 255  83.98220 25.13179        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 256 119.69304 41.47791        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 257 115.78499 37.62930        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 258  78.71454 22.97434        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 259  99.99923 20.76300        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 260 111.28409 35.69627        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 261 113.13093 36.73550        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 262 124.88841 40.34772        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 263 122.11537 39.69475        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 264 108.94258 33.34561        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 265 121.68650 39.48582        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 266 121.93580 41.68790        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 267 144.08211 46.75849        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 268  62.01480 13.20176        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 269 124.42241 39.51942        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 270 127.90123 40.06073        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 271  94.49199 31.06592        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 272 110.00640 33.61806        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 273  96.41187 19.98987        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 274 101.34961 19.74040        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 275 102.93379 20.95561        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 276  92.32324 18.15865        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 277  79.57892 15.65607        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 278  97.32099 19.78192        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 279 115.33512 39.78074        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 280 101.44063 30.70302        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 281 105.08516 20.90106        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 282  79.51881 15.62635        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 283 100.95779 32.92634        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 284 128.28932 38.88932        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 285 104.53241 20.31787        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 286 122.94313 37.65059        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 287 101.46551 19.94880        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 288 127.27418 43.76838        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 289  94.16222 18.31404        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 290  85.73203 16.49705        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 291 112.52897 36.28876        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 292  85.30652 16.89971        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 293 122.95119 40.92803        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 294 107.58525 35.14126        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 295 125.67406 40.66184        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 296  98.15421 20.05136        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 297 114.04563 35.65158        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 298  91.10524 19.66188        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 299 100.21973 33.14270        1   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 300  84.85402 17.61139        0   hclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 301  75.38865 15.23920        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 302 136.54339 45.87786        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 303  85.86511 16.92335        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 304  86.59990 16.94732        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 305  65.04716 13.22994        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 306  99.55408 32.83798        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 307  98.69303 19.95659        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 308  92.43490 16.95435        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 309 102.87072 33.10017        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 310 113.56030 37.01815        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 311  89.44561 16.65966        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 312  79.12235 16.67990        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 313  89.40867 16.59422        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 314 105.23904 33.84619        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 315 101.95168 19.91354        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 316  90.93071 17.80021        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 317 128.77758 40.23859        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 318 111.81025 38.40130        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 319 115.13936 36.00876        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 320  99.13390 20.54175        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 321 109.47283 34.12359        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 322 145.14403 47.01046        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 323 125.23958 39.72831        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 324  98.95082 30.88344        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 325  84.49510 17.39401        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 326  99.65230 20.61357        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 327 101.01789 19.53285        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 328 107.62245 34.70028        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 329 107.91600 37.02303        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 330 112.24129 34.84253        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 331 118.47962 35.78884        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 332 146.44072 45.60869        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 333  94.17943 18.30612        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 334  83.59016 16.46103        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 335  97.55087 19.09151        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 336  95.29717 18.30308        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 337 110.49568 35.19487        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 338  95.40975 19.62598        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 339 120.96211 41.17689        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 340  84.91098 17.85249        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 341 107.09968 36.41382        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 342  81.88014 16.17739        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 343 116.56269 40.69230        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 344  73.08749 14.94097        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 345  98.82993 31.92601        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 346 113.98932 37.07901        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 347  85.45893 17.69469        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 348 108.79996 22.12360        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 349 119.62907 36.32811        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 350  95.14802 18.34427        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 351 104.14630 18.36215        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 352 102.74659 32.58723        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 353 114.13654 38.72763        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 354 145.40670 45.19577        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 355  83.98220 25.13179        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 356 119.69304 41.47791        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 357 115.78499 37.62930        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 358  78.71454 22.97434        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 359  99.99923 20.76300        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 360 111.28409 35.69627        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 361 113.13093 36.73550        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 362 124.88841 40.34772        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 363 122.11537 39.69475        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 364 108.94258 33.34561        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 365 121.68650 39.48582        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 366 121.93580 41.68790        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 367 144.08211 46.75849        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 368  62.01480 13.20176        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 369 124.42241 39.51942        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 370 127.90123 40.06073        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 371  94.49199 31.06592        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 372 110.00640 33.61806        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 373  96.41187 19.98987        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 374 101.34961 19.74040        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 375 102.93379 20.95561        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 376  92.32324 18.15865        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 377  79.57892 15.65607        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 378  97.32099 19.78192        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 379 115.33512 39.78074        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 380 101.44063 30.70302        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 381 105.08516 20.90106        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 382  79.51881 15.62635        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 383 100.95779 32.92634        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 384 128.28932 38.88932        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 385 104.53241 20.31787        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 386 122.94313 37.65059        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 387 101.46551 19.94880        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 388 127.27418 43.76838        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 389  94.16222 18.31404        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 390  85.73203 16.49705        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 391 112.52897 36.28876        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 392  85.30652 16.89971        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 393 122.95119 40.92803        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 394 107.58525 35.14126        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 395 125.67406 40.66184        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 396  98.15421 20.05136        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 397 114.04563 35.65158        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 398  91.10524 19.66188        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 399 100.21973 33.14270        1 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 400  84.85402 17.61139        0 Somerton</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 401  75.38865 15.23920        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 402 136.54339 45.87786        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 403  85.86511 16.92335        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 404  86.59990 16.94732        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 405  65.04716 13.22994        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 406  99.55408 32.83798        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 407  98.69303 19.95659        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 408  92.43490 16.95435        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 409 102.87072 33.10017        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 410 113.56030 37.01815        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 411  89.44561 16.65966        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 412  79.12235 16.67990        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 413  89.40867 16.59422        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 414 105.23904 33.84619        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 415 101.95168 19.91354        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 416  90.93071 17.80021        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 417 128.77758 40.23859        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 418 111.81025 38.40130        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 419 115.13936 36.00876        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 420  99.13390 20.54175        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 421 109.47283 34.12359        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 422 145.14403 47.01046        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 423 125.23958 39.72831        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 424  98.95082 30.88344        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 425  84.49510 17.39401        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 426  99.65230 20.61357        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 427 101.01789 19.53285        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 428 107.62245 34.70028        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 429 107.91600 37.02303        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 430 112.24129 34.84253        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 431 118.47962 35.78884        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 432 146.44072 45.60869        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 433  94.17943 18.30612        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 434  83.59016 16.46103        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 435  97.55087 19.09151        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 436  95.29717 18.30308        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 437 110.49568 35.19487        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 438  95.40975 19.62598        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 439 120.96211 41.17689        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 440  84.91098 17.85249        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 441 107.09968 36.41382        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 442  81.88014 16.17739        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 443 116.56269 40.69230        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 444  73.08749 14.94097        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 445  98.82993 31.92601        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 446 113.98932 37.07901        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 447  85.45893 17.69469        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 448 108.79996 22.12360        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 449 119.62907 36.32811        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 450  95.14802 18.34427        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 451 104.14630 18.36215        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 452 102.74659 32.58723        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 453 114.13654 38.72763        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 454 145.40670 45.19577        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 455  83.98220 25.13179        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 456 119.69304 41.47791        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 457 115.78499 37.62930        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 458  78.71454 22.97434        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 459  99.99923 20.76300        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 460 111.28409 35.69627        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 461 113.13093 36.73550        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 462 124.88841 40.34772        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 463 122.11537 39.69475        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 464 108.94258 33.34561        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 465 121.68650 39.48582        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 466 121.93580 41.68790        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 467 144.08211 46.75849        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 468  62.01480 13.20176        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 469 124.42241 39.51942        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 470 127.90123 40.06073        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 471  94.49199 31.06592        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 472 110.00640 33.61806        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 473  96.41187 19.98987        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 474 101.34961 19.74040        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 475 102.93379 20.95561        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 476  92.32324 18.15865        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 477  79.57892 15.65607        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 478  97.32099 19.78192        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 479 115.33512 39.78074        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 480 101.44063 30.70302        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 481 105.08516 20.90106        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 482  79.51881 15.62635        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 483 100.95779 32.92634        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 484 128.28932 38.88932        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 485 104.53241 20.31787        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 486 122.94313 37.65059        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 487 101.46551 19.94880        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 488 127.27418 43.76838        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 489  94.16222 18.31404        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 490  85.73203 16.49705        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 491 112.52897 36.28876        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 492  85.30652 16.89971        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 493 122.95119 40.92803        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 494 107.58525 35.14126        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 495 125.67406 40.66184        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 496  98.15421 20.05136        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 497 114.04563 35.65158        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 498  91.10524 19.66188        0   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 499 100.21973 33.14270        1   mclust</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 500  84.85402 17.61139        0   mclust</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

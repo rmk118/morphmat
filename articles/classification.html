@@ -77,13 +77,21 @@
     
 <p>This vignette describes methods that first classify individual data
 points as mature or immature, enabling the use of logistic regression to
-find SM50 as would be done with a physiological metric of maturity. This
-vignette will be useful for referring readers to more complex options
-available in packages like <code>mclust</code> that are not available
-within <code>morphmat</code>.</p>
+find SM50 as would be done with a physiological metric of maturity.</p>
+<p>This is the approach taken by the <code>classify_mature()</code>
+function in the <a href="https://github.com/ejosymart/sizeMat" class="external-link">sizeMat
+package</a>, which first applies PCA to the allometric data, then uses
+hierarchical clustering (with the “Ward.D” agglomeration method and a
+standard Euclidean distance metric) to classify points as mature or
+immature. Simulation testing demonstrated that Gaussian mixture model
+clustering is generally more accurate at recovering true maturity
+classifications than hierarchical clustering, kmeans clustering,
+hierarchical kmeans, or partitioning around medoids (PAM) clustering.
+However, morphmat includes all clustering methods to allow users to
+easily compare results and identify how the choice of clustering method
+may impact the results of their analysis.</p>
 <p>We will start by simulating a data set with a known SM50 value of 75
-mm to demonstrate the use (and limitations) of classification
-methods.</p>
+mm:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span> <span class="co"># set seed for reproducibility</span></span>
 <span></span>
@@ -95,7 +103,7 @@ methods.</p>
 <span>  allo_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.25</span>, <span class="fl">1.05</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
 <span>  x_mean <span class="op">=</span> <span class="fl">85</span> <span class="co"># mean carapace width of the sample</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="classification_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p><img src="classification_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <div class="section level2">
 <h2 id="clustering-methods">Clustering methods<a class="anchor" aria-label="anchor" href="#clustering-methods"></a>
 </h2>
@@ -111,20 +119,39 @@ the simulation testing will include <code><a href="https://rdrr.io/r/stats/hclus
 <code>dbscan</code> package.</p>
 <p>The Somerton method is a clustering method widely used for estimating
 size at maturity based on the allometric growth of crustacean body
-parts, originally written in FORTRAN <span class="citation">(<a href="#ref-somerton1980a">Somerton 1980</a>)</span>.
-<code>morphmat</code> will contain code to implement the Somerton method
-in R, largely following the structure of code written by Dr. Bradley
+parts, originally written in FORTRAN <span class="citation">(<a href="#ref-somerton1980">Somerton 1980</a>)</span>.
+<code>morphmat</code> contains code to implement the Somerton method in
+R, largely following the structure of code written by Dr. Bradley
 Stevens.</p>
 <div class="section level3">
 <h3 id="somerton-method">Somerton method<a class="anchor" aria-label="anchor" href="#somerton-method"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">out_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/somerton.html">somerton</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">out_df</span>,</span>
-<span>           <span class="va">pred_mat_num</span> <span class="op">~</span> <span class="va">x</span>,</span>
-<span>           family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 77.70282</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">somerton_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/somerton.html">somerton</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span></span>
+<span><span class="va">out_df</span> <span class="op">&lt;-</span> <span class="va">somerton_out</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">juv_int</span> <span class="op">&lt;-</span> <span class="va">somerton_out</span><span class="op">$</span><span class="va">juv_mod</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">juv_slope</span> <span class="op">&lt;-</span> <span class="va">somerton_out</span><span class="op">$</span><span class="va">juv_mod</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">mat_int</span> <span class="op">&lt;-</span> <span class="va">somerton_out</span><span class="op">$</span><span class="va">adult_mod</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">mat_slope</span> <span class="op">&lt;-</span> <span class="va">somerton_out</span><span class="op">$</span><span class="va">adult_mod</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">out_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">pred_mat_num</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>             alpha <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"CW (mm)"</span>, y <span class="op">=</span> <span class="st">"CH (mm)"</span>, color <span class="op">=</span> <span class="st">"Predicted maturity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span></span>
+<span>    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0"</span> <span class="op">=</span> <span class="st">"#7bbcd5"</span>, <span class="st">"1"</span> <span class="op">=</span> <span class="st">"#CA6E78"</span><span class="op">)</span>,</span>
+<span>    breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0"</span> <span class="op">=</span> <span class="st">"Immature"</span>, <span class="st">"1"</span> <span class="op">=</span> <span class="st">"Mature"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>slope <span class="op">=</span> <span class="va">juv_slope</span>, intercept <span class="op">=</span> <span class="va">juv_int</span>, color <span class="op">=</span> <span class="st">"#7bbcd5"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>slope <span class="op">=</span> <span class="va">mat_slope</span>, intercept <span class="op">=</span> <span class="va">mat_int</span>, color <span class="op">=</span> <span class="st">"#CA6E78"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="va">mytheme</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">120</span>, <span class="fl">120</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">6</span><span class="op">)</span>,</span>
+<span>    label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"y[1] ==  %.3g + %.3g * x"</span>, <span class="va">juv_int</span>, <span class="va">juv_slope</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"y[2] == %.3g + %.3g * x"</span>, <span class="va">mat_int</span>, <span class="va">mat_slope</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    parse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="classification_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 </div>
 </div>
 <div class="section level2">
@@ -135,7 +162,7 @@ Stevens.</p>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">disc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/infl_pt.html">infl_pt</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="classification_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="classification_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">fc</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span> <span class="op">+</span></span>
@@ -174,7 +201,14 @@ mature, enabling logistic regression to be applied to estimate SM50:</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"CW (mm)"</span>, y <span class="op">=</span> <span class="st">"CH (mm)"</span>, title <span class="op">=</span> <span class="st">"Predicted maturity"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="va">mytheme</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><img src="classification_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
+<p><img src="classification_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
+</div>
+<div class="section level3">
+<h3 id="comparing-methods">Comparing methods<a class="anchor" aria-label="anchor" href="#comparing-methods"></a>
+</h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">all_clusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cluster_mods.html">cluster_mods</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="classification_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 <!-- # Discriminant Analysis -->
 <!-- Talk about drawbacks and reasons why it is unnecessary, but mention instances where it might be useful (stock assessment, applications to related species). -->
 </div>
@@ -191,7 +225,7 @@ same as determining size at maturity for non-crustacean fisheries.</p>
 using the binomial family with a logit link, then taking the ratio of
 the estimated coefficients to find the SM50 value. For example, using
 the classifications produced by the Somerton method:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">infl_pt_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">pred_mat</span> <span class="op">~</span> <span class="va">x</span>,</span>
 <span>                   family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span>,</span>
 <span>                   data <span class="op">=</span> <span class="va">fc_infl_pt</span><span class="op">)</span></span>
@@ -199,14 +233,15 @@ the classifications produced by the Somerton method:</p>
 <span><span class="co"># SM50 = -A/B</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">infl_pt_mod</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">infl_pt_mod</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 74.85785</span></span></code></pre></div>
-<p>See <code>vignette("logistic")</code> for more details on options for
-methods to obtain SM50 values and confidence intervals once your data
-set includes maturity labels.</p>
+<p>See the article on <a href="https://rmk118.github.io/morphmat/articles/logistic.html">post-classification
+logistic regression</a> for more details on options for methods to
+obtain SM50 values and confidence intervals once your data set includes
+maturity labels.</p>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
-<div id="ref-somerton1980a" class="csl-entry">
-Somerton, DA. 1980. <span>“A Computer Technique for Estimating the Size
-of Sexual Maturity in Crabs.”</span> <em>Canadian Journal of Fisheries
-and Aquatic Sciences</em> 37 (10): 1488–94. <a href="https://doi.org/10.1139/f80-192" class="external-link">https://doi.org/10.1139/f80-192</a>.
+<div id="ref-somerton1980" class="csl-entry">
+Somerton, David A. 1980. <span>“A Computer Technique for Estimating the
+Size of Sexual Maturity in Crabs.”</span> <em>Canadian Journal of
+Fisheries and Aquatic Sciences</em> 37 (10): 1488–94. <a href="https://doi.org/10.1139/f80-192" class="external-link">https://doi.org/10.1139/f80-192</a>.
 </div>
 </div>
 </div>

@@ -133,13 +133,13 @@ structure of our artificial data set.</p>
 <span>                               G <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>                               modelNames <span class="op">=</span> <span class="st">"EVV"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance</a></span><span class="op">(</span><span class="va">mclust_class</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">hypvol</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
+<span><span class="fu">broom</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance</a></span><span class="op">(</span><span class="va">mclust_class</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">hypvol</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
 <span><span class="co">#&gt;   model     G     BIC logLik    df  nobs</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> EVV       2 -<span style="color: #BB0000; text-decoration: underline;">10</span><span style="color: #BB0000;">582.</span> -<span style="color: #BB0000; text-decoration: underline;">5</span><span style="color: #BB0000;">258.</span>    10   800</span></span>
-<span></span>
-<span><span class="va">fc_mclust</span> <span class="op">&lt;-</span> <span class="va">fc</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> EVV       2 -<span style="color: #BB0000; text-decoration: underline;">10</span><span style="color: #BB0000;">582.</span> -<span style="color: #BB0000; text-decoration: underline;">5</span><span style="color: #BB0000;">258.</span>    10   800</span></span></code></pre>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fc_mclust</span> <span class="op">&lt;-</span> <span class="va">fc</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">rename</span><span class="op">(</span>true_maturity <span class="op">=</span> <span class="va">mature</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>pred_maturity <span class="op">=</span> <span class="va">mclust_class</span><span class="op">$</span><span class="va">classification</span><span class="op">)</span> </span>
 <span></span>
@@ -155,524 +155,24 @@ structure of our artificial data set.</p>
 <span>  <span class="fu">mutate</span><span class="op">(</span>uncertainty <span class="op">=</span> <span class="va">mclust_class</span><span class="op">$</span><span class="va">uncertainty</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="compare-the-mature-and-immature-groups">Compare the mature and immature groups<a class="anchor" aria-label="anchor" href="#compare-the-mature-and-immature-groups"></a>
+<h3 id="visualize-the-mature-and-immature-groups">Visualize the mature and immature groups<a class="anchor" aria-label="anchor" href="#visualize-the-mature-and-immature-groups"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fc_mclust</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>mature <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="va">pred_maturity</span> <span class="op">==</span> <span class="fl">0</span>, <span class="st">"Immature"</span>, <span class="st">"Mature"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">tbl_summary</span><span class="op">(</span>include <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span>,</span>
-<span>    by <span class="op">=</span> <span class="va">mature</span>,</span>
-<span>    type <span class="op">=</span> <span class="fu">all_continuous</span><span class="op">(</span><span class="op">)</span> <span class="op">~</span> <span class="st">"continuous2"</span>,</span>
-<span>    label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">x</span> <span class="op">~</span> <span class="st">"Carapace width (mm)"</span>, <span class="va">y</span> <span class="op">~</span> <span class="st">"Chela height (mm)"</span><span class="op">)</span>,</span>
-<span>    statistic <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>      <span class="fu">all_continuous</span><span class="op">(</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"{mean} (\U00B1{sd})"</span>,</span>
-<span>        <span class="st">"{min}-{max}"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">add_p</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">modify_header</span><span class="op">(</span><span class="va">label</span> <span class="op">~</span> <span class="st">""</span>,</span>
-<span>    <span class="fu">all_stat_cols</span><span class="op">(</span><span class="op">)</span> <span class="op">~</span> <span class="st">"**{level}**&lt;br&gt;N = {n} ({style_percent(p)}%)"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">add_stat_label</span><span class="op">(</span>label <span class="op">=</span> <span class="fu">all_continuous</span><span class="op">(</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Mean (\U00B1SD)"</span>, <span class="st">"Min - Max"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; The following <span style="color: #BB0000;">errors</span> were returned during `modify_header()`:</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> For variable `x` (`mature`) and <span style="color: #0000BB;">"p.value"</span> statistic: <span style="color: #BB0000;">The package "cardx" (&gt;=</span></span></span>
-<span><span class="co">#&gt;   <span style="color: #BB0000;">0.2.2) is required.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> For variable `y` (`mature`) and <span style="color: #0000BB;">"p.value"</span> statistic: <span style="color: #BB0000;">The package "cardx" (&gt;=</span></span></span>
-<span><span class="co">#&gt;   <span style="color: #BB0000;">0.2.2) is required.</span></span></span></code></pre></div>
-<div id="kguvxdebpo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#kguvxdebpo table {
-  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-#kguvxdebpo thead, #kguvxdebpo tbody, #kguvxdebpo tfoot, #kguvxdebpo tr, #kguvxdebpo td, #kguvxdebpo th {
-  border-style: none;
-}
-
-#kguvxdebpo p {
-  margin: 0;
-  padding: 0;
-}
-
-#kguvxdebpo .gt_table {
-  display: table;
-  border-collapse: collapse;
-  line-height: normal;
-  margin-left: auto;
-  margin-right: auto;
-  color: #333333;
-  font-size: 16px;
-  font-weight: normal;
-  font-style: normal;
-  background-color: #FFFFFF;
-  width: auto;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-}
-
-#kguvxdebpo .gt_caption {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-#kguvxdebpo .gt_title {
-  color: #333333;
-  font-size: 125%;
-  font-weight: initial;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-color: #FFFFFF;
-  border-bottom-width: 0;
-}
-
-#kguvxdebpo .gt_subtitle {
-  color: #333333;
-  font-size: 85%;
-  font-weight: initial;
-  padding-top: 3px;
-  padding-bottom: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-color: #FFFFFF;
-  border-top-width: 0;
-}
-
-#kguvxdebpo .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#kguvxdebpo .gt_bottom_border {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#kguvxdebpo .gt_col_headings {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#kguvxdebpo .gt_col_heading {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  overflow-x: hidden;
-}
-
-#kguvxdebpo .gt_column_spanner_outer {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-#kguvxdebpo .gt_column_spanner_outer:first-child {
-  padding-left: 0;
-}
-
-#kguvxdebpo .gt_column_spanner_outer:last-child {
-  padding-right: 0;
-}
-
-#kguvxdebpo .gt_column_spanner {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  overflow-x: hidden;
-  display: inline-block;
-  width: 100%;
-}
-
-#kguvxdebpo .gt_spanner_row {
-  border-bottom-style: hidden;
-}
-
-#kguvxdebpo .gt_group_heading {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  text-align: left;
-}
-
-#kguvxdebpo .gt_empty_group_heading {
-  padding: 0.5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: middle;
-}
-
-#kguvxdebpo .gt_from_md > :first-child {
-  margin-top: 0;
-}
-
-#kguvxdebpo .gt_from_md > :last-child {
-  margin-bottom: 0;
-}
-
-#kguvxdebpo .gt_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin: 10px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  overflow-x: hidden;
-}
-
-#kguvxdebpo .gt_stub {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#kguvxdebpo .gt_stub_row_group {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-  vertical-align: top;
-}
-
-#kguvxdebpo .gt_row_group_first td {
-  border-top-width: 2px;
-}
-
-#kguvxdebpo .gt_row_group_first th {
-  border-top-width: 2px;
-}
-
-#kguvxdebpo .gt_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#kguvxdebpo .gt_first_summary_row {
-  border-top-style: solid;
-  border-top-color: #D3D3D3;
-}
-
-#kguvxdebpo .gt_first_summary_row.thick {
-  border-top-width: 2px;
-}
-
-#kguvxdebpo .gt_last_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#kguvxdebpo .gt_grand_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#kguvxdebpo .gt_first_grand_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-style: double;
-  border-top-width: 6px;
-  border-top-color: #D3D3D3;
-}
-
-#kguvxdebpo .gt_last_grand_summary_row_top {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: double;
-  border-bottom-width: 6px;
-  border-bottom-color: #D3D3D3;
-}
-
-#kguvxdebpo .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#kguvxdebpo .gt_table_body {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#kguvxdebpo .gt_footnotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#kguvxdebpo .gt_footnote {
-  margin: 0px;
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#kguvxdebpo .gt_sourcenotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#kguvxdebpo .gt_sourcenote {
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#kguvxdebpo .gt_left {
-  text-align: left;
-}
-
-#kguvxdebpo .gt_center {
-  text-align: center;
-}
-
-#kguvxdebpo .gt_right {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-#kguvxdebpo .gt_font_normal {
-  font-weight: normal;
-}
-
-#kguvxdebpo .gt_font_bold {
-  font-weight: bold;
-}
-
-#kguvxdebpo .gt_font_italic {
-  font-style: italic;
-}
-
-#kguvxdebpo .gt_super {
-  font-size: 65%;
-}
-
-#kguvxdebpo .gt_footnote_marks {
-  font-size: 75%;
-  vertical-align: 0.4em;
-  position: initial;
-}
-
-#kguvxdebpo .gt_asterisk {
-  font-size: 100%;
-  vertical-align: 0;
-}
-
-#kguvxdebpo .gt_indent_1 {
-  text-indent: 5px;
-}
-
-#kguvxdebpo .gt_indent_2 {
-  text-indent: 10px;
-}
-
-#kguvxdebpo .gt_indent_3 {
-  text-indent: 15px;
-}
-
-#kguvxdebpo .gt_indent_4 {
-  text-indent: 20px;
-}
-
-#kguvxdebpo .gt_indent_5 {
-  text-indent: 25px;
-}
-
-#kguvxdebpo .katex-display {
-  display: inline-flex !important;
-  margin-bottom: 0.75em !important;
-}
-
-#kguvxdebpo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
-  height: 0px !important;
-}
-</style>
-<table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
-<thead><tr class="gt_col_headings">
-<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="label"></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_1"><span class="gt_from_md"><strong>Immature</strong><br>N = 287 (36%)</span></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_2"><span class="gt_from_md"><strong>Mature</strong><br>N = 513 (64%)</span></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="p.value"><span class="gt_from_md"><strong>p-value</strong></span></th>
-    </tr></thead>
-<tbody class="gt_table_body">
-<tr>
-<td headers="label" class="gt_row gt_left">Carapace width (mm)</td>
-<td headers="stat_1" class="gt_row gt_center"><br></td>
-<td headers="stat_2" class="gt_row gt_center"><br></td>
-<td headers="p.value" class="gt_row gt_center"><br></td>
-</tr>
-<tr>
-<td headers="label" class="gt_row gt_left">    Mean (±SD)</td>
-<td headers="stat_1" class="gt_row gt_center">69 (±15)</td>
-<td headers="stat_2" class="gt_row gt_center">92 (±16)</td>
-<td headers="p.value" class="gt_row gt_center"><br></td>
-</tr>
-<tr>
-<td headers="label" class="gt_row gt_left">    Min - Max</td>
-<td headers="stat_1" class="gt_row gt_center">25-107</td>
-<td headers="stat_2" class="gt_row gt_center">51-144</td>
-<td headers="p.value" class="gt_row gt_center"><br></td>
-</tr>
-<tr>
-<td headers="label" class="gt_row gt_left">Chela height (mm)</td>
-<td headers="stat_1" class="gt_row gt_center"><br></td>
-<td headers="stat_2" class="gt_row gt_center"><br></td>
-<td headers="p.value" class="gt_row gt_center"><br></td>
-</tr>
-<tr>
-<td headers="label" class="gt_row gt_left">    Mean (±SD)</td>
-<td headers="stat_1" class="gt_row gt_center">11 (±2)</td>
-<td headers="stat_2" class="gt_row gt_center">23 (±4)</td>
-<td headers="p.value" class="gt_row gt_center"><br></td>
-</tr>
-<tr>
-<td headers="label" class="gt_row gt_left">    Min - Max</td>
-<td headers="stat_1" class="gt_row gt_center">5-18</td>
-<td headers="stat_2" class="gt_row gt_center">13-38</td>
-<td headers="p.value" class="gt_row gt_center"><br></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<!-- # ```{r} -->
+<!-- # fc_mclust %>% -->
+<!-- #   mutate(mature = if_else(pred_maturity == 0, "Immature", "Mature")) %>% -->
+<!-- #   tbl_summary(include = c(x, y), -->
+<!-- #     by = mature, -->
+<!-- #     type = all_continuous() ~ "continuous2", -->
+<!-- #     label = list(x ~ "Carapace width (mm)", y ~ "Chela height (mm)"), -->
+<!-- #     statistic = list( -->
+<!-- #       all_continuous() ~ c("{mean} (\U00B1{sd})", -->
+<!-- #         "{min}-{max}"))) %>% -->
+<!-- #   add_p() %>% -->
+<!-- #   modify_header(label ~ "", -->
+<!-- #     all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>% -->
+<!-- #   add_stat_label(label = all_continuous() ~ c("Mean (\U00B1SD)", "Min - Max")) -->
+<!-- # ``` -->
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">fc_mclust</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="va">mytheme</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, color <span class="op">=</span> <span class="va">pred_maturity</span>, fill <span class="op">=</span> <span class="va">pred_maturity</span><span class="op">)</span>,</span>
@@ -694,39 +194,63 @@ Predicted clusters using mixture-based clustering.
 </h3>
 <p>This is the most basic way to obtain an SM50 estimate from allometric
 data that has been clustered into mature and immature groups:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">fc_mclust</span>,</span>
 <span>           <span class="va">pred_maturity_num</span> <span class="op">~</span> <span class="va">x</span>,</span>
 <span>           family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="co"># SM50 = -A/B</span></span>
-<span><span class="co">#&gt; [1] 74.89024</span></span></code></pre></div>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="co"># SM50 = -A/B</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; [1] 74.89024</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
 <h2 id="comparing-clustering-approaches">Comparing clustering approaches<a class="anchor" aria-label="anchor" href="#comparing-clustering-approaches"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Here there will be a function where you can compare the results of many</span></span>
-<span><span class="co"># different clustering methods: mclust, Somerton, infl_pt, kmeans, &amp; hclust</span></span>
-<span></span>
-<span><span class="co"># cluster_mods(fc, xvar = "x", yvar = "y", method = c("all"))</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">all_clusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cluster_mods.html">cluster_mods</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="morphmat_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="comparison-with-piecewise-regression-models">Comparison with piecewise regression models<a class="anchor" aria-label="anchor" href="#comparison-with-piecewise-regression-models"></a>
 </h2>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/piecewise_mods.html">piecewise_mods</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                chngpt             segmented               REGRANS </span></span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/piecewise_mods.html">piecewise_mods</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;                chngpt             segmented               REGRANS </span></span>
 <span><span class="co">#&gt;              67.68312              63.95451              67.67091 </span></span>
 <span><span class="co">#&gt;               Stevens   Two_line.breakpoint Two_line.intersection </span></span>
-<span><span class="co">#&gt;              68.33387              75.43651              56.76587</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/piecewise_mods.html">piecewise_mods</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span>,</span>
-<span>                   log <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                chngpt             segmented               REGRANS </span></span>
+<span><span class="co">#&gt;              68.33387              75.43651              56.76587</span></span></code></pre>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/piecewise_mods.html">piecewise_mods</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span>,</span>
+<span>                   log <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;                chngpt             segmented               REGRANS </span></span>
 <span><span class="co">#&gt;              67.68312              62.82577              67.67091 </span></span>
 <span><span class="co">#&gt;               Stevens   Two_line.breakpoint Two_line.intersection </span></span>
-<span><span class="co">#&gt;              68.33387              75.21507              50.25602</span></span></code></pre></div>
+<span><span class="co">#&gt;              68.33387              75.21507              50.25602</span></span></code></pre>
+<div class="section level3">
+<h3 id="broken-stickpiecewise-regression-methods---individual-functions">Broken-stick/piecewise regression methods - individual
+functions<a class="anchor" aria-label="anchor" href="#broken-stickpiecewise-regression-methods---individual-functions"></a>
+</h3>
+<p>REGRANS:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/regrans.html">regrans</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; [1] 67.67091</span></span></code></pre>
+<p>Two-line logistic:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/two_line_logistic.html">two_line_logistic</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, SM50_start <span class="op">=</span> <span class="fl">85</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;    SM50 </span></span>
+<span><span class="co">#&gt; 77.6817</span></span></code></pre>
+<p>Two-line model (lines are fit separately; no forced
+intersection):</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/two_line.html">two_line</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;   breakpoint intersection </span></span>
+<span><span class="co">#&gt;     75.43651     56.76587</span></span></code></pre>
+<p>Broken-stick Stevens (only iterates over values of the x-axis
+variable present in the data):</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/broken_stick_stevens.html">broken_stick_stevens</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; [1] 68.33387</span></span></code></pre>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
