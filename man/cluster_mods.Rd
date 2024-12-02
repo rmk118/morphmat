@@ -9,7 +9,8 @@ cluster_mods(
   xvar,
   yvar,
   log = FALSE,
-  method = c("mclust", "Somerton", "kmeans", "hclust", "infl_pt", "all")
+  method = c("mclust", "Somerton", "kmeans", "hclust", "infl_pt", "all"),
+  plot = FALSE
 )
 }
 \arguments{
@@ -21,14 +22,20 @@ variable (e.g., carapace width).}
 \item{yvar}{Name of column (integer or double) of measurements for the y-axis
 variable (e.g., claw height).}
 
-\item{log}{Boolean; should both variables be log-transformed before performing the
-regression? Defaults to FALSE.}
+\item{log}{Boolean; should both variables be log-transformed before
+performing the regression? Defaults to FALSE.}
 
 \item{method}{Classification method to use. A single string or vector
-containing one or more of c("mclust", "Somerton", "kmeans", "hclust", "infl_pt"), or "all" to return the results of all methods for comparison.}
+containing one or more of c("mclust", "Somerton", "kmeans", "hclust",
+"infl_pt"), or "all" to return the results of all methods for comparison.}
+
+\item{plot}{Boolean; optionally display a plot of the input data shaded
+according to the maturity classifications from the specified method(s).
+Defaults to FALSE.}
 }
 \value{
-An estimate of SM50 from the specified method(s).
+A data frame with each point classified according to the specified
+method(s).
 }
 \description{
 Classification approaches to estimating SM50
@@ -37,4 +44,5 @@ Classification approaches to estimating SM50
 set.seed(12)
 fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
 cluster_mods(fc, xvar = "x", yvar = "y", method = c("kmeans"))
+cluster_mods(fc, xvar = "x", yvar = "y", method = c("all"), plot = TRUE)
 }

@@ -78,7 +78,22 @@ You can install the development version of morphmat from
 devtools::install_github("rmk118/morphmat")
 ```
 
-## Examples
+## Articles/vignettes
+
+- [Getting
+  Started](https://rmk118.github.io/morphmat/articles/morphmat.html)
+- [Broken-stick
+  models](https://rmk118.github.io/morphmat/articles/broken-stick.html)
+- [Two-line
+  models](https://rmk118.github.io/morphmat/articles/two-line.html)
+- [Classification
+  methods](https://rmk118.github.io/morphmat/articles/classification.html)
+- [Post-classification logistic
+  regression](https://rmk118.github.io/morphmat/articles/logistic.html)
+- [Simulating
+  data](https://rmk118.github.io/morphmat/articles/simulations.html)
+
+## Basic Examples
 
 ``` r
 library(morphmat)
@@ -96,46 +111,6 @@ fc <- fake_crustaceans(
 )
 ```
 
-### Broken-stick/piecewise regression methods
-
-REGRANS:
-
-``` r
-regrans(fc, "x", "y", verbose = FALSE)
-#> [1] 67.67091
-```
-
-Two-line logistic:
-
-``` r
-two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE, SM50_start = 85)
-#>    SM50 
-#> 77.6817
-```
-
-Two-line model (lines are fit separately; no forced intersection):
-
-``` r
-two_line(fc, xvar = "x", yvar = "y", verbose = FALSE)
-#>   breakpoint intersection 
-#>     75.43651     56.76587
-```
-
-Broken-stick Stevens (only iterates over values of the x-axis variable
-present in the data):
-
-``` r
-broken_stick_stevens(fc, xvar = "x", yvar = "y", verbose = FALSE)
-#> [1] 68.33387
-```
-
-Other packages:
-
-``` r
-# segmented
-# chngpt
-```
-
 Compare estimates from all piecewise regression methods:
 
 ``` r
@@ -147,6 +122,14 @@ piecewise_mods(fc, xvar = "x", yvar = "y", method = "all")
 ```
 
 ### Clustering methods
+
+Compare all clustering methods
+
+``` r
+all_clusters <- cluster_mods(fc, xvar = "x", yvar = "y", method = c("all"), plot = TRUE)
+```
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 Somerton method:
 

@@ -1,14 +1,9 @@
 ---
 title: "Two-line models"
-output: rmarkdown::html_vignette
 link-citations: true
 link-external-newwindow: true 
 editor_options: 
   chunk_output_type: console
-vignette: >
-  %\VignetteIndexEntry{Two-line models}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
 bibliography: references.bib
 ---
 
@@ -20,11 +15,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r, include = FALSE}
 #| message: FALSE
-#| echo: FALSE
 #| warning: FALSE
-#| output: FALSE
 
 # List of packages required:
 packages <- c("morphmat", "chngpt", "nlstools", "dplyr", "ggplot2")

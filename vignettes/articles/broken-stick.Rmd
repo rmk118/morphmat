@@ -1,27 +1,21 @@
 ---
 title: "Broken-stick methods"
-output: rmarkdown::html_vignette
-bibliography: ../references.bib
 link-citations: true
 link-external-newwindow: true 
-vignette: >
-  %\VignetteIndexEntry{Broken-stick methods}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
-number-sections: true
 editor_options: 
   chunk_output_type: console
+bibliography: references.bib
 ---
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
+ # collapse = TRUE,
   message = FALSE,
   comment = "#>"
 )
 ```
 
-```{r setup}
+```{r, include = FALSE}
 #| message: FALSE
 #| warning: FALSE
 #| output: FALSE
@@ -30,7 +24,7 @@ knitr::opts_chunk$set(
 packages <- c("morphmat", "chngpt", "segmented", "dplyr", "ggplot2")
 
 # Load packages into session
-lapply(packages, require, character.only = TRUE, quietly = TRUE)
+lapply(packages, require, character.only = TRUE)
 ```
 
 ```{r}
@@ -44,7 +38,7 @@ mytheme <- theme_classic() + # define custom theme for ggplots
     text = element_text(size = 13))
 ```
 
-Sources (more will be added): Somerton [-@somerton1980]; Muggeo [-@muggeo2003; @muggeo2008; @muggeo2017]; Hall et al. [-@hall2006]
+Sources (more will be added): Somerton [-@somerton1980; @somerton1980a]; Muggeo [-@muggeo2003; @muggeo2008; @muggeo2017]; Hall et al. [-@hall2006]
 
 \begin{equation*}\log{y}=
     \begin{cases}
@@ -247,9 +241,9 @@ summary(
 
 The estimates and accuracy also change dramatically even with slightly different variations of data with the exact same underlying structure. Results from detailed investigations of the sensitivity of each modeling approach will be available in a forthcoming paper (Krasnow et al., *in prep*).
 
-Although we will not test all of the options here, the `chngpt` package supports 14 different types of two-phase (one threshold) models, as well as one three-phase model: see [Fig. 1](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10722876/) in @son2021. Importantly, it also supports generalized linear models and linear mixed models, so you can fit models utilizing any family that can be passed to glm and include other covariates and random effects. Additional benefits of this package include several functions to simulate data and the significant capability of user-friendly customization. Options include providing your own grid of changepoints to iterate over, using five different types of bootstrap CIs with numerous options for each type, providing a bound on the slope parameters for the lines on either side of the breakpoint, and changing the search/optimization algorithm for parameter estimation to meet the needs of your data (e.g., "fastgrid2" is very fast and might be helpful for large data sets).
+Although we will not test all of the options here, the `chngpt` package supports 14 different types of two-phase (one threshold) models, as well as one three-phase model: see [Fig. 1](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10722876/) in Son and Fong [-@son2021]. Importantly, it also supports generalized linear models and linear mixed models, so you can fit models utilizing any family that can be passed to `glm` and include other covariates and random effects. Additional benefits of this package include several functions to simulate data and the significant capability of user-friendly customization. Options include providing your own grid of changepoints to iterate over, using five different types of bootstrap CIs with numerous options for each type, providing a bound on the slope parameters for the lines on either side of the breakpoint, and changing the search/optimization algorithm for parameter estimation to meet the needs of your data (e.g., "fastgrid2" is very fast and might be helpful for large data sets).
 
-Using the "chngpt.test" function to run significance tests:
+Using the `chngpt::chngpt.test()` function to run significance tests:
 
 ```{r}
 #| label: chngpt-sig-tests
@@ -277,7 +271,7 @@ chngpt.test(
 )
 ```
 
-It is interesting that this function returns a slightly different breakpoint/threshold estimate from the `chngptm()` function when both are called using the default search region bounds (regardless of what set.seed is set to before calling the functions). Additionally, the test statistic for the model with the less accurate breakpoint estimate is much higher than for the more accurate model, yielding a lower p-value.
+It is interesting that this function returns a slightly different breakpoint/threshold estimate from the `chngpt::chngptm()` function when both are called using the default search region bounds (regardless of what set.seed is set to before calling the functions). Additionally, the test statistic for the model with the less accurate breakpoint estimate is much higher than for the more accurate model, yielding a lower p-value.
 
 ## REGRANS
 

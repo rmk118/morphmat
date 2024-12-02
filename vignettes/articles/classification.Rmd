@@ -1,22 +1,10 @@
 ---
 title: "Classification methods"
-output: rmarkdown::html_vignette
-format: 
-    code-overflow: wrap
-    toc: true
-    toc-depth: 3
-    df-print: kable
-    code-fold: true
-vignette: >
-  %\VignetteIndexEntry{Classification methods}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
-link-external-newwindow: true 
-number-sections: true
 link-citations: true
-bibliography: ../references.bib
+link-external-newwindow: true 
 editor_options: 
   chunk_output_type: console
+bibliography: references.bib
 ---
 
 ```{r, include = FALSE}
@@ -26,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r, include = FALSE}
 #| message: FALSE
 #| echo: FALSE
 #| warning: FALSE
@@ -50,9 +38,11 @@ mytheme <- theme_classic() + # define custom theme for ggplots
     text = element_text(size = 13))
 ```
 
-This vignette describes methods that first classify individual data points as mature or immature, enabling the use of logistic regression to find SM50 as would be done with a physiological metric of maturity. This vignette will be useful for referring readers to more complex options available in packages like `mclust` that are not available within `morphmat`.
+This vignette describes methods that first classify individual data points as mature or immature, enabling the use of logistic regression to find SM50 as would be done with a physiological metric of maturity. 
 
-We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate the use (and limitations) of classification methods.
+This is the approach taken by the `classify_mature()` function in the [sizeMat package](https://github.com/ejosymart/sizeMat), which first applies PCA to the allometric data, then uses hierarchical clustering (with the "Ward.D" agglomeration method and a standard Euclidean distance metric) to classify points as mature or immature. Simulation testing demonstrated that Gaussian mixture model clustering is generally more accurate at recovering true maturity classifications than hierarchical clustering, kmeans clustering, hierarchical kmeans, or partitioning around medoids (PAM) clustering. However, morphmat includes all clustering methods to allow users to easily compare results and identify how the choice of clustering method may impact the results of their analysis.
+
+We will start by simulating a data set with a known SM50 value of 75 mm:
 
 ```{r}
 #| label: generate-crabs
@@ -82,16 +72,35 @@ ggplot() +
 
 Innumerable clustering methods have been implemented in existing R packages. I will be using simulation testing to evaluate the relative performance of common clustering methods when used to separate immature and mature crustaceans based on morphometric data. Functions included in the simulation testing will include `hclust()` and `kmeans()` from the base R `stats` package; `factoextra::hkmeans()`; `cluster::PAM()`; `mclust::Mclust()`; and `dbscan()`, `hdbscan()`, and `OPTICS()` from the `dbscan` package.
 
-The Somerton method is a clustering method widely used for estimating size at maturity based on the allometric growth of crustacean body parts, originally written in FORTRAN [@somerton1980a]. `morphmat` will contain code to implement the Somerton method in R, largely following the structure of code written by Dr. Bradley Stevens.
+The Somerton method is a clustering method widely used for estimating size at maturity based on the allometric growth of crustacean body parts, originally written in FORTRAN [@somerton1980]. `morphmat` contains code to implement the Somerton method in R, largely following the structure of code written by Dr. Bradley Stevens.
 
 ## Somerton method
 
 ```{r}
-out_df <- somerton(fc, xvar = "x", yvar = "y")[[1]]
-mod <- glm(data = out_df,
-           pred_mat_num ~ x,
-           family = binomial(link = "logit"))
-unname(-coef(mod)[1] / coef(mod)[2])
+somerton_out <- somerton(fc, xvar = "x", yvar = "y")
+out_df <- somerton_out[[1]]
+
+juv_int <- somerton_out$juv_mod$coefficients[[1]]
+juv_slope <- somerton_out$juv_mod$coefficients[[2]]
+mat_int <- somerton_out$adult_mod$coefficients[[1]]
+mat_slope <- somerton_out$adult_mod$coefficients[[2]]
+
+ggplot() +
+  geom_point(data = out_df, aes(x, y, color = as.factor(pred_mat_num)),
+             alpha = 0.4) +
+  labs(x = "CW (mm)", y = "CH (mm)", color = "Predicted maturity") +
+  scale_color_manual(
+    values = c("0" = "#7bbcd5", "1" = "#CA6E78"),
+    breaks = c(0, 1),
+    labels = c("0" = "Immature", "1" = "Mature")) +
+  geom_abline(slope = juv_slope, intercept = juv_int, color = "#7bbcd5") +
+  geom_abline(slope = mat_slope, intercept = mat_int, color = "#CA6E78") +
+  mytheme +
+  annotate("text", x = c(120, 120), y = c(8, 6),
+    label = c(
+      sprintf("y[1] ==  %.3g + %.3g * x", juv_int, juv_slope),
+      sprintf("y[2] == %.3g + %.3g * x", mat_int, mat_slope)),
+    parse = TRUE)
 ```
 
 # Other classification methods
@@ -143,6 +152,12 @@ if (rlang::is_installed("patchwork")) {
 }
 ```
 
+## Comparing methods
+
+```{r}
+all_clusters <- cluster_mods(fc, xvar = "x", yvar = "y", method = c("all"), plot = TRUE)
+```
+
 <!-- # Discriminant Analysis -->
 
 <!-- Talk about drawbacks and reasons why it is unnecessary, but mention instances where it might be useful (stock assessment, applications to related species). -->
@@ -162,4 +177,4 @@ infl_pt_mod <- glm(pred_mat ~ x,
 unname(-coef(infl_pt_mod)[1] / coef(infl_pt_mod)[2])
 ```
 
-See `vignette("logistic")` for more details on options for methods to obtain SM50 values and confidence intervals once your data set includes maturity labels.
+See the article on [post-classification logistic regression](https://rmk118.github.io/morphmat/articles/logistic.html) for more details on options for methods to obtain SM50 values and confidence intervals once your data set includes maturity labels.

@@ -13,7 +13,7 @@ editor_options:
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
+#  collapse = TRUE,
   comment = "#>"
 )
 ```
@@ -29,7 +29,6 @@ library(dplyr) # tidy data manipulation
 library(broom) # cleaning model output
 library(ggplot2) # for plotting
 library(mclust) # recommended clustering method
-library(gtsummary) # creates table comparing mature vs. immature 
 ```
 
 We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate an example workflow using `morphmat`. See `vignette("simulations")` and the `fake_crustaceans()` documentation for more details on the structure of our artificial data set.
@@ -102,22 +101,23 @@ fc_mclust <- fc_mclust %>%
   mutate(uncertainty = mclust_class$uncertainty)
 ```
 
-## Compare the mature and immature groups
-```{r}
-fc_mclust %>%
-  mutate(mature = if_else(pred_maturity == 0, "Immature", "Mature")) %>%
-  tbl_summary(include = c(x, y),
-    by = mature,
-    type = all_continuous() ~ "continuous2",
-    label = list(x ~ "Carapace width (mm)", y ~ "Chela height (mm)"),
-    statistic = list(
-      all_continuous() ~ c("{mean} (\U00B1{sd})",
-        "{min}-{max}"))) %>%
-  add_p() %>%
-  modify_header(label ~ "",
-    all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>%
-  add_stat_label(label = all_continuous() ~ c("Mean (\U00B1SD)", "Min - Max"))
-```
+## Visualize the mature and immature groups
+
+<!-- # ```{r} -->
+<!-- # fc_mclust %>% -->
+<!-- #   mutate(mature = if_else(pred_maturity == 0, "Immature", "Mature")) %>% -->
+<!-- #   tbl_summary(include = c(x, y), -->
+<!-- #     by = mature, -->
+<!-- #     type = all_continuous() ~ "continuous2", -->
+<!-- #     label = list(x ~ "Carapace width (mm)", y ~ "Chela height (mm)"), -->
+<!-- #     statistic = list( -->
+<!-- #       all_continuous() ~ c("{mean} (\U00B1{sd})", -->
+<!-- #         "{min}-{max}"))) %>% -->
+<!-- #   add_p() %>% -->
+<!-- #   modify_header(label ~ "", -->
+<!-- #     all_stat_cols() ~ "**{level}**<br>N = {n} ({style_percent(p)}%)") %>% -->
+<!-- #   add_stat_label(label = all_continuous() ~ c("Mean (\U00B1SD)", "Min - Max")) -->
+<!-- # ``` -->
 
 ```{r}
 #| label: fig-cluster1
@@ -142,15 +142,13 @@ This is the most basic way to obtain an SM50 estimate from allometric data that 
 mod <- glm(data = fc_mclust,
            pred_maturity_num ~ x,
            family = binomial(link = "logit"))
+
 unname(-coef(mod)[1] / coef(mod)[2]) # SM50 = -A/B
 ```
 
 # Comparing clustering approaches
 ```{r}
-# Here there will be a function where you can compare the results of many
-# different clustering methods: mclust, Somerton, infl_pt, kmeans, & hclust
-
-# cluster_mods(fc, xvar = "x", yvar = "y", method = c("all"))
+all_clusters <- cluster_mods(fc, xvar = "x", yvar = "y", method = c("all"), plot = TRUE)
 ```
 
 # Comparison with piecewise regression models
@@ -162,4 +160,28 @@ piecewise_mods(fc, xvar = "x", yvar = "y", method = c("all"),
                    log = TRUE) %>% exp()
 ```
 
+## Broken-stick/piecewise regression methods - individual functions
 
+REGRANS:
+
+```{r}
+regrans(fc, "x", "y", verbose = FALSE)
+```
+
+Two-line logistic:
+
+```{r}
+two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE, SM50_start = 85)
+```
+
+Two-line model (lines are fit separately; no forced intersection):
+
+```{r}
+two_line(fc, xvar = "x", yvar = "y", verbose = FALSE)
+```
+
+Broken-stick Stevens (only iterates over values of the x-axis variable present in the data):
+
+```{r}
+broken_stick_stevens(fc, xvar = "x", yvar = "y", verbose = FALSE)
+```

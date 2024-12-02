@@ -1,31 +1,27 @@
 ---
 title: "Post-classification logistic regression"
-editor_options: 
-  chunk_output_type: console
 link-citations: true
-link-external-newwindow: true 
+link-external-newwindow: true
+editor_options:
+  chunk_output_type: console
 bibliography: references.bib
 ---
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
+ # collapse = TRUE,
   comment = "#>"
 )
 ```
 
-```{r setup}
-#| message: FALSE
-#| echo: FALSE
-#| warning: FALSE
-#| output: FALSE
+```{r, include = FALSE}
 
 # List of packages required:
 packages <- c("morphmat", "broom", "drc", "drda", "qra", "lmtest", "sandwich",
   "mclust", "dplyr", "ggplot2")
 
 # Load packages into session
-lapply(packages, require, character.only = TRUE, quietly = TRUE)
+lapply(packages, require, character.only = TRUE)
 
 mytheme <- theme_classic() + # define custom theme for ggplots
   theme(
@@ -68,25 +64,25 @@ fc_mclust <- fc_mclust %>%
   mutate(uncertainty = mclust_class$uncertainty)
 ```
 
-# Post-classification logistic regression options
+# Post-classification logistic regression
 
 Beyond the familiar `stats::glm`, there are many packages that can be used to model the relationship between size and maturity status, allowing for the incorporation of random effects, temporal or spatial structuring, and other additional complexities. These include popular packages for fitting generalized linear mixed models (GLMMs) and generalized additive (mixed) models (GAMMs) such as `lmer`, `nlme`, `mgcv`, `glmmTMB`, and `sdmTMB`. While logit links are the most common for binomial models like these, testing alternative link functions—particularly the probit and complementary log-log ("cloglog") links—may be important for ensuring reliable parameter estimates [@mainguy2024]. Also see Roa et al. [-@roa1999].
 
 Helpful vignette: <https://cran.r-project.org/web/packages/qra/vignettes/timeMortality.html>
 
-## Methods to obtain confidence intervals for SM50 value
+Even if no covariates are included in the model, many choices must be made when fitting a binomial model for the probability of maturity at a given length. These include:
 
-1.  [confint_L.R script](https://github.com/rafamoral/L50/blob/main/confint_L.R) from Mainguy et al. [-@mainguy2024]: Delta method, Fieller method, profile-likelihood, non-parametric bootstrapping, parametric bootstrapping, Monte Carlo, Bayesian
+- The model to be fitted (most commonly 2-parameter logistic models, but many alternative formulations with up to 5 parameters)
+- Alternative link functions (logit, probit, cloglog, etc.)
+- Constrained optimization (i.e., set lower and upper bounds on the possible values of the parameters to be estimated)
+- Initial values provided for the parameters to be estimated
 
-2.  R package qra: Fieller method, Delta method [@maindonald2021]
 
-3.  R package drc [@ritz2015]: Delta method. This package can also fit 5/4/3/2-parameter logistic, log-logistic, Weibull, etc. models, incorporate weights, robust nls fitting, constrained optimization, and other customization options. It also contains functions to simulate data
+## Example methods to obtain confidence intervals for SM50 value
 
-4: R package DRDA [@malyutina2023]
+A great place to start is the [confint_L.R script](https://github.com/rafamoral/L50/blob/main/confint_L.R) from Mainguy et al. [-@mainguy2024]. This script can be used to quantify the uncertainty around the SM50 parameter using the Delta method, Fieller method, profile-likelihood, three resampling techniques (non-parametric bootstrapping, parametric bootstrapping, and Monte Carlo), and Bayesian credible intervals. For the resampling methods, three types of intervals can be calculated: equal-tailed intervals (ETI/percentile), bias corrected accelerated intervals (BCa), or highest density intervals (HDI).
 
-Other functions that could be used (that I have not tested) include `twopartm::FiellerRatio()` and `tidydelta::tidydelta()`.
-
-### Standard stats::glm
+### Standard glm
 
 ```{r}
 example_glm <- glm(data = fc_mclust,
@@ -103,6 +99,8 @@ broom::glance(example_glm) %>%
 
 ### drc package
 
+The R package [drc](https://cran.r-project.org/web/packages/drc/drc.pdf) was designed for analysis of dose-response data, and includes many functions that are useful for fitting logistic models [@ritz2015]. This package can fit a variety of 5/4/3/2-parameter logistic, log-logistic, and Weibull models and find confidence intervals for the estimated parameters, among other functions.
+
 ```{r}
 testdrm <- drc::drm(pred_maturity_num ~ x,
                data = fc_mclust,
@@ -110,7 +108,7 @@ testdrm <- drc::drm(pred_maturity_num ~ x,
                type = "binomial")
 testdrm
 summary(testdrm)
-confint(testdrm, "e")
+confint(testdrm, "e") # specifies the 'e' parameter, the inflection point
 
 estfun.drc <- drc::estfun.drc
 bread.drc <- drc::bread.drc
@@ -141,9 +139,49 @@ ggplot() +
   theme(legend.position = "inside", legend.position.inside = c(0.75, 0.25))
 ```
 
+### DRDA package
+
+The R package DRDA is a newer alternative to drc that uses an improved optimization methodology to improve the accuracy of parameter estimates [@malyutina2023].
+
+```{r}
+fit_l2 <- drda(pred_maturity_num ~ x,
+               data = fc_mclust,
+               mean_function = "logistic2")
+fit_l4 <- drda(pred_maturity_num ~ x,
+               data = fc_mclust,
+               mean_function = "logistic4")
+
+anova(fit_l2, fit_l4)
+
+summary(fit_l2)
+
+plot(fit_l2) # built-in plotting method
+```
+
+Custom plot example:
+
+```{r}
+sum_l2 <- summary(fit_l2)[["param"]][4,]
+
+sm50_est <- sum_l2[1]
+low_ci <- sum_l2[3]
+hi_ci <- sum_l2[4]
+
+ggplot() +
+  geom_point(aes(x = fc_mclust$x, y = fc_mclust$pred_maturity_num),
+             shape = 1, size = 1) +
+  geom_line(aes(x = fc_mclust$x, y = predict(fit_l2))) +
+  geom_vline(xintercept = sm50_est) +
+  geom_rect(aes(xmin = low_ci, xmax = hi_ci,
+    ymin = -Inf, ymax = Inf, fill = "95% CI"), alpha = 0.5) +
+  labs(y = "Probability of maturity", x = "Carapace width (mm)", fill = NULL) +
+  mytheme +
+  theme(legend.position = "inside", legend.position.inside = c(0.75, 0.25))
+```
+
 ### qra package
 
-See `qra::fieller()` for details of usage and outputs.
+The R package [qra](https://cran.r-project.org/web/packages/qra/index.html) is another useful package initially designed for analyzing dose-response data [@maindonald2021]. It includes implementations of the the Fieller and Delta methods for estimating confidence intervals for the SM50 parameter when it is not directly estimated during model-fitting. See `qra::fieller()` for details of usage and outputs.
 
 ```{r}
 qra::fieller(
@@ -187,42 +225,9 @@ ggplot() +
   theme(legend.position = "inside", legend.position.inside = c(0.75, 0.25))
 ```
 
-### DRDA package
+### Others
 
-```{r}
-fit_l2 <- drda(pred_maturity_num ~ x,
-               data = fc_mclust,
-               mean_function = "logistic2")
-fit_l4 <- drda(pred_maturity_num ~ x,
-               data = fc_mclust,
-               mean_function = "logistic4")
+Other functions that could be used (that I have not tested) include [`twopartm::FiellerRatio()`](https://cran.r-project.org/web/packages/twopartm/index.html) and [`tidydelta::tidydelta()`](https://javiermtzrdz.github.io/tidydelta/).
 
-anova(fit_l2, fit_l4)
-anova(fit_l2)
-summary(fit_l2)
-
-plot(fit_l2) # built-in plotting method
-```
-
-Custom plot example:
-
-```{r}
-sum_l2 <- summary(fit_l2)[["param"]][4,]
-
-sm50_est <- sum_l2[1]
-low_ci <- sum_l2[3]
-hi_ci <- sum_l2[4]
-
-ggplot() +
-  geom_point(aes(x = fc_mclust$x, y = fc_mclust$pred_maturity_num),
-             shape = 1, size = 1) +
-  geom_line(aes(x = fc_mclust$x, y = predict(fit_l2))) +
-  geom_vline(xintercept = sm50_est) +
-  geom_rect(aes(xmin = low_ci, xmax = hi_ci,
-    ymin = -Inf, ymax = Inf, fill = "95% CI"), alpha = 0.5) +
-  labs(y = "Probability of maturity", x = "Carapace width (mm)", fill = NULL) +
-  mytheme +
-  theme(legend.position = "inside", legend.position.inside = c(0.75, 0.25))
-```
 
 ## References

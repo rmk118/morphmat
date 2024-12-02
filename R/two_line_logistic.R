@@ -4,7 +4,7 @@
 #'   connected by a logistic curve.
 #'
 #' @details This relies on `minpack.lm::nlsLM()`, which is often able to
-#'   converge when the default `stats::nls()` function cannot find a solution.
+#'   converge when `stats::nls()` function cannot find a solution.
 #'
 #' @param dat data frame or matrix containing the data
 #' @param xvar Name of column (integer or double) of measurements for the x-axis

@@ -35,13 +35,14 @@ Suggests:
     tidyr,
     gtsummary,
     broom,
-    drc,
-    drda,
-    sandwich,
-    nlstools,
-    qra,
     lmtest,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-Config/Needs/website: rmarkdown
+Config/Needs/website:
+    rmarkdown,
+    drc,
+    drda,
+    sandwich,
+    qra,
+    nlstools
