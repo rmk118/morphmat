@@ -43,6 +43,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/broken-stick.html">Broken-stick methods</a></li>
     <li><a class="dropdown-item" href="../articles/classification.html">Classification methods</a></li>
+    <li><a class="dropdown-item" href="../articles/logistic.html">Post-classification logistic regression</a></li>
     <li><a class="dropdown-item" href="../articles/simulations.html">Simulating data</a></li>
     <li><a class="dropdown-item" href="../articles/two-line.html">Two-line models</a></li>
   </ul>
@@ -68,19 +69,32 @@
       <img src="../logo.png" class="logo" alt=""><h1>Broken-stick methods</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/rmk118/morphmat/blob/master/vignettes/broken-stick.Rmd" class="external-link"><code>vignettes/broken-stick.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rmk118/morphmat/blob/master/vignettes/articles/broken-stick.Rmd" class="external-link"><code>vignettes/articles/broken-stick.Rmd</code></a></small>
       <div class="d-none name"><code>broken-stick.Rmd</code></div>
     </div>
 
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rmk118/morphmat" class="external-link">morphmat</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">chngpt</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">segmented</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
-<!-- Here I will write a vignette explaining all of the broken-stick regression methods. This will be useful for referring readers to more complex options available in packages like `segmented` that are not available within `morphmat`. -->
+<code class="sourceCode R"><span><span class="co"># List of packages required:</span></span>
+<span><span class="va">packages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"morphmat"</span>, <span class="st">"chngpt"</span>, <span class="st">"segmented"</span>, <span class="st">"dplyr"</span>, <span class="st">"ggplot2"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load packages into session</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">packages</span>, <span class="va">require</span>, character.only <span class="op">=</span> <span class="cn">TRUE</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[2]]</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[3]]</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[4]]</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[5]]</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p>Sources (more will be added): Somerton <span class="citation">(<a href="#ref-somerton1980">1980</a>)</span>; Muggeo <span class="citation">(<a href="#ref-muggeo2003">2003</a>, <a href="#ref-muggeo2008">2008</a>, <a href="#ref-muggeo2017">2017</a>)</span>; Hall et al. <span class="citation">(<a href="#ref-hall2006">2006</a>)</span></p>
 <p><span class="math display">\begin{equation*}\log{y}=
     \begin{cases}
@@ -105,10 +119,10 @@ mm to demonstrate the use (and limitations) of broken-stick methods.</p>
 <span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fake_crustaceans.html">fake_crustaceans</a></span><span class="op">(</span></span>
 <span>  error_scale <span class="op">=</span> <span class="fl">17</span>,</span>
 <span>  slope <span class="op">=</span> <span class="fl">9</span>,</span>
-<span>  L50 <span class="op">=</span> <span class="fl">75</span>,</span>
-<span>  n <span class="op">=</span> <span class="fl">800</span>,</span>
+<span>  L50 <span class="op">=</span> <span class="fl">75</span>, <span class="co"># known size at maturity is 75 mm</span></span>
+<span>  n <span class="op">=</span> <span class="fl">800</span>, <span class="co"># sample size</span></span>
 <span>  allo_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.25</span>, <span class="fl">1.05</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
-<span>  x_mean <span class="op">=</span> <span class="fl">85</span></span>
+<span>  x_mean <span class="op">=</span> <span class="fl">85</span> <span class="co"># mean carapace width of the sample</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="broken-stick_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <div class="section level2">
@@ -170,7 +184,7 @@ and the method(s) used to calculate confidence intervals for the
 breakpoint <span class="citation">(<a href="#ref-fong2017">Fong et al.
 2017</a>)</span>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit_chngpt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/chngpt/man/chngptm.html" class="external-link">chngptm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">fit_chngpt</span> <span class="op">&lt;-</span> <span class="fu">chngptm</span><span class="op">(</span></span>
 <span>  formula.1 <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
 <span>  formula.2 <span class="op">=</span>  <span class="op">~</span> <span class="va">x</span>,</span>
 <span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
@@ -213,7 +227,7 @@ alternative method for calculating confidence intervals (“model-based”)
 produces very similar results to the default bootstrap method.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/chngpt/man/chngptm.html" class="external-link">chngptm</a></span><span class="op">(</span></span>
+<span>  <span class="fu">chngptm</span><span class="op">(</span></span>
 <span>    formula.1 <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
 <span>    formula.2 <span class="op">=</span>  <span class="op">~</span> <span class="va">x</span>,</span>
 <span>    family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
@@ -231,7 +245,7 @@ affect the estimate, although it does result in narrower confidence
 intervals:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/chngpt/man/chngptm.html" class="external-link">chngptm</a></span><span class="op">(</span></span>
+<span>  <span class="fu">chngptm</span><span class="op">(</span></span>
 <span>    formula.1 <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
 <span>    formula.2 <span class="op">=</span>  <span class="op">~</span> <span class="va">x</span>,</span>
 <span>    family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
@@ -251,7 +265,7 @@ quantile bound to 0.33 and the upper to 0.66, the model will return an
 SM50 value closer to the true value of 75 mm.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/chngpt/man/chngptm.html" class="external-link">chngptm</a></span><span class="op">(</span></span>
+<span>  <span class="fu">chngptm</span><span class="op">(</span></span>
 <span>    formula.1 <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
 <span>    formula.2 <span class="op">=</span>  <span class="op">~</span> <span class="va">x</span>,</span>
 <span>    family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
@@ -288,7 +302,7 @@ fast and might be helpful for large data sets).</p>
 <p>Using the “chngpt.test” function to run significance tests:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Model with default upper and lower bounds</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/chngpt/man/chngpt.test.html" class="external-link">chngpt.test</a></span><span class="op">(</span></span>
+<span><span class="fu">chngpt.test</span><span class="op">(</span></span>
 <span>  formula.null <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
 <span>  formula.chngpt <span class="op">=</span> <span class="op">~</span> <span class="va">x</span>,</span>
 <span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
@@ -304,7 +318,7 @@ fast and might be helpful for large data sets).</p>
 <span></span>
 <span><span class="co"># Model with better upper and lower bounds to return</span></span>
 <span><span class="co"># the true SM50 of 75 mm (0.6 and 0.3)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/chngpt/man/chngpt.test.html" class="external-link">chngpt.test</a></span><span class="op">(</span></span>
+<span><span class="fu">chngpt.test</span><span class="op">(</span></span>
 <span>  formula.null <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
 <span>  formula.chngpt <span class="op">=</span> <span class="op">~</span> <span class="va">x</span>,</span>
 <span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
@@ -320,7 +334,7 @@ fast and might be helpful for large data sets).</p>
 <span><span class="co">#&gt; Maximal statistic = 13.909, threshold = 74.531, p-value = 0.00036</span></span>
 <span><span class="co">#&gt; alternative hypothesis: two-sided</span></span></code></pre></div>
 <p>It is interesting that this function returns a slightly different
-breakpoint/threshold estimate from the <code><a href="https://rdrr.io/pkg/chngpt/man/chngptm.html" class="external-link">chngptm()</a></code> function
+breakpoint/threshold estimate from the <code>chngptm()</code> function
 when both are called using the default search region bounds (regardless
 of what set.seed is set to before calling the functions). Additionally,
 the test statistic for the model with the less accurate breakpoint
@@ -360,14 +374,17 @@ included within Crab_Maturity; this segmented regression approach is
 included here because it differs from the <code>segmented</code> and
 REGRANS methods in that <em>possible SM50 values are restricted to
 values of the x-variable present in the data set</em>.</p>
+<p>See Olsen and Stevens <span class="citation">(<a href="#ref-olsen2020">2020</a>)</span> for an example real-world
+application.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stevens_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/broken_stick_stevens.html">broken_stick_stevens</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">stevens_est</span></span>
 <span><span class="co">#&gt; [1] 68.33387</span></span></code></pre></div>
 <p><img src="broken-stick_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
-<div class="section level3 unnumbered">
-<h3 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h3>
+</div>
+<div class="section level2 unnumbered">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-fong2017" class="csl-entry">
 Fong, Youyi, Ying Huang, Peter B. Gilbert, and Sallie R. Permar. 2017.
@@ -395,6 +412,12 @@ Broken-Line Relationships.”</span> <em>R News</em> 8 (1): 20–25. <a href="ht
 Regression: A Smoothed Score-Based Approach.”</span> <em>Australian
 &amp; New Zealand Journal of Statistics</em> 59 (3): 311–22. <a href="https://doi.org/gkzpsc" class="external-link">https://doi.org/gkzpsc</a>.
 </div>
+<div id="ref-olsen2020" class="csl-entry">
+Olsen, Noelle A., and Bradley G. Stevens. 2020. <span>“Size at Maturity,
+Shell Conditions, and Morphometric Relationships of Male and Female
+Jonah Crabs in the Middle Atlantic Bight.”</span> <em>North American
+Journal of Fisheries Management</em> 40 (6): 1472–85. <a href="https://doi.org/10.1002/nafm.10509" class="external-link">https://doi.org/10.1002/nafm.10509</a>.
+</div>
 <div id="ref-pezzuto1993" class="csl-entry">
 Pezzuto, Paulo Ricardo. 1993. <span>“Regrans: A
 <span>“</span>Basic<span>”</span> Program for an Extensive Analysis of
@@ -409,7 +432,6 @@ Science</em> 39 (1): 15–19. <a href="https://doi.org/10.1093/icesjms/39.1.15" 
 Son, Hyunju, and Youyi Fong. 2021. <span>“Fast Grid Search and
 Bootstrap-Based Inference for Continuous Two-Phase Polynomial Regression
 Models.”</span> <em>Environmetrics</em> 32 (3): e2664. <a href="https://doi.org/10.1002/env.2664" class="external-link">https://doi.org/10.1002/env.2664</a>.
-</div>
 </div>
 </div>
 </div>

@@ -46,6 +46,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/broken-stick.html">Broken-stick methods</a></li>
     <li><a class="dropdown-item" href="articles/classification.html">Classification methods</a></li>
+    <li><a class="dropdown-item" href="articles/logistic.html">Post-classification logistic regression</a></li>
     <li><a class="dropdown-item" href="articles/simulations.html">Simulating data</a></li>
     <li><a class="dropdown-item" href="articles/two-line.html">Two-line models</a></li>
   </ul>
@@ -191,28 +192,35 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span> <span class="co"># for reproducibility when generating the simulated data</span></span>
 <span></span>
 <span><span class="co"># Generate a simulated dataset with known size at maturity</span></span>
-<span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fake_crustaceans.html">fake_crustaceans</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">100</span>, L50 <span class="op">=</span> <span class="fl">100</span>, allo_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.2</span>, <span class="fl">1.1</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fake_crustaceans.html">fake_crustaceans</a></span><span class="op">(</span></span>
+<span>  error_scale <span class="op">=</span> <span class="fl">17</span>,</span>
+<span>  slope <span class="op">=</span> <span class="fl">9</span>,</span>
+<span>  L50 <span class="op">=</span> <span class="fl">75</span>,</span>
+<span>  n <span class="op">=</span> <span class="fl">800</span>,</span>
+<span>  allo_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.25</span>, <span class="fl">1.05</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
+<span>  x_mean <span class="op">=</span> <span class="fl">85</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="broken-stickpiecewise-regression-methods">Broken-stick/piecewise regression methods<a class="anchor" aria-label="anchor" href="#broken-stickpiecewise-regression-methods"></a>
 </h3>
 <p>REGRANS:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/regrans.html">regrans</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 89.43822</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 67.67091</span></span></code></pre></div>
 <p>Two-line logistic:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/two_line_logistic.html">two_line_logistic</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, SM50_start <span class="op">=</span> <span class="fl">105</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     SM50 </span></span>
-<span><span class="co">#&gt; 104.7636</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/two_line_logistic.html">two_line_logistic</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, SM50_start <span class="op">=</span> <span class="fl">85</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    SM50 </span></span>
+<span><span class="co">#&gt; 77.6817</span></span></code></pre></div>
 <p>Two-line model (lines are fit separately; no forced intersection):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/two_line.html">two_line</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   breakpoint intersection </span></span>
-<span><span class="co">#&gt;     106.0655    1383.9744</span></span></code></pre></div>
+<span><span class="co">#&gt;     75.43651     56.76587</span></span></code></pre></div>
 <p>Broken-stick Stevens (only iterates over values of the x-axis variable present in the data):</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/broken_stick_stevens.html">broken_stick_stevens</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 91.10524</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 68.33387</span></span></code></pre></div>
 <p>Other packages:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># segmented</span></span>
@@ -221,9 +229,9 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/piecewise_mods.html">piecewise_mods</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, method <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                chngpt             segmented               REGRANS </span></span>
-<span><span class="co">#&gt;              89.44561              88.71463              89.43822 </span></span>
+<span><span class="co">#&gt;              67.68312              63.95451              67.67091 </span></span>
 <span><span class="co">#&gt;               Stevens   Two_line.breakpoint Two_line.intersection </span></span>
-<span><span class="co">#&gt;              91.10524             106.06548            1383.97444</span></span></code></pre></div>
+<span><span class="co">#&gt;              68.33387              75.43651              56.76587</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="clustering-methods">Clustering methods<a class="anchor" aria-label="anchor" href="#clustering-methods"></a>
@@ -233,7 +241,7 @@
 <code class="sourceCode R"><span><span class="va">out_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/somerton.html">somerton</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">out_df</span>, <span class="va">pred_mat_num</span> <span class="op">~</span> <span class="va">x</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 102.37</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 77.70282</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">

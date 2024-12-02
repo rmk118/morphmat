@@ -43,6 +43,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/broken-stick.html">Broken-stick methods</a></li>
     <li><a class="dropdown-item" href="../articles/classification.html">Classification methods</a></li>
+    <li><a class="dropdown-item" href="../articles/logistic.html">Post-classification logistic regression</a></li>
     <li><a class="dropdown-item" href="../articles/simulations.html">Simulating data</a></li>
     <li><a class="dropdown-item" href="../articles/two-line.html">Two-line models</a></li>
   </ul>
@@ -68,7 +69,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Classification methods</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/rmk118/morphmat/blob/master/vignettes/classification.Rmd" class="external-link"><code>vignettes/classification.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/rmk118/morphmat/blob/master/vignettes/articles/classification.Rmd" class="external-link"><code>vignettes/articles/classification.Rmd</code></a></small>
       <div class="d-none name"><code>classification.Rmd</code></div>
     </div>
 
@@ -84,15 +85,15 @@ within <code>morphmat</code>.</p>
 mm to demonstrate the use (and limitations) of classification
 methods.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span> <span class="co"># set seed for reproducibility</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span> <span class="co"># set seed for reproducibility</span></span>
 <span></span>
 <span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fake_crustaceans.html">fake_crustaceans</a></span><span class="op">(</span></span>
 <span>  error_scale <span class="op">=</span> <span class="fl">17</span>,</span>
 <span>  slope <span class="op">=</span> <span class="fl">9</span>,</span>
-<span>  L50 <span class="op">=</span> <span class="fl">75</span>,</span>
-<span>  n <span class="op">=</span> <span class="fl">800</span>,</span>
+<span>  L50 <span class="op">=</span> <span class="fl">75</span>, <span class="co"># known size at maturity is 75 mm</span></span>
+<span>  n <span class="op">=</span> <span class="fl">800</span>, <span class="co"># sample size</span></span>
 <span>  allo_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.25</span>, <span class="fl">1.05</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
-<span>  x_mean <span class="op">=</span> <span class="fl">85</span></span>
+<span>  x_mean <span class="op">=</span> <span class="fl">85</span> <span class="co"># mean carapace width of the sample</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="classification_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <div class="section level2">
@@ -123,7 +124,7 @@ Stevens.</p>
 <span>           <span class="va">pred_mat_num</span> <span class="op">~</span> <span class="va">x</span>,</span>
 <span>           family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 78.37427</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 77.70282</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -149,8 +150,8 @@ via the inflection point method
 <p>The line can then be used to classify each point as immature and
 mature, enabling logistic regression to be applied to estimate SM50:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fc_infl_pt</span> <span class="op">&lt;-</span> <span class="va">fc</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pred_mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">y</span> <span class="op">/</span> <span class="va">x</span> <span class="op">&gt;</span> <span class="va">disc</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                            correct <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">pred_mat</span> <span class="op">==</span> <span class="va">mature</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fc_infl_pt</span> <span class="op">&lt;-</span> <span class="va">fc</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">mutate</span><span class="op">(</span>pred_mat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu">if_else</span><span class="op">(</span><span class="va">y</span> <span class="op">/</span> <span class="va">x</span> <span class="op">&gt;</span> <span class="va">disc</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                            correct <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="va">pred_mat</span> <span class="op">==</span> <span class="va">mature</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_installed.html" class="external-link">is_installed</a></span><span class="op">(</span><span class="st">"patchwork"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -197,51 +198,15 @@ the classifications produced by the Somerton method:</p>
 <span></span>
 <span><span class="co"># SM50 = -A/B</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">infl_pt_mod</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">infl_pt_mod</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 76.58952</span></span></code></pre></div>
-<p>Beyond the familiar <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">stats::glm</a></code>, there are many packages
-that can be used to model the relationship between size and maturity
-status, allowing for the incorporation of random effects, temporal or
-spatial structuring, and other additional complexities. These include
-popular packages for fitting generalized linear mixed models (GLMMs) and
-generalized additive (mixed) models (GAMMs) such as <code>lmer</code>,
-<code>nlme</code>, <code>mgcv</code>, <code>glmmTMB</code>, and
-<code>sdmTMB</code>.</p>
-<div class="section level3">
-<h3 id="methods-to-obtain-confidence-intervals-for-sm50-value">Methods to obtain confidence intervals for SM50 value<a class="anchor" aria-label="anchor" href="#methods-to-obtain-confidence-intervals-for-sm50-value"></a>
-</h3>
-<ol style="list-style-type: decimal">
-<li><p><a href="https://github.com/rafamoral/L50/blob/main/confint_L.R" class="external-link">confint_L.R
-script</a> from Mainguy et al. <span class="citation">(<a href="#ref-mainguy2024">2024</a>)</span>: Delta method, Fieller method,
-profile-likelihood, non-parametric bootstrapping, parametric
-bootstrapping, Monte Carlo, Bayesian</p></li>
-<li><p>R package qra: Fieller method</p></li>
-<li><p>R package twopartm: Fieller method</p></li>
-<li><p>R package drc <span class="citation">(<a href="#ref-ritz2015">Ritz et al. 2015</a>)</span>: Delta method, Fieller
-method. This package can also fit 5/4/3/2-parameter logistic,
-log-logistic, Weibull, etc. models, incorporate weights, robust nls
-fitting, constrained optimization, and other customization options. It
-also contains functions to simulate data</p></li>
-</ol>
-<p>5: R package tidydelta: Delta method</p>
+<span><span class="co">#&gt; [1] 74.85785</span></span></code></pre></div>
+<p>See <code>vignette("logistic")</code> for more details on options for
+methods to obtain SM50 values and confidence intervals once your data
+set includes maturity labels.</p>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
-<div id="ref-mainguy2024" class="csl-entry">
-Mainguy, Julien, Martin Bélanger, Geneviève Ouellet-Cauchon, and Rafael
-de Andrade Moral. 2024. <span>“Monitoring Reproduction in Fish:
-Assessing the Adequacy of Ogives and the Predicted Uncertainty of Their
-<span><em>L</em></span>50 Estimates for More Reliable Biological
-Inferences.”</span> <em>Fisheries Research</em> 269 (January): 106863.
-<a href="https://doi.org/10.1016/j.fishres.2023.106863" class="external-link">https://doi.org/10.1016/j.fishres.2023.106863</a>.
-</div>
-<div id="ref-ritz2015" class="csl-entry">
-Ritz, Christian, Florent Baty, Jens C. Streibig, and Daniel Gerhard.
-2015. <span>“Dose-Response Analysis Using R.”</span> <em>PLOS ONE</em>
-10 (12): e0146021. <a href="https://doi.org/10.1371/journal.pone.0146021" class="external-link">https://doi.org/10.1371/journal.pone.0146021</a>.
-</div>
 <div id="ref-somerton1980a" class="csl-entry">
 Somerton, DA. 1980. <span>“A Computer Technique for Estimating the Size
 of Sexual Maturity in Crabs.”</span> <em>Canadian Journal of Fisheries
 and Aquatic Sciences</em> 37 (10): 1488–94. <a href="https://doi.org/10.1139/f80-192" class="external-link">https://doi.org/10.1139/f80-192</a>.
-</div>
 </div>
 </div>
 </div>
