@@ -38,6 +38,7 @@ Suggests:
     drc,
     drda,
     sandwich,
+    nlstools,
     qra,
     lmtest,
     testthat (>= 3.0.0)
