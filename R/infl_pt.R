@@ -9,18 +9,18 @@
 #' transition to maturity of a population of Tanner crabs
 #' (*Chionoecetes bairdi*) was evident by an increase in the
 #' log(claw height)/log(carapace width) ratio from below 0.2 to above
-#' 0.2. `infl_pt_fun()` finds this discriminating line by creating a kernel
+#' 0.2. `infl_pt()` finds this discriminating line by creating a kernel
 #' density estimate (visually similar to a smoothed histogram) of the
 #' y-var/x-var ratio for all points, then finding the local minimum separating
 #' the two peaks representing the maturity clusters.
 #'
-#' @import ggplot2
-#' @importFrom rlang .data
 #' @param dat optional data frame or matrix containing the data
 #' @param x Name of column (or integer or double vector) containing measurements
 #'   for the x-axis variable (e.g., carapace width).
 #' @param y Name of column (or integer or double vector) containing measurements
 #'   for the y-axis variable (e.g., claw height).
+#' @param log Boolean; should both variables be log-transformed before performing the
+#'   regression? Defaults to FALSE.
 #' @param plot Boolean; should a plot of the density curve with the identified
 #'   minimum be created?
 #'
@@ -37,13 +37,20 @@
 #' z <- c(x, y)
 #' hist(z)
 #' dat1 <- data.frame(xvar = rep(1, 200), yvar = z)
-#' infl_pt(dat1, "xvar", "yvar", TRUE)
+#' infl_pt(dat1, "xvar", "yvar", plot = TRUE)
 #' fc <- fake_crustaceans(n = 100, allo_params = c(1, 0.2, 1.1, 0.2))
-#' infl_pt(fc, "x", "y", TRUE)
+#' infl_pt(fc, "x", "y", plot = TRUE)
+#' infl_pt(fc, "x", "y", log = TRUE, plot = TRUE)
 #'
-infl_pt <- function(dat, x, y, plot = FALSE) {
+infl_pt <- function(dat, x, y, log = FALSE, plot = FALSE) {
   # find the ratio between the two morphometric variables
-  ratio <- dat[[y]]/dat[[x]]
+  if (isTRUE(log)) {
+    ratio <- log(dat[[y]])/log(dat[[x]])
+  }
+  else {
+    ratio <- dat[[y]]/dat[[x]]
+  }
+
 
   # compute a kernel density estimate (essentially a smoothed histogram)
   density_test <- stats::density(ratio)

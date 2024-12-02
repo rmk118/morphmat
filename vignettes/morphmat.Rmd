@@ -1,0 +1,76 @@
+---
+title: "morphmat"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{morphmat}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(morphmat)
+library(ggplot2)
+```
+
+We will start by simulating a data set with a known SM50 value of 75 mm to demonstrate an example workflow using `morphmat`.
+```{r}
+#| label: generate-crabs
+
+set.seed(12) # set seed for reproducibility
+
+fc <- fake_crustaceans(
+  error_scale = 17,
+  slope = 9,
+  L50 = 75,
+  n = 800,
+  allo_params = c(0.9, 0.25, 1.05, 0.2),
+  x_mean = 85
+)
+
+mytheme <- theme_classic() + # define custom theme for ggplots
+  theme(
+    axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
+    axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
+    text = element_text(size = 13))
+```
+
+# Plot your data
+
+## Original scale
+```{r}
+ggplot() +
+  geom_point(data = fc, aes(x, y), alpha = 0.4) +
+  labs(x = "Carapace width (mm)", y = "Claw height (mm)", ) +
+  mytheme
+```
+
+## Log-log scale
+```{r}
+ggplot() +
+  geom_point(data = fc, aes(log_x, log_y), alpha = 0.4) +
+  labs(x = "Log carapace width (mm)", y = "Log claw height (mm)", ) +
+  mytheme
+```
+
+# Suggested method
+
+## mclust for classification
+
+```{r}
+
+```
+
+
+## GLM for obtaining SM50 value
+
+# Comparing clustering approaches
+
+# Comparison with piecewise regression models
+

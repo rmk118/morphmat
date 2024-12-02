@@ -10,6 +10,7 @@ regrans(
   yvar,
   lower = NULL,
   upper = NULL,
+  log = FALSE,
   verbose = FALSE,
   n_tries = 100
 )
@@ -30,6 +31,9 @@ the x-variable.}
 \item{upper}{Integer or double; the upper bound for possible SM50 values.
 Must be on the same scale of the data. Defaults to the 80th percentile of
 the x-variable.}
+
+\item{log}{Boolean; should both variables be log-transformed before performing the
+regression? Defaults to FALSE.}
 
 \item{verbose}{Return all breakpoints tested and their sum of squares, or
 only the estimated SM50?}

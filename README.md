@@ -101,9 +101,9 @@ regrans(fc, "x", "y", verbose = FALSE)
 Two-line logistic:
 
 ``` r
-two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE)
+two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE, SM50_start = 105)
 #>     SM50 
-#> 104.7633
+#> 104.7636
 ```
 
 Two-line model (lines are fit separately; no forced intersection):
@@ -129,12 +129,14 @@ Other packages:
 # chngpt
 ```
 
-Compare estimates from all regression methods:
+Compare estimates from all piecewise regression methods:
 
 ``` r
-broken_stick(fc, xvar = "x", yvar = "y", method = "all")
-#>    chngpt segmented   REGRANS   Stevens 
-#>  89.44561  88.71463  89.43822  91.10524
+piecewise_mods(fc, xvar = "x", yvar = "y", method = "all")
+#>                chngpt             segmented               REGRANS 
+#>              89.44561              88.71463              89.43822 
+#>               Stevens   Two_line.breakpoint Two_line.intersection 
+#>              91.10524             106.06548            1383.97444
 ```
 
 ### Clustering methods

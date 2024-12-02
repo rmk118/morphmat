@@ -10,6 +10,7 @@ broken_stick_stevens(
   yvar,
   lower = NULL,
   upper = NULL,
+  log = FALSE,
   verbose = FALSE
 )
 }
@@ -30,6 +31,9 @@ the x-variable.}
 Must be on the same scale of the data. Defaults to the 80th percentile of
 the x-variable.}
 
+\item{log}{Boolean; should both variables be log-transformed before performing the
+regression? Defaults to FALSE.}
+
 \item{verbose}{Should additional output be returned besides the SM50
 estimate?}
 }
@@ -41,7 +45,12 @@ immature amd mature slope and intercept parameters, and the F and p-values
 for the final piecewise model.
 }
 \description{
-Broken-stick method from Bradley Stevens
+Fits a broken-stick model to estimate size at maturity. Code
+adapted from Dr. Bradley Stevens at the University of Maryland Eastern
+Shore. Differs from the broken-stick methods implemented in \code{regrans()},
+\code{chngpt::chngpt()}, \code{segmented::segmented()}, \code{SiZer::piecewise.linear()},
+etc. in that only values of the x-axis variable present in the data are
+tested as possible SM50 values.
 }
 \examples{
 set.seed(12)

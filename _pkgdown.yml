@@ -1,4 +1,5 @@
 url: https://rmk118.github.io/morphmat/
 template:
   bootstrap: 5
+  math-rendering: katex
 

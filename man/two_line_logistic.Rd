@@ -10,10 +10,11 @@ two_line_logistic(
   yvar,
   imm_int = 1,
   imm_slope = 0.2,
-  mat_int = 1,
+  mat_int = 4,
   mat_slope = 0.3,
   SM50_start = NULL,
   alpha_start = 9,
+  log = FALSE,
   verbose = FALSE
 )
 }
@@ -44,6 +45,9 @@ model. If not provided, taken to be the median of the x-variable}
 \item{alpha_start}{Starting value for the logistic slope parameter when
 fitting the NLS model}
 
+\item{log}{Boolean; should both variables be log-transformed before performing the
+regression? Defaults to FALSE.}
+
 \item{verbose}{Should additional output be returned besides the SM50
 estimate?}
 }
@@ -56,6 +60,6 @@ Two-line logistic model
 }
 \examples{
 set.seed(12)
-fc <- fake_crustaceans(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
-two_line_logistic(fc, xvar="x", yvar="y", verbose = FALSE)
+fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
+two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE)
 }

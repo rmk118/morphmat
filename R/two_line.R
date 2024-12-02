@@ -26,6 +26,8 @@
 #'   only observed values of the x-variable ("obs"), or should it be a specified
 #'   number of evenly-spaced values between the lower and upper limits of the
 #'   unknown region ("even", the default)
+#' @param log Boolean; should both variables be log-transformed before performing the
+#'   regression? Defaults to FALSE.
 #' @param num_bps When `bps = "even"`, how many values should be tested as
 #'   possible endpoints? Defaults to 100, but should be increased.
 #'
@@ -47,27 +49,36 @@
 #'
 #' @seealso [two_line_logistic()] for an alternative two-line model with a
 #'   logistic transition between the left and right segments and
-#'   [broken_stick()] for segmented/piecewise regression methods.
+#'   [piecewise_mods()] for segmented/piecewise regression methods.
 #'
 two_line <- function(dat,
-                             xvar,
-                             yvar,
-                             lower = NULL,
-                             upper = NULL,
-                             verbose = FALSE,
-                             bps = "even",
-                             num_bps = 100) {
-  stevens <- dat %>% dplyr::arrange(.data[[xvar]])
+                     xvar,
+                     yvar,
+                     lower = NULL,
+                     upper = NULL,
+                     verbose = FALSE,
+                     bps = "even",
+                     log = FALSE,
+                     num_bps = 100) {
 
-  xraw <- stevens[[xvar]]
-  yraw <- stevens[[yvar]]
+
+  new_dat <- dat %>% dplyr::arrange(.data[[xvar]])
+
+  if (isTRUE(log)) {
+    xraw <- log(new_dat[[xvar]])
+    yraw <- log(new_dat[[yvar]])
+  }
+  else {
+    xraw <- new_dat[[xvar]]
+    yraw <- new_dat[[yvar]]
+  }
 
   if (is.null(lower)) {
-    lower <- stats::quantile(xraw, 0.2)
+    lower <- stats::quantile(xraw, 0.2, names = FALSE)
   }
 
   if (is.null(upper)) {
-    upper <- stats::quantile(xraw, 0.8)
+    upper <- stats::quantile(xraw, 0.8, names = FALSE)
   }
 
   left_x <- (xraw <= lower) # T/F vector
@@ -77,26 +88,26 @@ two_line <- function(dat,
   min_x <- xraw[low_ndx] # lowest T value
   min_y <- yraw[low_ndx] # lowest T value
 
-  stevens$xvar <- xraw
-  stevens$yvar <- yraw
+  new_dat$xvar <- xraw
+  new_dat$yvar <- yraw
 
-  lm0 <- stats::lm(yvar ~ xvar, data = stevens)
+  lm0 <- stats::lm(yvar ~ xvar, data = new_dat)
   rss0 <- stats::anova(lm0)[[2, 2]] # residual sum of squares
   ms0 <- stats::anova(lm0)[[3]] # mean squared error
   F0 <- ms0[1] / ms0[2] # F value
-  n0 <- dim(stevens)[1]
+  n0 <- dim(new_dat)[1]
   rss_min <- rss0
   mse0 <- mean(lm0$residuals ^ 2)
 
   # assign group membership
   # 1 = left line, 2= right line
-  memb <- rep(1, nrow(stevens))
+  memb <- rep(1, nrow(new_dat))
   memb_low <- (xraw <= min_x) # T/F list if less than low range
   memb_high <- (yraw > min_y) # T/F list if GT than high range
   memb[memb_low] <- 1 # assign 1 to those < low
   memb[memb_high] <- 2 # assign 2 to those > high
   memb_sum1 <- summary(as.factor(memb))
-  stevens$group <- memb
+  new_dat$group <- memb
 
   #### Loop
 
@@ -106,13 +117,13 @@ two_line <- function(dat,
     for (i in 1:n0) {
       piecewise1 <- stats::lm(
         yvar ~ xvar * (xvar < xvar[i]) + xvar * (xvar >= xvar[i]),
-        data = stevens)
+        data = new_dat)
       mse[i] <- mean(piecewise1$residuals ^ 2)
     }
 
     ### find breakpoint (bp) that gives lowest MSE
     bp_ind <- which(mse == min(mse))
-    bp <- stevens$xvar[bp_ind] # this is not necessarily where the lines cross
+    bp <- new_dat$xvar[bp_ind] # this is not necessarily where the lines cross
 
   }
 
@@ -124,7 +135,7 @@ two_line <- function(dat,
     mse <- rep(0, num_bps)
     for (i in 1:num_bps) {
       piecewise1 <- stats::lm(yvar ~ xvar * (xvar < steps[i]) +
-                         xvar * (xvar >= steps[i]), data = stevens)
+                         xvar * (xvar >= steps[i]), data = new_dat)
       mse[i] <- mean(piecewise1$residuals ^ 2)
     }
 
@@ -139,7 +150,7 @@ two_line <- function(dat,
 
   ## rerun piecewise regression at best bp
   piecewise2 <- stats::lm(yvar ~ xvar * (xvar < bp) + xvar * (xvar > bp),
-                          data = stevens)
+                          data = new_dat)
 
   pw_vals <- stats::coef(piecewise2)
   pw_vals[which(is.na(pw_vals))] <- 0
@@ -152,11 +163,11 @@ two_line <- function(dat,
 
   ####  Reassign group membership
   memb_pw <- rep(1, n0)
-  memb_pw[stevens$xvar >= bp] <- 2
-  stevens$group <- memb_pw
+  memb_pw[new_dat$xvar >= bp] <- 2
+  new_dat$group <- memb_pw
 
   output <- list(
-    data = stevens,
+    data = new_dat,
     breakpoint = bp,
     intersection = jx,
     imm_slope = b_lo,

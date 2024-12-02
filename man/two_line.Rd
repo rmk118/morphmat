@@ -12,6 +12,7 @@ two_line(
   upper = NULL,
   verbose = FALSE,
   bps = "even",
+  log = FALSE,
   num_bps = 100
 )
 }
@@ -39,6 +40,9 @@ estimate?}
 only observed values of the x-variable ("obs"), or should it be a specified
 number of evenly-spaced values between the lower and upper limits of the
 unknown region ("even", the default)}
+
+\item{log}{Boolean; should both variables be log-transformed before performing the
+regression? Defaults to FALSE.}
 
 \item{num_bps}{When \code{bps = "even"}, how many values should be tested as
 possible endpoints? Defaults to 100, but should be increased.}
@@ -74,5 +78,5 @@ two_line(fc, xvar = "x", yvar = "y", verbose = FALSE)
 \seealso{
 \code{\link[=two_line_logistic]{two_line_logistic()}} for an alternative two-line model with a
 logistic transition between the left and right segments and
-\code{\link[=broken_stick]{broken_stick()}} for segmented/piecewise regression methods.
+\code{\link[=piecewise_mods]{piecewise_mods()}} for segmented/piecewise regression methods.
 }

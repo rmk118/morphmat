@@ -8,7 +8,7 @@ somerton(
   dat,
   xvar,
   yvar,
-  trans = "none",
+  log = FALSE,
   lower = NULL,
   upper = NULL,
   max_iter = 50
@@ -23,10 +23,8 @@ axis variable (e.g., carapace width).}
 \item{yvar}{Name of column (integer or double) of measurements for the y-axis
 variable (e.g., claw height).}
 
-\item{trans}{Transformation to be applied to the data before performing the
-regression: "none", "log" (both variables are log-transformed), or "std"
-(both variables are standardized = scaled and centered). If no string is
-provided, no transformation is performed (i.e., the default is "none").}
+\item{log}{Boolean; should both variables be log-transformed before performing the
+regression? Defaults to FALSE.}
 
 \item{lower}{Integer or double; the lower bound for possible SM50 values.
 Must be on the same trans of the data. Defaults to the 20th percentile of

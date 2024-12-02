@@ -1,5 +1,12 @@
 #' Broken-stick method from Bradley Stevens
 #'
+#' @description Fits a broken-stick model to estimate size at maturity. Code
+#'   adapted from Dr. Bradley Stevens at the University of Maryland Eastern
+#'   Shore. Differs from the broken-stick methods implemented in `regrans()`,
+#'   `chngpt::chngpt()`, `segmented::segmented()`, `SiZer::piecewise.linear()`,
+#'   etc. in that only values of the x-axis variable present in the data are
+#'   tested as possible SM50 values.
+#'
 #' @param dat data frame or matrix containing the data
 #' @param xvar Name of column (integer or double) of measurements for the x-axis
 #'   variable (e.g., carapace width).
@@ -11,6 +18,8 @@
 #' @param lower Integer or double; the lower bound for possible SM50 values.
 #'   Must be on the same scale of the data. Defaults to the 20th percentile of
 #'   the x-variable.
+#' @param log Boolean; should both variables be log-transformed before performing the
+#'   regression? Defaults to FALSE.
 #' @param verbose Should additional output be returned besides the SM50
 #'   estimate?
 #'
@@ -30,19 +39,26 @@ broken_stick_stevens <- function(dat,
                                  yvar,
                                  lower = NULL,
                                  upper = NULL,
+                                 log = FALSE,
                                  verbose = FALSE) {
 
-  stevens <- dat %>% dplyr::arrange(.data[[xvar]])
+  new_dat <- dat %>% dplyr::arrange(.data[[xvar]])
 
-  xraw <- stevens[[xvar]]
-  yraw <- stevens[[yvar]]
+  if (isTRUE(log)) {
+    xraw <- log(new_dat[[xvar]])
+    yraw <- log(new_dat[[yvar]])
+  }
+  else {
+    xraw <- new_dat[[xvar]]
+    yraw <- new_dat[[yvar]]
+  }
 
   if (is.null(lower)) {
-    lower <- stats::quantile(xraw, 0.2)
+    lower <- stats::quantile(xraw, 0.2, names = FALSE)
   }
 
   if (is.null(upper)) {
-    upper <- stats::quantile(xraw, 0.8)
+    upper <- stats::quantile(xraw, 0.8, names = FALSE)
   }
 
   left_x <- (xraw <= lower) # T/F vector
@@ -52,28 +68,28 @@ broken_stick_stevens <- function(dat,
   min_x <- xraw[low_ndx] # lowest T value
   min_y <- yraw[low_ndx] # lowest T value
 
-  stevens$xvar <- xraw
-  stevens$yvar <- yraw
+  new_dat$xvar <- xraw
+  new_dat$yvar <- yraw
 
   # null model - single line to describe both maturity stages
-  lm0 <- stats::lm(yvar ~ xvar, data = stevens)
+  lm0 <- stats::lm(yvar ~ xvar, data = new_dat)
   rss0 <- stats::anova(lm0)[[2, 2]] # residual sum of squares
   ms0 <- stats::anova(lm0)[[3]] # mean squared error
   F0 <- ms0[1] / ms0[2] # F value
-  n0 <- dim(stevens)[1]
+  n0 <- dim(new_dat)[1]
   rss_min <- rss0
   mse0 <- mean(lm0$residuals ^ 2)
 
   # assign group membership
   # 1 = left line, 2 = right line
-  memb <- rep(1, nrow(stevens))
+  memb <- rep(1, nrow(new_dat))
   memb_low <- (xraw <= min_x) # T/F list if less than low range
   memb_high <- (yraw > min_y) # T/F list if GT than high range
   memb[memb_low] <- 1 # assign 1 to those < low
   memb[memb_high] <- 2 # assign 2 to those > high
   memb_sum1 <- summary(as.factor(memb))
-  stevens$prior <- memb
-  stevens$group <- memb
+  new_dat$prior <- memb
+  new_dat$group <- memb
 
   run <- 0
 
@@ -83,7 +99,7 @@ broken_stick_stevens <- function(dat,
     # Left regression
     lm1 <- stats::lm(
       I(yvar[memb == 1] - min_y) ~ 0 + I(xvar[memb == 1] - min_x),
-      data = stevens
+      data = new_dat
       )
     b1 <- stats::coef(lm1)[[1]]
     a1 <- min_y - (b1 * min_x)
@@ -94,7 +110,7 @@ broken_stick_stevens <- function(dat,
     # Right regression
     lm2 <- stats::lm(
       I(yvar[memb == 2] - min_y) ~ 0 + I(xvar[memb == 2] - min_x),
-      data = stevens
+      data = new_dat
       )
     b2 <- stats::coef(lm2)[[1]]
     a2 <- min_y - (b2 * min_x)
@@ -126,26 +142,24 @@ broken_stick_stevens <- function(dat,
 
     # next point
     low_ndx <- low_ndx + 1
-    min_x <- stevens$xvar[low_ndx]
-    min_y <- stevens$yvar[low_ndx]
-    memb_low <- stevens$xvar <= min_x # T/F list if less than low range
-    memb_high <- stevens$xvar > min_x # T/F list if GT than high range
+    min_x <- new_dat$xvar[low_ndx]
+    min_y <- new_dat$yvar[low_ndx]
+    memb_low <- new_dat$xvar <= min_x # T/F list if less than low range
+    memb_high <- new_dat$xvar > min_x # T/F list if GT than high range
     memb[memb_low] <- 1 # assign 1 to those < low
     memb[memb_high] <- 2 # assign 2 to those > high
   } # end loop
 
   SM50 <- joint_x
 
-  memb_low <- stevens$xvar <= joint_x # T/F list if less than low range
-  memb_high <- stevens$xvar > joint_x # T/F list if GT than high range
+  memb_low <- new_dat$xvar <= joint_x # T/F list if less than low range
+  memb_high <- new_dat$xvar > joint_x # T/F list if GT than high range
   memb[memb_low] <- 1 # assign 1 to those < low
   memb[memb_high] <- 2 # assign 2 to those > high
-  stevens$group <- memb
-  memb_sum2 <- summary(as.factor(stevens$group))
-  n_tot <- sum(memb_sum2)
+  new_dat$group <- memb
 
   output <- list(
-    data = stevens %>% dplyr::select(-c("xvar", "yvar", "prior")),
+    data = new_dat %>% dplyr::select(-c("xvar", "yvar", "prior")),
     SM50 = SM50,
     imm_slope = b1_1,
     imm_int = a1_1,

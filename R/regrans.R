@@ -11,6 +11,8 @@
 #' @param upper Integer or double; the upper bound for possible SM50 values.
 #'   Must be on the same scale of the data. Defaults to the 80th percentile of
 #'   the x-variable.
+#' @param log Boolean; should both variables be log-transformed before performing the
+#'   regression? Defaults to FALSE.
 #' @param verbose Return all breakpoints tested and their sum of squares, or
 #'   only the estimated SM50?
 #' @param n_tries Number of breakpoints to test within the unknown range.
@@ -26,22 +28,29 @@
 #' regrans(fc, "x", "y", verbose = FALSE)
 #' head(regrans(fc, "x", "y", verbose = TRUE), n = 30)
 regrans <- function(dat,
-                        xvar,
-                        yvar,
-                        lower = NULL,
-                        upper = NULL,
-                        verbose = FALSE,
-                        n_tries = 100) {
+                    xvar,
+                    yvar,
+                    lower = NULL,
+                    upper = NULL,
+                    log = FALSE,
+                    verbose = FALSE,
+                    n_tries = 100) {
 
-  x <- dat[[xvar]]
-  y <- dat[[yvar]]
+  if (isTRUE(log)) {
+    x <- log(dat[[xvar]])
+    y <- log(dat[[yvar]])
+  }
+  else {
+    x <- dat[[xvar]]
+    y <- dat[[yvar]]
+  }
 
   if (is.null(lower)) {
-    lower <- stats::quantile(x, 0.2)
+    lower <- stats::quantile(x, 0.2, names = FALSE)
   }
 
   if (is.null(upper)) {
-    upper <- stats::quantile(x, 0.8)
+    upper <- stats::quantile(x, 0.8, names = FALSE)
   }
 
   changept_choices <- seq(lower, upper, length.out = n_tries)

@@ -17,6 +17,8 @@
 #'   model. If not provided, taken to be the median of the x-variable
 #' @param alpha_start Starting value for the logistic slope parameter when
 #'   fitting the NLS model
+#' @param log Boolean; should both variables be log-transformed before performing the
+#'   regression? Defaults to FALSE.
 #' @param verbose Should additional output be returned besides the SM50
 #'   estimate?
 #'
@@ -26,20 +28,26 @@
 #'
 #' @examples
 #' set.seed(12)
-#' fc <- fake_crustaceans(n=100, L50=100, allo_params=c(1, 0.2, 1.1, 0.2))
-#' two_line_logistic(fc, xvar="x", yvar="y", verbose = FALSE)
+#' fc <- fake_crustaceans(n = 100, L50 = 100, allo_params = c(1, 0.2, 1.1, 0.2))
+#' two_line_logistic(fc, xvar = "x", yvar = "y", verbose = FALSE)
 two_line_logistic <- function(dat,
                               xvar,
                               yvar,
                               imm_int = 1,
                               imm_slope = 0.2,
-                              mat_int = 1,
+                              mat_int = 4,
                               mat_slope = 0.3,
                               SM50_start = NULL,
                               alpha_start = 9,
+                              log = FALSE,
                               verbose = FALSE) {
 
-  tll_dat <- data.frame(xvar = dat[[xvar]], yvar = dat[[yvar]])
+  if (isTRUE(log)) {
+    tll_dat <- data.frame(xvar = log(dat[[xvar]]), yvar = log(dat[[yvar]]))
+  }
+  else {
+    tll_dat <- data.frame(xvar = dat[[xvar]], yvar = dat[[yvar]])
+  }
 
   if (is.null(SM50_start)) {
     SM50_start <- stats::median(tll_dat$xvar)
@@ -57,7 +65,7 @@ two_line_logistic <- function(dat,
     )))) + (int2 + slope2 * xvar) * (1 / (1 + exp(-(xvar - SM50) / alpha)))
   }
 
-  nls_out <- stats::nls(
+  nls_out <- minpack.lm::nlsLM(
     formula =  yvar ~ TLL_fun(xvar, int1, slope1, int2, slope2, SM50, alpha),
     data = tll_dat,
     start = list(
@@ -68,7 +76,8 @@ two_line_logistic <- function(dat,
       SM50 = SM50_start,
       alpha = alpha_start
     ),
-    control=stats::nls.control(maxiter=100)
+    lower = c(-Inf, 0, -Inf, 0, 0, 0),
+    control = minpack.lm::nls.lm.control(maxiter = 500, maxfev = 10000)
   )
 
   if (verbose == TRUE) {

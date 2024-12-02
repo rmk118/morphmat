@@ -11,10 +11,8 @@
 #' @param lower Integer or double; the lower bound for possible SM50 values.
 #'   Must be on the same trans of the data. Defaults to the 20th percentile of
 #'   the x-variable.
-#' @param trans Transformation to be applied to the data before performing the
-#'   regression: "none", "log" (both variables are log-transformed), or "std"
-#'   (both variables are standardized = scaled and centered). If no string is
-#'   provided, no transformation is performed (i.e., the default is "none").
+#' @param log Boolean; should both variables be log-transformed before performing the
+#'   regression? Defaults to FALSE.
 #' @param max_iter Maximum number of iterations
 #'
 #' @returns Output is a list that also includes the input data frame with a
@@ -30,36 +28,31 @@
 #' mod <- glm(data = out_df, pred_mat_num ~ x, family = binomial(link = "logit"))
 #' unname(-coef(mod)[1] / coef(mod)[2])
 somerton <- function(
-    dat, # data.frame with columns corresponding to xvar, yvar
+    dat, # data frame with columns corresponding to xvar and yvar
     xvar, # X variable
     yvar, # Y variable
-    trans = "none", # transformation to apply
+    log = FALSE, # log-transform the data before fitting the model?
     lower = NULL, # lower bound of unknown range
     upper = NULL, # upper bound of unknown range
     max_iter = 50 # maximum number of iterations
 ) {
 
-  if (is.null(lower)) {
-    lower <- stats::quantile(dat[[xvar]], 0.2)
-  }
-
-  if (is.null(upper)) {
-    upper <- stats::quantile(dat[[xvar]], 0.8)
-  }
-
-  if (trans == "log") {
+  if (isTRUE(log)) {
     dat$xvar <- log(dat[[xvar]])
     dat$yvar <- log(dat[[yvar]])
-  }
-  else if (trans == "std") {
-    dat$xvar <- scale(dat[[xvar]])
-    dat$xvar <- scale(dat[[yvar]])
   }
   else {
     dat$xvar <- dat[[xvar]]
     dat$yvar <- dat[[yvar]]
   }
 
+  if (is.null(lower)) {
+    lower <- stats::quantile(dat$xvar, 0.2, names = FALSE)
+  }
+
+  if (is.null(upper)) {
+    upper <- stats::quantile(dat$xvar, 0.8, names = FALSE)
+  }
 
   df <- dat %>%
     dplyr::mutate(group = dplyr::case_when(xvar < lower ~ "juv",
@@ -67,7 +60,6 @@ somerton <- function(
                                            .default = NA))
 
   df$temp_group <- df$group
-
 
   rsq_vec <- rep(NA, max_iter)
   RSS_vec <- rep(NA, max_iter)
