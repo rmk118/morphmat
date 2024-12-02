@@ -12,11 +12,12 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Simulating data">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><link href="../deps/KaTex-0.16.10/katex.min.css" rel="stylesheet">
+<script src="../deps/KaTex-0.16.10/katex.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Simulating data">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,6 +36,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/morphmat.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
@@ -131,27 +133,17 @@ imperfection found in empirical data <span class="citation">(<a href="#ref-lotte
 <div class="section level3">
 <h3 id="equations">Equations<a class="anchor" aria-label="anchor" href="#equations"></a>
 </h3>
-<p>The parameterization of the logistic equation we will use is:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>−</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mi>b</mi></mrow></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">f(x)=\frac{1}{1+e^{-(x-a)/b}} </annotation></semantics></math>
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
-is a location parameter and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>
-is the shape parameter.</p>
-<p>The allometric growth equation is
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>β</mi><msup><mi>X</mi><mi>α</mi></msup></mrow><annotation encoding="application/x-tex">Y=\beta X^{\alpha}</annotation></semantics></math></p>
-<p>which results in a linear plot when log-transformed:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mover><mi>β</mi><mo accent="true">̃</mo></mover><mo>+</mo><mi>α</mi><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\log{(Y)}= \tilde{\beta}+\alpha\log{(X)}</annotation></semantics></math>.
-Here,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
-is the slope of the allometric line and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
-is the intercept, with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>β</mi><mo accent="true">̃</mo></mover><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\tilde{\beta}=\log{(\beta)}</annotation></semantics></math>.
-Differences in the intercept of the allometry indicate differences in
-the proportionate size of the chela, irrespective of carapace width. In
-contrast, differences in the slope parameter represent differences in
-how the relative size of the chela changes with body size.</p>
+<p>The parameterization of the logistic equation we will use is: <span class="math display">f(x)=\frac{1}{1+e^{-(x-a)/b}} </span> where <span class="math inline">a</span> is a location parameter and <span class="math inline">b</span> is the shape parameter.</p>
+<p>The allometric growth equation is <span class="math display">Y=\beta
+X^{\alpha}</span></p>
+<p>which results in a linear plot when log-transformed: <span class="math inline">\log{(Y)}= \tilde{\beta}+\alpha\log{(X)}</span>.
+Here, <span class="math inline">\alpha</span> is the slope of the
+allometric line and <span class="math inline">\beta</span> is the
+intercept, with <span class="math inline">\tilde{\beta}=\log{(\beta)}</span>. Differences in
+the intercept of the allometry indicate differences in the proportionate
+size of the chela, irrespective of carapace width. In contrast,
+differences in the slope parameter represent differences in how the
+relative size of the chela changes with body size.</p>
 </div>
 <div class="section level3">
 <h3 id="a-note-on-the-error-distribution">A note on the error distribution<a class="anchor" aria-label="anchor" href="#a-note-on-the-error-distribution"></a>
@@ -160,7 +152,10 @@ how the relative size of the chela changes with body size.</p>
 around the regression lines obtained by log-transforming the raw CW and
 CH values. In other words, we are assuming the original data has
 multiplicative log-normally distributed error:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>β</mi><msup><mi>X</mi><mi>α</mi></msup><msup><mi>e</mi><mi>ε</mi></msup><mo>,</mo><mspace width="1.0em"></mspace><mi>ε</mi><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><msup><mi>σ</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y=\beta X^{\alpha}e^{\varepsilon}, \quad \varepsilon \sim N(0,\sigma^2)</annotation></semantics></math><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Y</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>α</mi><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>ε</mi><mo>,</mo><mspace width="1.0em"></mspace><mi>ε</mi><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><msup><mi>σ</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\log{(Y)}=\log{(\beta)}+ \alpha\log{(X)}+\varepsilon, \quad \varepsilon \sim N(0,\sigma^2)</annotation></semantics></math></p>
+<p><span class="math display">Y=\beta X^{\alpha}e^{\varepsilon}, \quad
+\varepsilon \sim N(0,\sigma^2)</span> <span class="math display">\log{(Y)}=\log{(\beta)}+
+\alpha\log{(X)}+\varepsilon, \quad \varepsilon \sim
+N(0,\sigma^2)</span></p>
 <p>The question of whether error structures should be assumed to be
 multiplicative or additive when fitting allometric models is non-trivial
 and often controversial <span class="citation">(<a href="#ref-packard2009">Packard 2009</a>; <a href="#ref-ballantyne2013">Ballantyne 2013</a>; <a href="#ref-xiao2011">Xiao et al. 2011</a>)</span>. However, the
@@ -184,12 +179,11 @@ for the function to generate a random sample of 1000 crabs with a mean
 carapace width of 105 mm and standard deviation of 20 mm. The true size
 at maturity for the population is 100 mm, and the slope parameter for
 the logistic equation is 5. There is no change in the allometric slope
-or intercept parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mi>α</mi><mo>=</mo><mn>1.2</mn><mo>,</mo><mi>β</mi><mo>=</mo><mn>0.15</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(\alpha=1.2, \beta=0.15)</annotation></semantics></math>
-upon reaching maturity, so if this was real data, we would not actually
-be able to estimate size at maturity based on a change in morphometric
-ratios. The SD of the error distribution also remains constant upon
-reaching maturity.</p>
+or intercept parameters <span class="math inline">(\alpha=1.2,
+\beta=0.15)</span> upon reaching maturity, so if this was real data, we
+would not actually be able to estimate size at maturity based on a
+change in morphometric ratios. The SD of the error distribution also
+remains constant upon reaching maturity.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">default_sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fake_crustaceans.html">fake_crustaceans</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -340,13 +334,12 @@ parameters and create a simulated data set for each combination.</p>
 <h2 id="visualization">Visualization<a class="anchor" aria-label="anchor" href="#visualization"></a>
 </h2>
 <p>We can see how the slope of the logistic distribution becomes less
-steep with higher values of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>.
-The lower values are representative of a species where there is very
-little intraspecific variation in size at maturity; if the true L50 is
-100 mm, almost all individuals will become mature close to 100 mm. In
-contrast, the high parameters represent a species where there is
-significant variation in L50 between individuals.</p>
+steep with higher values of <span class="math inline">a</span>. The
+lower values are representative of a species where there is very little
+intraspecific variation in size at maturity; if the true L50 is 100 mm,
+almost all individuals will become mature close to 100 mm. In contrast,
+the high parameters represent a species where there is significant
+variation in L50 between individuals.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#5D74A5"</span>, <span class="st">"#819AC2"</span>, <span class="st">"#A6C1DF"</span>, <span class="st">"#CAD9DC"</span>, <span class="st">"#ECEDCE"</span>,</span>
 <span>         <span class="st">"#F9E3B6"</span>, <span class="st">"#F1BD96"</span>, <span class="st">"#E39778"</span>, <span class="st">"#C57663"</span>, <span class="st">"#A8554E"</span><span class="op">)</span></span>
@@ -374,17 +367,11 @@ point/location parameter, which is set to 100 mm.
 </p>
 </div>
 <p>Another way of visualizing the impact of changing the slope parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(a)</annotation></semantics></math>
-is by comparing density plots of maturity by CW. We can see that the
-area of intersection between the immature and mature curves increases
-with increasing values of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>.
-The right tail of the immature distribution extends to much higher CW
-values when
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">a=10</annotation></semantics></math>
-compared to when
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">a=1</annotation></semantics></math>,
-while the left tail of the mature distribution extends much lower.</p>
+<span class="math inline">(a)</span> is by comparing density plots of
+maturity by CW. We can see that the area of intersection between the
+immature and mature curves increases with increasing values of <span class="math inline">a</span>. The right tail of the immature
+distribution extends to much higher CW values when <span class="math inline">a=10</span> compared to when <span class="math inline">a=1</span>, while the left tail of the mature
+distribution extends much lower.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Size by maturity stage density plots</span></span>
 <span><span class="va">fake_crustaceans</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>

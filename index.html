@@ -12,11 +12,12 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
-<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="katex-auto.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Modeling Size at Maturity Using Morphometric Data">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><link href="deps/KaTex-0.16.10/katex.min.css" rel="stylesheet">
+<script src="deps/KaTex-0.16.10/katex.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Modeling Size at Maturity Using Morphometric Data">
 <meta name="description" content="A compilation of methods used to estimate size at (sexual) maturity based on morphometric data, most commonly applied to crabs, lobsters, and other crustaceans. Approaches include modeling approaches based on piecewise/segmentedlinear regression as well as numerous clustering-based methods.">
 <meta property="og:description" content="A compilation of methods used to estimate size at (sexual) maturity based on morphometric data, most commonly applied to crabs, lobsters, and other crustaceans. Approaches include modeling approaches based on piecewise/segmentedlinear regression as well as numerous clustering-based methods.">
 <meta property="og:image" content="https://rmk118.github.io/morphmat/logo.png">
@@ -38,6 +39,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="articles/morphmat.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
@@ -199,9 +201,9 @@
 <span><span class="co">#&gt; [1] 89.43822</span></span></code></pre></div>
 <p>Two-line logistic:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/two_line_logistic.html">two_line_logistic</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/two_line_logistic.html">two_line_logistic</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, SM50_start <span class="op">=</span> <span class="fl">105</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     SM50 </span></span>
-<span><span class="co">#&gt; 104.7633</span></span></code></pre></div>
+<span><span class="co">#&gt; 104.7636</span></span></code></pre></div>
 <p>Two-line model (lines are fit separately; no forced intersection):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/two_line.html">two_line</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -215,11 +217,13 @@
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># segmented</span></span>
 <span><span class="co"># chngpt</span></span></code></pre></div>
-<p>Compare estimates from all regression methods:</p>
+<p>Compare estimates from all piecewise regression methods:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/broken_stick.html">broken_stick</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, method <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    chngpt segmented   REGRANS   Stevens </span></span>
-<span><span class="co">#&gt;  89.44561  88.71463  89.43822  91.10524</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/piecewise_mods.html">piecewise_mods</a></span><span class="op">(</span><span class="va">fc</span>, xvar <span class="op">=</span> <span class="st">"x"</span>, yvar <span class="op">=</span> <span class="st">"y"</span>, method <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                chngpt             segmented               REGRANS </span></span>
+<span><span class="co">#&gt;              89.44561              88.71463              89.43822 </span></span>
+<span><span class="co">#&gt;               Stevens   Two_line.breakpoint Two_line.intersection </span></span>
+<span><span class="co">#&gt;              91.10524             106.06548            1383.97444</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="clustering-methods">Clustering methods<a class="anchor" aria-label="anchor" href="#clustering-methods"></a>
