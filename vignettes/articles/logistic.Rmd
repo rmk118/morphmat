@@ -104,7 +104,7 @@ broom::glance(example_glm) %>%
 ### drc package
 
 ```{r}
-testdrm <- drm(pred_maturity_num ~ x,
+testdrm <- drc::drm(pred_maturity_num ~ x,
                data = fc_mclust,
                fct = LL.2(),
                type = "binomial")
@@ -116,8 +116,8 @@ estfun.drc <- drc::estfun.drc
 bread.drc <- drc::bread.drc
 
 # use lmtest and sandwich packages to obtain robust standard errors
-coeftest(testdrm, vcov = sandwich) 
-ED(testdrm, c(50), "delta")
+lmtest::coeftest(testdrm, vcov = sandwich) 
+drc::ED(testdrm, c(50), "delta")
 
 plot(testdrm) # built-in plotting method
 ```
