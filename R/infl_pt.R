@@ -14,10 +14,10 @@
 #' y-var/x-var ratio for all points, then finding the local minimum separating
 #' the two peaks representing the maturity clusters.
 #'
-#' @param dat optional data frame or matrix containing the data
-#' @param x Name of column (or integer or double vector) containing measurements
+#' @param dat data frame or matrix containing the data
+#' @param xvar Name of column (or integer or double vector) containing measurements
 #'   for the x-axis variable (e.g., carapace width).
-#' @param y Name of column (or integer or double vector) containing measurements
+#' @param yvar Name of column (or integer or double vector) containing measurements
 #'   for the y-axis variable (e.g., claw height).
 #' @param log Boolean; should both variables be log-transformed before performing the
 #'   regression? Defaults to FALSE.
@@ -42,13 +42,13 @@
 #' infl_pt(fc, "x", "y", plot = TRUE)
 #' infl_pt(fc, "x", "y", log = TRUE, plot = TRUE)
 #'
-infl_pt <- function(dat, x, y, log = FALSE, plot = FALSE) {
+infl_pt <- function(dat, xvar, yvar, log = FALSE, plot = FALSE) {
   # find the ratio between the two morphometric variables
   if (isTRUE(log)) {
-    ratio <- log(dat[[y]])/log(dat[[x]])
+    ratio <- log(dat[[yvar]])/log(dat[[xvar]])
   }
   else {
-    ratio <- dat[[y]]/dat[[x]]
+    ratio <- dat[[yvar]]/dat[[xvar]]
   }
 
 
@@ -60,7 +60,7 @@ infl_pt <- function(dat, x, y, log = FALSE, plot = FALSE) {
 
   # find the local minimum between the two peaks
   density_test$is_min <- splus2R::peaks(
-    x = -density_test$y, span = 3, strict = FALSE)
+    x = -density_test$y, span = 3, strict = TRUE)
 
   min <- density_test %>%
     dplyr::filter(.data$is_min == TRUE) %>%

@@ -24,11 +24,11 @@ variable (e.g., carapace width).}
 variable (e.g., claw height).}
 
 \item{lower}{Integer or double; the lower bound for possible SM50 values.
-Must be on the same trans of the data. Defaults to the 20th percentile of
+Must be on the same scale of the data. Defaults to the 20th percentile of
 the x-variable.}
 
 \item{upper}{Integer or double; the upper bound for possible SM50 values.
-Must be on the same trans of the data. Defaults to the 80th percentile of
+Must be on the same scale as the data. Defaults to the 80th percentile of
 the x-variable.}
 
 \item{log}{Boolean; should both variables be log-transformed before performing the

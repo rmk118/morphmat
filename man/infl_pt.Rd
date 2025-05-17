@@ -4,15 +4,15 @@
 \alias{infl_pt}
 \title{Maturity classification based on the minimum density of CH/CW ratios}
 \usage{
-infl_pt(dat, x, y, log = FALSE, plot = FALSE)
+infl_pt(dat, xvar, yvar, log = FALSE, plot = FALSE)
 }
 \arguments{
-\item{dat}{optional data frame or matrix containing the data}
+\item{dat}{data frame or matrix containing the data}
 
-\item{x}{Name of column (or integer or double vector) containing measurements
+\item{xvar}{Name of column (or integer or double vector) containing measurements
 for the x-axis variable (e.g., carapace width).}
 
-\item{y}{Name of column (or integer or double vector) containing measurements
+\item{yvar}{Name of column (or integer or double vector) containing measurements
 for the y-axis variable (e.g., claw height).}
 
 \item{log}{Boolean; should both variables be log-transformed before performing the

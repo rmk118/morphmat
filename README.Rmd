@@ -24,6 +24,8 @@ knitr::opts_chunk$set(
 
 <!-- badges: end -->
 
+## Description
+
 A compilation of methods used to estimate size at (sexual) maturity based on morphometric data, most commonly applied to crabs, lobsters, and other crustaceans. Approaches include modeling approaches based on piecewise/segmented linear regression as well as numerous clustering-based methods.
 
 `morphmat` is intended to help fisheries scientists and managers to implement the multitude of computational methods that have been developed for estimating crustacean size at maturity. This package is being developed as part of my graduate work at the University of Maine. **This is still a work in progress and should not yet be used for research purposes.**
@@ -57,8 +59,9 @@ The following scripts do not use morphometric data and require individuals to al
 You can install the development version of morphmat from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("rmk118/morphmat")
+remotes::install_github("rmk118/morphmat")
+# or
+pak::pak("rmk118/morphmat")
 ```
 
 ## Articles/vignettes
@@ -109,5 +112,16 @@ out_df <- somerton(fc, xvar = "x", yvar = "y")[[1]]
 mod <- glm(data = out_df, pred_mat_num ~ x, family = binomial(link = "logit"))
 unname(-coef(mod)[1] / coef(mod)[2])
 ```
+
+
+## Contributing
+
+If you would like to contribute to this project, please start by reading the [Guide to Contributing](CONTRIBUTING.md). Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
+
+## How to Cite
+
+> Krasnow, R. (2025). morphmat:
+> An R package to estimate crustacean size at maturity using morphometric data.
+> <https://ruby.science/morphmat>.
 
 ## References
