@@ -1,6 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://rmk118.github.io/morphmat/404.html</loc></url>
-<url><loc>https://rmk118.github.io/morphmat/LICENSE-text.html</loc></url>
+<url><loc>https://rmk118.github.io/morphmat/CONDUCT.html</loc></url>
+<url><loc>https://rmk118.github.io/morphmat/CONTRIBUTING.html</loc></url>
 <url><loc>https://rmk118.github.io/morphmat/LICENSE.html</loc></url>
 <url><loc>https://rmk118.github.io/morphmat/articles/broken-stick.html</loc></url>
 <url><loc>https://rmk118.github.io/morphmat/articles/classification.html</loc></url>
@@ -13,6 +14,7 @@
 <url><loc>https://rmk118.github.io/morphmat/index.html</loc></url>
 <url><loc>https://rmk118.github.io/morphmat/reference/broken_stick_stevens.html</loc></url>
 <url><loc>https://rmk118.github.io/morphmat/reference/cluster_mods.html</loc></url>
+<url><loc>https://rmk118.github.io/morphmat/reference/density_int.html</loc></url>
 <url><loc>https://rmk118.github.io/morphmat/reference/fake_crustaceans.html</loc></url>
 <url><loc>https://rmk118.github.io/morphmat/reference/index.html</loc></url>
 <url><loc>https://rmk118.github.io/morphmat/reference/infl_pt.html</loc></url>

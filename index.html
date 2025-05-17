@@ -6,18 +6,17 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Modeling Size at Maturity Using Morphometric Data • morphmat</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
-<script src="katex-auto.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="katex-auto.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><link href="deps/KaTex-0.16.10/katex.min.css" rel="stylesheet">
-<script src="deps/KaTex-0.16.10/katex.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Modeling Size at Maturity Using Morphometric Data">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Modeling Size at Maturity Using Morphometric Data">
 <meta name="description" content="A compilation of methods used to estimate size at (sexual) maturity based on morphometric data, most commonly applied to crabs, lobsters, and other crustaceans. Approaches include modeling approaches based on piecewise/segmentedlinear regression as well as numerous clustering-based methods.">
 <meta property="og:description" content="A compilation of methods used to estimate size at (sexual) maturity based on morphometric data, most commonly applied to crabs, lobsters, and other crustaceans. Approaches include modeling approaches based on piecewise/segmentedlinear regression as well as numerous clustering-based methods.">
 <meta property="og:image" content="https://rmk118.github.io/morphmat/logo.png">
@@ -73,6 +72,9 @@
 <!-- badges: start -->
 
 <!-- badges: end -->
+<div class="section level2">
+<h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
+</h2>
 <p>A compilation of methods used to estimate size at (sexual) maturity based on morphometric data, most commonly applied to crabs, lobsters, and other crustaceans. Approaches include modeling approaches based on piecewise/segmented linear regression as well as numerous clustering-based methods.</p>
 <p><code>morphmat</code> is intended to help fisheries scientists and managers to implement the multitude of computational methods that have been developed for estimating crustacean size at maturity. This package is being developed as part of my graduate work at the University of Maine. <strong>This is still a work in progress and should not yet be used for research purposes.</strong></p>
 <p><code>morphmat</code> will include user-friendly functions for estimating size at morphometric maturity, along with guidelines for choosing the optimal method for a given dataset and correctly interpreting results. Both novel and historically popular (e.g., broken-stick regression) methods will be included, and users will be able to obtain SM50 estimates from nearly a dozen different approaches with a single function call. By combining code for the various models within a single package, morphmat will enable the application of multi-model inference to SM50 estimation, avoiding the arbitrary selection of a single “best” model (<a href="#ref-katsanevakis2006">Katsanevakis 2006</a>). By increasing the accessibility of modern statistical methods for estimating SM50, I hope to facilitate the widespread adoption of improved SM50 modeling procedures.</p>
@@ -175,13 +177,15 @@
 </tr>
 </tbody>
 </table>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>You can install the development version of morphmat from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"rmk118/morphmat"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"rmk118/morphmat"</span><span class="op">)</span></span>
+<span><span class="co"># or</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"rmk118/morphmat"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="articlesvignettes">Articles/vignettes<a class="anchor" aria-label="anchor" href="#articlesvignettes"></a>
@@ -235,6 +239,18 @@
 </div>
 </div>
 <div class="section level2">
+<h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
+</h2>
+<p>If you would like to contribute to this project, please start by reading the <a href="CONTRIBUTING.html">Guide to Contributing</a>. Please note that this project is released with a <a href="CONDUCT.html">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
+</div>
+<div class="section level2">
+<h2 id="how-to-cite">How to Cite<a class="anchor" aria-label="anchor" href="#how-to-cite"></a>
+</h2>
+<blockquote>
+<p>Krasnow, R. (2025). morphmat: An R package to estimate crustacean size at maturity using morphometric data. <a href="https://ruby.science/morphmat" class="external-link uri">https://ruby.science/morphmat</a>.</p>
+</blockquote>
+</div>
+<div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
@@ -263,6 +279,12 @@ Mainguy, Julien, Martin Bélanger, Geneviève Ouellet-Cauchon, and Rafael de And
 </ul>
 </div>
 
+<div class="community">
+<h2 data-toc-skip>Community</h2>
+<ul class="list-unstyled">
+<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
+</ul>
+</div>
 
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
@@ -274,7 +296,7 @@ Mainguy, Julien, Martin Bélanger, Geneviève Ouellet-Cauchon, and Rafael de And
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Ruby Krasnow <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0009-0007-0531-8420" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Ruby Krasnow <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0009-0007-0531-8420" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 </ul>
 </div>
 
@@ -295,7 +317,7 @@ Mainguy, Julien, Martin Bélanger, Geneviève Ouellet-Cauchon, and Rafael de And
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>

@@ -6,18 +6,17 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Broken-stick methods • morphmat</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><link href="../deps/KaTex-0.16.10/katex.min.css" rel="stylesheet">
-<script src="../deps/KaTex-0.16.10/katex.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Broken-stick methods">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Broken-stick methods">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -75,8 +74,7 @@
 
     
     
-<p>Sources (more will be added): Somerton <span class="citation">(<a href="#ref-somerton1980">1980</a>; <a href="#ref-somerton1980a">D. A.
-Somerton 1980</a>)</span>; Muggeo <span class="citation">(<a href="#ref-muggeo2003">2003</a>, <a href="#ref-muggeo2017">2017</a>; <a href="#ref-muggeo2008">V. Muggeo 2008</a>)</span>; Hall et al. <span class="citation">(<a href="#ref-hall2006">2006</a>)</span></p>
+<p>Sources (more will be added): Somerton <span class="citation">(<a href="#ref-somerton1980">1980a</a>, <a href="#ref-somerton1980a">1980b</a>)</span>; Muggeo <span class="citation">(<a href="#ref-muggeo2003">2003</a>, <a href="#ref-muggeo2008">2008</a>, <a href="#ref-muggeo2017">2017</a>)</span>; Hall et al. <span class="citation">(<a href="#ref-hall2006">2006</a>)</span></p>
 <p><span class="math display">\begin{equation*}\log{y}=
     \begin{cases}
      \tilde{\beta_1} + \alpha_1 \log{x}             &amp; \text{for
@@ -105,7 +103,7 @@ mm to demonstrate the use (and limitations) of broken-stick methods.</p>
 <span>  allo_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.25</span>, <span class="fl">1.05</span>, <span class="fl">0.2</span><span class="op">)</span>,</span>
 <span>  x_mean <span class="op">=</span> <span class="fl">85</span> <span class="co"># mean carapace width of the sample</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="broken-stick_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><img src="broken-stick_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 <div class="section level2">
 <h2 id="segmented-package">segmented package<a class="anchor" aria-label="anchor" href="#segmented-package"></a>
 </h2>
@@ -123,7 +121,7 @@ as those from the “delta” and “gradient” methods included in the
 <code class="sourceCode R"><span><span class="va">lm_orig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, data <span class="op">=</span> <span class="va">fc</span><span class="op">)</span></span>
 <span><span class="va">lm_orig_seg</span> <span class="op">&lt;-</span> <span class="fu">segmented</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/segmented/man/segmented.html" class="external-link">segmented</a></span><span class="op">(</span><span class="va">lm_orig</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">lm_orig_seg</span><span class="op">)</span></span></code></pre></div>
-<p><img src="broken-stick_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="broken-stick_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <p>The segmented package has three built-in methods to get 95%
 confidence intervals for the break point:</p>
 <pre><code><span><span class="co">#&gt; Delta method:</span></span></code></pre>
@@ -338,7 +336,7 @@ quantile to the 0.8 quantile of the x-axis variable.</p>
 <code class="sourceCode R"><span><span class="va">regrans_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/regrans.html">regrans</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">regrans_est</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; [1] 67.67091</span></span></code></pre>
-<p><img src="broken-stick_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
+<p><img src="broken-stick_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <p>As with the previous broken-stick methods, REGRANS tends to
 underestimate SM50 and the model estimates are highly sensitive to the
 values of the upper and lower bounds of the region considered plausible
@@ -361,7 +359,7 @@ application.</p>
 <code class="sourceCode R"><span><span class="va">stevens_est</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/broken_stick_stevens.html">broken_stick_stevens</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"x"</span>, <span class="st">"y"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">stevens_est</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; [1] 68.33387</span></span></code></pre>
-<p><img src="broken-stick_files/figure-html/unnamed-chunk-19-1.png" width="700"></p>
+<p><img src="broken-stick_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -379,15 +377,14 @@ Undergo an Allometric Change That Can Be Used to Determine Morphometric
 Maturity?”</span> <em>ICES Journal of Marine Science</em> 63 (1):
 140–50. <a href="https://doi.org/10.1016/j.icesjms.2005.07.007" class="external-link">https://doi.org/10.1016/j.icesjms.2005.07.007</a>.
 </div>
-<div id="ref-muggeo2008" class="csl-entry">
-Muggeo, Vito. 2008. <span>“Segmented: An r Package to Fit Regression
-Models with Broken-Line Relationships.”</span> <em>R News</em> 8 (1):
-20–25. <a href="https://journal.r-project.org/articles/RN-2008-004/RN-2008-004.pdf" class="external-link">https://journal.r-project.org/articles/RN-2008-004/RN-2008-004.pdf</a>.
-</div>
 <div id="ref-muggeo2003" class="csl-entry">
 Muggeo, Vito M. R. 2003. <span>“Estimating Regression Models with
 Unknown Break-Points.”</span> <em>Statistics in Medicine</em> 22 (19):
 3055–71. <a href="https://doi.org/dsrbfd" class="external-link">https://doi.org/dsrbfd</a>.
+</div>
+<div id="ref-muggeo2008" class="csl-entry">
+———. 2008. <span>“Segmented: An r Package to Fit Regression Models with
+Broken-Line Relationships.”</span> <em>R News</em> 8 (1): 20–25. <a href="https://journal.r-project.org/articles/RN-2008-004/RN-2008-004.pdf" class="external-link">https://journal.r-project.org/articles/RN-2008-004/RN-2008-004.pdf</a>.
 </div>
 <div id="ref-muggeo2017" class="csl-entry">
 ———. 2017. <span>“Interval Estimation for the Breakpoint in Segmented
@@ -400,15 +397,15 @@ Shell Conditions, and Morphometric Relationships of Male and Female
 Jonah Crabs in the Middle Atlantic Bight.”</span> <em>North American
 Journal of Fisheries Management</em> 40 (6): 1472–85. <a href="https://doi.org/10.1002/nafm.10509" class="external-link">https://doi.org/10.1002/nafm.10509</a>.
 </div>
-<div id="ref-somerton1980a" class="csl-entry">
-Somerton, D. A. 1980. <span>“Fitting Straight Lines to Hiatt Growth
-Diagrams: A Re-Evaluation.”</span> <em>ICES Journal of Marine
-Science</em> 39 (1): 15–19. <a href="https://doi.org/10.1093/icesjms/39.1.15" class="external-link">https://doi.org/10.1093/icesjms/39.1.15</a>.
-</div>
 <div id="ref-somerton1980" class="csl-entry">
-Somerton, David A. 1980. <span>“A Computer Technique for Estimating the
+Somerton, David A. 1980a. <span>“A Computer Technique for Estimating the
 Size of Sexual Maturity in Crabs.”</span> <em>Canadian Journal of
 Fisheries and Aquatic Sciences</em> 37 (10): 1488–94. <a href="https://doi.org/10.1139/f80-192" class="external-link">https://doi.org/10.1139/f80-192</a>.
+</div>
+<div id="ref-somerton1980a" class="csl-entry">
+———. 1980b. <span>“Fitting Straight Lines to Hiatt Growth Diagrams: A
+Re-Evaluation.”</span> <em>ICES Journal of Marine Science</em> 39 (1):
+15–19. <a href="https://doi.org/10.1093/icesjms/39.1.15" class="external-link">https://doi.org/10.1093/icesjms/39.1.15</a>.
 </div>
 <div id="ref-son2021" class="csl-entry">
 Son, Hyunju, and Youyi Fong. 2021. <span>“Fast Grid Search and
@@ -428,7 +425,7 @@ Models.”</span> <em>Environmetrics</em> 32 (3): e2664. <a href="https://doi.or
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>

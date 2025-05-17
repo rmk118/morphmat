@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.1.1
+pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
   articles/broken-stick: broken-stick.html
@@ -8,7 +8,7 @@ articles:
   morphmat: morphmat.html
   simulations: simulations.html
   articles/two-line: two-line.html
-last_built: 2024-12-02T23:43Z
+last_built: 2025-05-17T19:06Z
 urls:
   reference: https://rmk118.github.io/morphmat/reference
   article: https://rmk118.github.io/morphmat/articles
